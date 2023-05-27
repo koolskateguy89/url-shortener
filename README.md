@@ -1,3 +1,29 @@
+# URL Shortener
+
+A Simple URL Shortener using Rust and NextJs/Solid-Start.
+
+Project structure based on [`spa5k/monorepo-typescript-rust`](https://github.com/spa5k/monorepo-typescript-rust), and my **extremely**
+limited knowledge of [Turborepo](https://turbo.build/repo) and
+[Cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html).
+
+## Apps and Packages
+
+- `server`
+- `solid` - a [Solid-Start](https://start.solidjs.com/) app
+- `nextjs`: a [Next.js](https://nextjs.org/) app
+- `api`: API to interact with the server
+- `ui-solid`: Solid component library
+- `ui-react`: React component library
+- `eslint-config-custom-solid`: Solid `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `eslint-config-custom-next`: Next.Js `eslint` configurations (includes `eslint-plugin-solid` and `eslint-config-prettier`)
+- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+
+
+TODO?: add /target to turbo dev output
+
+TODO: eslint-config-custom-solid and use it in `solid` and `ui-solid`. Also add solid tsconfig to `tsconfig` package
+
+
 # Turborepo starter
 
 This is an official starter Turborepo.
