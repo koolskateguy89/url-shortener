@@ -3,12 +3,15 @@
 A Simple URL Shortener using Rust and NextJs/Solid-Start.
 
 Project structure based on [`spa5k/monorepo-typescript-rust`](https://github.com/spa5k/monorepo-typescript-rust), and my **extremely**
-limited knowledge of [Turborepo](https://turbo.build/repo) and
-[Cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html).
+limited knowledge of [Turborepo](https://turbo.build/repo),
+[Cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html),
+and
+[pnpm workspaces](https://pnpm.io/workspaces)
 
-## Apps and Packages
+## Apps, Packages and Crates
 
 - `server`
+- `common`: shared Rust code
 - `web-yew`: a [Yew](https://yew.rs/) app
 - `web-solid-start` - a [Solid-Start](https://start.solidjs.com/) app
 - `web-nextjs`: a [Next.js](https://nextjs.org/) app

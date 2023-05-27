@@ -1,0 +1,5 @@
+{
+  "extends": "tsconfig/solid.json",
+  "include": ["."],
+  "exclude": ["dist", "build", "node_modules"]
+}

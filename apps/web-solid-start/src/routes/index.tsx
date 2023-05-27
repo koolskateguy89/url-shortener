@@ -1,9 +1,12 @@
 import { type VoidComponent } from "solid-js";
 import { A } from "solid-start";
 
+import { Button } from "ui";
+
 const Home: VoidComponent = () => {
   return (
     <main class="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#026d56] to-[#152a2c]">
+      <Button />
       <div class="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
         <h1 class="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
           Create <span class="text-[hsl(88,_77%,_78%)]">JD</span> App
