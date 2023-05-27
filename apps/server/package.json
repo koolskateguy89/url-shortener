@@ -1,0 +1,11 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "cargo watch -x run",
+    "build": "cargo build --release",
+    "start": "cargo idk what to put here",
+    "lint": "cargo idk what to put here"
+  }
+}
