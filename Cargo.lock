@@ -42,6 +42,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "common"
+version = "0.1.0"
+
+[[package]]
 name = "console_error_panic_hook"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -575,6 +579,9 @@ dependencies = [
 [[package]]
 name = "server"
 version = "0.1.0"
+dependencies = [
+ "common",
+]
 
 [[package]]
 name = "slab"
@@ -773,6 +780,7 @@ dependencies = [
 name = "web-yew"
 version = "0.1.0"
 dependencies = [
+ "common",
  "yew",
 ]
 

@@ -1,5 +1,7 @@
 use yew::prelude::*;
 
+use common::add;
+
 #[function_component]
 fn App() -> Html {
     let counter = use_state(|| 0);
@@ -15,6 +17,7 @@ fn App() -> Html {
         <div>
             <button {onclick}>{ "+1" }</button>
             <p>{ *counter }</p>
+            <p>{ add(2, 3) }</p>
         </div>
     }
 }

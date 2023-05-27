@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+  "crates/common",
   "apps/server",
   "apps/web-yew",
 ]
