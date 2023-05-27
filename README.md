@@ -15,15 +15,14 @@ limited knowledge of [Turborepo](https://turbo.build/repo) and
 - `api`: API to interact with the server
 - `ui-solid`: Solid component library
 - `ui-react`: React component library
-- `eslint-config-custom-solid`: Solid `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `eslint-config-custom-next`: Next.Js `eslint` configurations (includes `eslint-plugin-solid` and `eslint-config-prettier`)
+- `eslint-config-custom`: `eslint` configuration
+- `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-config-next` and `eslint-config-prettier`)
+- `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-plugin-solid` and `eslint-config-prettier`)
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
-
 
 TODO?: add /target to turbo dev output
 
-TODO: eslint-config-custom-solid and use it in `solid` and `ui-solid`. Also add solid tsconfig to `tsconfig` package
-
+TODO: tailwind base preset https://tailwindcss.com/docs/presets
 
 # Turborepo starter
 

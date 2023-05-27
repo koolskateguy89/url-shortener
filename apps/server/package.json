@@ -6,6 +6,6 @@
     "dev": "cargo watch -x run",
     "build": "cargo build --release",
     "start": "cargo idk what to put here",
-    "lint": "cargo idk what to put here"
+    "lint": "echo server lint (idk what to put here)"
   }
 }

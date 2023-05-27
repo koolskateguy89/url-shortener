@@ -28,11 +28,11 @@
     "strings": true
   },
 
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.tsdk": "node_modules\\typescript\\lib",
-
   // Rust format on save
   "[rust]": {
     "editor.formatOnSave": true,
   },
+
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules\\typescript\\lib",
 }

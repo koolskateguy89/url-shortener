@@ -2,5 +2,7 @@
 # An example Trunk.toml with all possible fields along with their defaults.
 
 [serve]
+# The address to serve on.
+address = "0.0.0.0"
 # The port to serve on.
 port = 8080
