@@ -9,8 +9,9 @@ limited knowledge of [Turborepo](https://turbo.build/repo) and
 ## Apps and Packages
 
 - `server`
-- `solid` - a [Solid-Start](https://start.solidjs.com/) app
-- `nextjs`: a [Next.js](https://nextjs.org/) app
+- `web-yew`: a [Yew](https://yew.rs/) app
+- `web-solid-start` - a [Solid-Start](https://start.solidjs.com/) app
+- `web-nextjs`: a [Next.js](https://nextjs.org/) app
 - `api`: API to interact with the server
 - `ui-solid`: Solid component library
 - `ui-react`: React component library

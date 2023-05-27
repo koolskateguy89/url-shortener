@@ -1,0 +1,11 @@
+{
+  "name": "web-yew",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "trunk serve",
+    "build": "trunk build --release",
+    "start": "trunk serve --release",
+    "lint": "cargo idk what to put here"
+  }
+}
