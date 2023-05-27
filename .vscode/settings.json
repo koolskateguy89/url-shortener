@@ -1,0 +1,38 @@
+{
+  // Prettier format on save
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    // word wrap for Tailwind
+    "editor.wordWrap": "on"
+  },
+
+  // Prisma format on save
+  "[prisma]": {
+    "editor.formatOnSave": true
+  },
+
+  // Tailwind
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+
+  // Rust format on save
+  "[rust]": {
+    "editor.formatOnSave": true,
+  },
+}
