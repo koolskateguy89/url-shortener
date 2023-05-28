@@ -1,14 +1,15 @@
 {
+  "name": "url-shortener",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "server": "pnpm --filter=./apps/server",
-    "web-yew": "pnpm --filter=./apps/web-yew",
+    "server-actix": "pnpm --filter=./apps/server-actix",
     "web-solid-start": "pnpm --filter=./apps/web-solid-start",
-    "web-nextjs": "pnpm --filter=./apps/web-nextjs"
+    "web-nextjs": "pnpm --filter=./apps/web-nextjs",
+    "web-yew": "pnpm --filter=./apps/web-yew"
   },
   "devDependencies": {
     "@turbo/gen": "^1.9.9",
@@ -22,6 +23,5 @@
     "turbo": "^1.9.9",
     "typescript": "^5.0.4"
   },
-  "packageManager": "pnpm@8.0.0",
-  "name": "url-shortener"
+  "packageManager": "pnpm@8.0.0"
 }

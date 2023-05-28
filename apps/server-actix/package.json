@@ -1,0 +1,11 @@
+{
+  "name": "server-actix",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "cargo watch -x \"shuttle run\"",
+    "build": "echo server-actix build (idrk what to put here)",
+    "start": "echo server-actix start (idrk what to put here)",
+    "lint": "echo server-actix lint (idrk what to put here)"
+  }
+}

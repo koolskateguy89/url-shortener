@@ -2,6 +2,6 @@
 
 members = [
   "crates/common",
-  "apps/server",
+  "apps/server-actix",
   "apps/web-yew",
 ]

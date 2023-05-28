@@ -1,10 +1,14 @@
 [package]
-name = "url-shortener-web-yew"
+name = "url-shortener-server-actix"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 common = { package = "url-shortener-common", path = "../../crates/common" }
-yew = { version = "0.20.0", features = ["csr"] }
+shuttle-runtime = "0.17.0"
+actix-web = "4.3.1"
+shuttle-actix-web = "0.17.0"
+tokio = "1.28.2"

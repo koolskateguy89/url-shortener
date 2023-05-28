@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "solid-start dev --port 3002",
+    "dev": "solid-start dev --port 3000",
     "build": "solid-start build",
     "start": "solid-start start",
     "lint": "eslint \"**/*.{ts,tsx,js,jsx}\""

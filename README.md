@@ -1,31 +1,54 @@
 # URL Shortener
 
+TODO: change /web to /web-nextjs & properly setup
+
 A Simple URL Shortener using Rust and NextJs/Solid-Start.
+...
+A URL Shortener [monorepo](https://turbo.build/repo) using Rust and various web frameworks.
+... idk if i like this description
 
 Project structure based on [`spa5k/monorepo-typescript-rust`](https://github.com/spa5k/monorepo-typescript-rust), and my **extremely**
-limited knowledge of [Turborepo](https://turbo.build/repo),
+limited knowledge of
+[Turborepo](https://turbo.build/repo)
+,
 [Cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html),
 and
 [pnpm workspaces](https://pnpm.io/workspaces)
 
 ## Apps, Packages and Crates
 
-- `server`
+- `server-actix`: an [Actix Web](https://actix.rs/) web server, with [Shuttle](https://www.shuttle.rs/) infrastructure
 - `common`: shared Rust code
-- `web-yew`: a [Yew](https://yew.rs/) app
 - `web-solid-start` - a [Solid-Start](https://start.solidjs.com/) app
 - `web-nextjs`: a [Next.js](https://nextjs.org/) app
-- `api`: API to interact with the server
+- `web-yew`: a [Yew](https://yew.rs/) app
+- `api`: API to interact with the server -- OR a shared types package
 - `ui-solid`: Solid component library
 - `ui-react`: React component library
-- `eslint-config-custom`: `eslint` configuration
+- `eslint-config-custom`: base `eslint` configuration
 - `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-config-next` and `eslint-config-prettier`)
 - `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-plugin-solid` and `eslint-config-prettier`)
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
+TODO: table displaying app & port (in dev)
+- `server-actix`: 8000
+- `web-solid-start`: 3000
+- `web-nextjs`: 3001
+- `web-yew`: 3002
+
+
 TODO?: add /target to turbo dev output
 
 TODO: tailwind base preset https://tailwindcss.com/docs/presets
+
+## App progress
+
+- [~] Server
+  - [~] Actix
+- [ ] Web
+  - [~] Solid-Start
+  - [ ] NextJs
+  - [ ] Yew
 
 # Turborepo starter
 
