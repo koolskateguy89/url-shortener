@@ -3,5 +3,15 @@
 import * as React from "react";
 
 export const Button = () => {
-  return <button onClick={() => alert("boop")}>Boop</button>;
+  return (
+    <button
+      style={{
+        backgroundColor: "red",
+        color: "white",
+      }}
+      onClick={() => alert("boop")}
+    >
+      Boop
+    </button>
+  );
 };

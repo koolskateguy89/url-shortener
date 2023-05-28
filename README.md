@@ -1,7 +1,5 @@
 # URL Shortener
 
-TODO: change /web to /web-nextjs & properly setup
-
 A Simple URL Shortener using Rust and NextJs/Solid-Start.
 ...
 A URL Shortener [monorepo](https://turbo.build/repo) using Rust and various web frameworks.
@@ -45,6 +43,7 @@ TODO: tailwind base preset https://tailwindcss.com/docs/presets
 
 - [~] Server
   - [~] Actix
+- [ ] API - use Tanstack Query ? it's framework agnostic but Solid-Start has good enough default that it TQ isn't needed. But what to do with NextJs?
 - [ ] Web
   - [~] Solid-Start
   - [ ] NextJs
