@@ -7,8 +7,10 @@
     },
   },
   "include": [
-    "vite.config.ts",
-    "./src",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.cjs",
+    "**/*.mjs",
   ],
   "exclude": ["node_modules"]
 }

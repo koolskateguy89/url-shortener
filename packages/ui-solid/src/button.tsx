@@ -1,13 +1,3 @@
-export const Button = () => {
-  return (
-    <button
-      style={{
-        "background-color": "red",
-        color: "white",
-      }}
-      onClick={() => alert("boop")}
-    >
-      Boop
-    </button>
-  );
+export let Button = () => {
+  return <button class="bg-red-600 px-3 py-2 text-white">Boop</button>;
 };

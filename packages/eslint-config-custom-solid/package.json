@@ -4,8 +4,7 @@
   "main": "index.cjs",
   "license": "MIT",
   "dependencies": {
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-config-turbo": "^1.9.9",
+    "eslint-config-custom-ts": "workspace:*",
     "eslint-plugin-solid": "^0.12.1"
   },
   "publishConfig": {

@@ -8,11 +8,16 @@
     "lint": "eslint \"**/*.ts*\"",
     "generate:component": "turbo gen react-component"
   },
+  "dependencies": {
+    "ui-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.7.5",
+    "solid-start": "^0.2.26"
+  },
   "devDependencies": {
     "eslint": "^8.41.0",
     "eslint-config-custom-solid": "workspace:*",
-    "solid-js": "^1.7.5",
-    "solid-start": "^0.2.26",
     "tsconfig": "workspace:*",
     "typescript": "^5.0.4"
   }

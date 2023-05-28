@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/require-await */
 // @refresh reload
-import "./root.css";
 import { Suspense } from "solid-js";
 import {
   Body,
@@ -13,6 +13,10 @@ import {
   Title,
   Link,
 } from "solid-start";
+
+import "./root.css";
+
+// TODO?: inter font (if not already done)
 
 export default function Root() {
   return (
