@@ -1,0 +1,8 @@
+{
+  "name": "common-rs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "cargo clippy"
+  }
+}
