@@ -1,2 +1,4 @@
-export * from "./button";
 export * from "./utils";
+
+// components
+export * from "./button";

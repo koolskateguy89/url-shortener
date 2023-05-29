@@ -1,12 +1,12 @@
-/**
- * Empty Tailwind config to get VSCode intellisense working with Tailwind classes (suggestions)
- *
- * @type {import('tailwindcss').Config}
- */
+/** @type {import('tailwindcss').Config} */
+const config = require("ui-core/tailwind.config.cjs");
+
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{ts,tsx}"],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
+  presets: [config],
+  content: [
+    ...config.content,
+    // packages
+    "../../packages/ui-solid/src/**/*.{js,ts,jsx,tsx}",
+  ],
 };

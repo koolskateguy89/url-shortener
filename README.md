@@ -11,7 +11,7 @@ limited knowledge of
 ,
 [Cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html),
 and
-[pnpm workspaces](https://pnpm.io/workspaces)
+[pnpm workspaces](https://pnpm.io/workspaces).
 
 ## Apps, Packages and Crates
 
@@ -23,9 +23,11 @@ and
 - `api`: API to interact with the server -- OR a shared types package
 - `ui-solid`: Solid component library
 - `ui-react`: React component library
-- `eslint-config-custom`: base `eslint` configuration
+- `eslint-config-custom`: base `eslint` configuration (kind of, not really though)
+- `eslint-config-custom-ts`: base `eslint` configuration for TypeScript
 - `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-config-next` and `eslint-config-prettier`)
 - `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-plugin-solid` and `eslint-config-prettier`)
+- `tailwind-config`: shared Tailwind CSS configuration
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
 TODO: table displaying app & port (in dev)
@@ -34,10 +36,12 @@ TODO: table displaying app & port (in dev)
 - `web-nextjs`: 3001
 - `web-yew`: 3002
 
-
 TODO?: add /target to turbo dev output
 
-TODO: tailwind base preset https://tailwindcss.com/docs/presets
+## Useful Links
+
+- [Sharing Tailwind Config in monorepo](https://github.com/vercel/turbo/tree/main/examples/with-tailwind)
+
 
 ## App progress
 

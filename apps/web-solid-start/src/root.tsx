@@ -14,7 +14,7 @@ import {
   Link,
 } from "solid-start";
 
-import "./root.css";
+import "~/styles/globals.css";
 
 // TODO?: inter font (if not already done)
 

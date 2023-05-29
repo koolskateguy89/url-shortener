@@ -17,7 +17,7 @@ module.exports = {
   },
   settings: {
     next: {
-      rootDir: ["apps/docs", "apps/web", "apps/web-nextjs"],
+      rootDir: "apps/web-nextjs",
     },
   },
 };

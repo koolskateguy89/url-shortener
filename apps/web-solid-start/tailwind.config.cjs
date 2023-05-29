@@ -1,11 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  presets: [require("ui/tailwind.config.cjs")],
   darkMode: ["class"],
-  content: [
-    "./src/routes/**/*.{ts,tsx}",
-    "./src/components/**/*.{ts,tsx}",
-    "../../packages/ui-solid/src/**/*.{ts,tsx}",
-  ],
   theme: {
     extend: {},
   },
