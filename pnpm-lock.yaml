@@ -149,6 +149,8 @@ importers:
 
   apps/web-yew: {}
 
+  crates/common: {}
+
   packages/eslint-config-custom:
     dependencies:
       '@typescript-eslint/eslint-plugin':
