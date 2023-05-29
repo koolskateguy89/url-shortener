@@ -7,4 +7,7 @@ module.exports = {
   parserOptions: {
     project: path.join(__dirname, "tsconfig.json"),
   },
+  rules: {
+    "@next/next/no-html-link-for-pages": "off",
+  },
 };
