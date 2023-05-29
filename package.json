@@ -10,6 +10,7 @@
     "web-solid-start": "pnpm --filter=web-solid-start",
     "web-nextjs": "pnpm --filter=web-nextjs",
     "web-yew": "pnpm --filter=web-yew",
+    "server:dev": "turbo run dev --filter=server-actix",
     "solid:dev": "turbo run dev --filter=server-actix --filter=web-solid-start",
     "next:dev": "turbo run dev --filter=server-actix --filter=web-nextjs",
     "yew:dev": "turbo run --filter=server-actix --filter=web-yew"

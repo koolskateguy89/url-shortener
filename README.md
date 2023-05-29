@@ -1,9 +1,6 @@
 # URL Shortener
 
-A Simple URL Shortener using Rust and NextJs/Solid-Start.
-...
-A URL Shortener [monorepo](https://turbo.build/repo) using Rust and various web frameworks.
-... idk if i like this description
+A Simple URL Shortener for exploring Rust and other technologies.
 
 Project structure based on [`spa5k/monorepo-typescript-rust`](https://github.com/spa5k/monorepo-typescript-rust), and my **extremely**
 limited knowledge of
@@ -46,7 +43,7 @@ TODO?: add /target to turbo dev output
 
 - [~] Server
   - [~] Actix
-- [ ] API - use Tanstack Query ? it's framework agnostic but Solid-Start has good enough default that it TQ isn't needed. But what to do with NextJs?
+- [ ] API - use Tanstack Query ? it's framework agnostic but Solid-Start has good enough default that it TQ isn't needed. But what to do with NextJs? - correction it's backend agnostic so wouldn't work here
 - [ ] Web
   - [~] Solid-Start
   - [ ] NextJs

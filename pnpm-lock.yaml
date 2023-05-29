@@ -94,6 +94,9 @@ importers:
       '@solidjs/router':
         specifier: ^0.8.2
         version: 0.8.2(solid-js@1.7.5)
+      lucide-solid:
+        specifier: ^0.223.0
+        version: 0.223.0(solid-js@1.7.5)
       solid-js:
         specifier: ^1.7.5
         version: 1.7.5

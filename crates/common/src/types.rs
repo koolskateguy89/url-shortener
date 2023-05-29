@@ -3,13 +3,18 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Payload {
+#[derive(Debug, Deserialize)]
+pub struct ShortenRequest {
     pub url: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Response {
+#[derive(Debug, Serialize)]
+pub struct ShortenResponse {
     pub url: String,
+    pub id: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct LengthenRequest {
     pub id: String,
 }
