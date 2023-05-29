@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "eslint": "^8.41.0",
-    "eslint-config-custom-ts": "workspace:*",
+    "eslint-config-custom": "workspace:*",
     "tailwindcss": "^3.3.2",
     "tailwind-config": "workspace:*",
     "tsconfig": "workspace:*",

@@ -4,7 +4,7 @@
   "main": "index.cjs",
   "license": "MIT",
   "dependencies": {
-    "eslint-config-custom-ts": "workspace:*",
+    "eslint-config-custom": "workspace:*",
     "eslint-config-next": "^13.4.4"
   },
   "publishConfig": {
