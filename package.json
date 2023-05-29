@@ -6,10 +6,13 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "server-actix": "pnpm --filter=./apps/server-actix",
-    "web-solid-start": "pnpm --filter=./apps/web-solid-start",
-    "web-nextjs": "pnpm --filter=./apps/web-nextjs",
-    "web-yew": "pnpm --filter=./apps/web-yew"
+    "server-actix": "pnpm --filter=server-actix",
+    "web-solid-start": "pnpm --filter=web-solid-start",
+    "web-nextjs": "pnpm --filter=web-nextjs",
+    "web-yew": "pnpm --filter=web-yew",
+    "solid:dev": "turbo run dev --filter=server-actix --filter=web-solid-start",
+    "next:dev": "turbo run dev --filter=server-actix --filter=web-nextjs",
+    "yew:dev": "turbo run --filter=server-actix --filter=web-yew"
   },
   "devDependencies": {
     "@turbo/gen": "^1.9.9",

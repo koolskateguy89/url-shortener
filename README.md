@@ -42,7 +42,6 @@ TODO?: add /target to turbo dev output
 
 - [Sharing Tailwind Config in monorepo](https://github.com/vercel/turbo/tree/main/examples/with-tailwind)
 
-
 ## App progress
 
 - [~] Server
