@@ -6,6 +6,6 @@
     "dev": "trunk serve",
     "build": "trunk build --release",
     "start": "trunk serve --release",
-    "lint": "echo web-yew lint (idk what to put here)"
+    "lint": "cargo clippy"
   }
 }

@@ -31,9 +31,9 @@ const Home: VoidComponent = () => {
           "Content-Type": "application/json",
         },
       });
-      const result = (await res.json()) as { url: string };
+      const result = (await res.json()) as { url: string; id: string };
 
-      return result.url;
+      return result;
     }
   );
 

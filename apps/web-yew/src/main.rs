@@ -2,6 +2,9 @@ use yew::prelude::*;
 
 use common::add;
 
+// TODO: use gloo to fetch data from server
+// https://yew.rs/docs/tutorial#fetching-data-using-external-rest-api
+
 #[function_component]
 fn App() -> Html {
     let counter = use_state(|| 0);

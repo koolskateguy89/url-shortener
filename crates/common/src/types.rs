@@ -18,3 +18,8 @@ pub struct ShortenResponse {
 pub struct LengthenRequest {
     pub id: String,
 }
+
+#[derive(Debug, Serialize)]
+pub struct LengthenResponse {
+    pub url: String,
+}
