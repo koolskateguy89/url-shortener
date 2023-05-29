@@ -5,7 +5,10 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [
+        ".next/**", "!.next/cache/**",
+        ".solid/**"
+      ]
     },
     "lint": {},
     "dev": {
