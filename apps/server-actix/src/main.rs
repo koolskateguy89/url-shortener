@@ -84,7 +84,7 @@ async fn shorten_url(
 
     // TODO: get URL from config (or env var)
     Ok(web::Json(types::ShortenResponse {
-        url: format!("http://localhost:8000/{id}"),
+        url: format!("http://localhost:8000/api/{id}"),
         id,
     }))
 }

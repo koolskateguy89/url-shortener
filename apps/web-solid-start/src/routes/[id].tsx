@@ -6,11 +6,20 @@ import {
   useRouteData,
 } from "solid-start";
 
+// FIXME: this is just not working, the fetch is failing, idk why
 export function routeData({ params }: RouteDataArgs) {
   return createRouteData(
-    (id) => {
-      // TODO: fetch id from backend, then redirect. Else show error
-      return 2;
+    async (id) => {
+      console.log("id =", id);
+
+      // TODO: use api pacakge
+      const res = await fetch(`http://localhost:8000/api/${id}`, {});
+      const result = (await res.json()) as { url: string };
+
+      console.log("result =", result);
+
+      throw redirect(result.url);
+      return "wtf";
     },
     {
       key: () => params.id,
