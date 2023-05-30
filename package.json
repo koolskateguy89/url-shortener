@@ -13,7 +13,7 @@
     "server:dev": "turbo run dev --filter=server-actix",
     "solid:dev": "turbo run dev --filter=server-actix --filter=web-solid-start",
     "next:dev": "turbo run dev --filter=server-actix --filter=web-nextjs",
-    "yew:dev": "turbo run --filter=server-actix --filter=web-yew"
+    "yew:dev": "turbo run dev --filter=server-actix --filter=web-yew"
   },
   "devDependencies": {
     "@turbo/gen": "^1.9.9",

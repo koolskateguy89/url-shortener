@@ -6,3 +6,8 @@
 address = "0.0.0.0"
 # The port to serve on.
 port = 3002
+
+[[proxy]]
+rewrite = "/api/"
+# TODO: use envvar instead of hardcoding
+backend = "http://localhost:8000/"

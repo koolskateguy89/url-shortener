@@ -54,7 +54,7 @@ TODO?: add /target to turbo dev output
 - [ ] Web
   - [~] Solid-Start
   - [ ] NextJs
-  - [ ] Yew
+  - [~] Yew
 
 # Turborepo starter
 
