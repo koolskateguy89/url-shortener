@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::middleware::Logger;
+use actix_web::middleware::{Logger, NormalizePath};
 use actix_web::{
     error, get, post,
     web::{self, ServiceConfig},
@@ -109,9 +109,9 @@ async fn lengthen_url(
 
 #[derive(Debug)]
 struct AppState {
+    // pool: PgPool,
     /// id -> url
     db: Mutex<HashMap<String, String>>, // <- Mutex is necessary to mutate safely across threads
-                                        // pool: PgPool,
 }
 
 #[shuttle_runtime::main]
@@ -134,6 +134,7 @@ async fn actix_web(// TODO: db
             web::scope("")
                 .wrap(cors)
                 .wrap(Logger::default())
+                .wrap(NormalizePath::default())
                 .service(display_all)
                 .service(shorten_url)
                 .service(lengthen_url)
