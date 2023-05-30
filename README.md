@@ -40,7 +40,7 @@ TODO?: add /target to turbo dev output
 - `server-actix`: [https://url-shortener-server-actix.shuttleapp.rs/](https://url-shortener-server-actix.shuttleapp.rs/)
 - `web-solid-start`: [https://url-shortener-solid-start.vercel.app/](https://url-shortener-solid-start.vercel.app/)
 - `web-nextjs`: [https://url-shortener-nextjs-eight.vercel.app/](https://url-shortener-nextjs-eight.vercel.app/)
-- `web-yew`: ...
+- `web-yew`: ... TODO under server-actix/yew
 
 ## Useful Links
 

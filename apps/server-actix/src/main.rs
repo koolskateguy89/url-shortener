@@ -15,6 +15,10 @@ use common::types;
 
 // TODO: make it serve on 0.0.0.0 instead of 127.0.0.1
 
+// TODO: serve static files for yew frontend under /yew
+// https://actix.rs/docs/static-files
+// https://yew.rs/docs/more/deployment
+
 fn random_id() -> String {
     use nanoid::nanoid;
     nanoid!(6)
@@ -67,6 +71,7 @@ async fn display_all(state: web::Data<AppState>) -> Result<String> {
     Ok(format!("{:?}", db))
 }
 
+// TODO?: change url path to /shorten
 #[post("/")]
 async fn shorten_url(
     body: web::Json<types::ShortenRequest>,
@@ -84,7 +89,8 @@ async fn shorten_url(
     }))
 }
 
-// // TODO?: rename func, will need to change url path possibly
+// TODO?: rename func, will need to change url path possibly
+// TODO?: change url path
 #[get("/{id}")]
 async fn lengthen_url(
     path: web::Path<types::LengthenRequest>,
