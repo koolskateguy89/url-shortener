@@ -7,6 +7,22 @@ mod api;
 
 use api::{shorten, ApiShortenResponse};
 
+enum ShortenResult {
+    Idle,
+    Loading,
+    Success(ApiShortenResponse),
+    Error(gloo_net::Error),
+}
+
+impl Into<ShortenResult> for Result<ApiShortenResponse, gloo_net::Error> {
+    fn into(self) -> ShortenResult {
+        match self {
+            Ok(result) => ShortenResult::Success(result),
+            Err(err) => ShortenResult::Error(err),
+        }
+    }
+}
+
 #[function_component]
 fn App() -> Html {
     let counter = use_state(|| 0);
@@ -18,13 +34,9 @@ fn App() -> Html {
         })
     };
 
-    // TODO: error handle, will likely need to use Option<Result<Reponse, ...>>
-    let shorten_result = use_state(|| None::<ApiShortenResponse>);
-    let loading = use_state(|| false);
-
+    let shorten_result = use_state(|| ShortenResult::Idle);
     let onsubmit = {
         let shorten_result = shorten_result.clone();
-        let loading = loading.clone();
 
         Callback::from(move |event: SubmitEvent| {
             event.prevent_default();
@@ -44,16 +56,13 @@ fn App() -> Html {
             // TODO: check url is a valid URL before req
 
             let shorten_result = shorten_result.clone();
-            let loading = loading.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                shorten_result.set(None);
-                loading.set(true);
+                shorten_result.set(ShortenResult::Loading);
 
                 let result = shorten(url).await;
                 log!("result =", format!("{result:?}"));
 
-                shorten_result.set(result.ok());
-                loading.set(false);
+                shorten_result.set(result.into());
             });
         })
     };
@@ -64,11 +73,11 @@ fn App() -> Html {
             <button {onclick}>{ "+1" }</button>
             <p>{ *counter }</p>
             <p>
-                { if *loading { "Loading..." } else { "Not loading" } }
-            </p>
-            <p>
-                { if let Some(result) = &*shorten_result {
-                    html! {
+                { match &*shorten_result {
+                    ShortenResult::Loading => html! {
+                        { "Loading..." }
+                    },
+                    ShortenResult::Success(result) => html! {
                         <>
                             <a href={ result.remote_url.clone() }>
                                 { &result.local_url }
@@ -76,9 +85,11 @@ fn App() -> Html {
                             <br />
                             { &result.remote_url }
                         </>
-                    }
-                } else {
-                    html!()
+                    },
+                    ShortenResult::Error(err) => html! {
+                        { err.to_string() }
+                    },
+                    _ => html!(),
                 } }
             </p>
             <form {onsubmit}>
