@@ -134,7 +134,7 @@ async fn actix_web(// TODO: db
             web::scope("")
                 .wrap(cors)
                 .wrap(Logger::default())
-                .wrap(NormalizePath::default())
+                .wrap(NormalizePath::trim())
                 .service(display_all)
                 .service(shorten_url)
                 .service(lengthen_url)
