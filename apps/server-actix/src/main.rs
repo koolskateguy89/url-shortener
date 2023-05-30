@@ -65,14 +65,14 @@ fn get_db(state: &web::Data<AppState>) -> Result<MutexGuard<HashMap<String, Stri
         .map_err(|_| error::ErrorInternalServerError("Failed to get db"))
 }
 
-#[get("/all")]
-async fn display_all(state: web::Data<AppState>) -> Result<String> {
+#[get("/api/all")]
+async fn display_all(state: web::Data<AppState>) -> Result<impl Responder> {
     let db = get_db(&state)?;
-    Ok(format!("{:?}", db))
+    Ok(web::Json(db.clone()))
 }
 
 // TODO?: change url path to /shorten
-#[post("/")]
+#[post("/api")]
 async fn shorten_url(
     body: web::Json<types::ShortenRequest>,
     state: web::Data<AppState>,
@@ -91,7 +91,7 @@ async fn shorten_url(
 
 // TODO?: rename func, will need to change url path possibly
 // TODO?: change url path
-#[get("/{id}")]
+#[get("/api/{id}")]
 async fn lengthen_url(
     path: web::Path<types::LengthenRequest>,
     state: web::Data<AppState>,
@@ -136,7 +136,8 @@ async fn actix_web(// TODO: db
                 .wrap(Logger::default())
                 .service(display_all)
                 .service(shorten_url)
-                .service(lengthen_url),
+                .service(lengthen_url)
+                .service(web::redirect("/", "/api/all")),
         );
     };
 

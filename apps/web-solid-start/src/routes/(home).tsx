@@ -24,7 +24,7 @@ const Home: VoidComponent = () => {
 
       const { url } = wrappedUrl.data;
 
-      const res = await fetch("http://localhost:8000/", {
+      const res = await fetch("http://localhost:8000/api", {
         method: "POST",
         body: JSON.stringify({ url }),
         headers: {
