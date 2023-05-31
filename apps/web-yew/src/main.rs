@@ -69,7 +69,7 @@ fn App() -> Html {
 
     // TODO: use local_url as href once routing redirect implemented
     html! {
-        <div>
+        <main class="flex h-screen flex-col items-center justify-center space-y-4">
             <button {onclick}>{ "+1" }</button>
             <p>{ *counter }</p>
             <p>
@@ -79,7 +79,7 @@ fn App() -> Html {
                     },
                     ShortenResult::Success(result) => html! {
                         <>
-                            <a href={ result.remote_url.clone() }>
+                            <a href={ result.remote_url.clone() } class="underline">
                                 { &result.local_url }
                             </a>
                             <br />
@@ -92,11 +92,16 @@ fn App() -> Html {
                     _ => html!(),
                 } }
             </p>
-            <form {onsubmit}>
-                <input type="text" name="url" />
-                <button type="submit">{ "Shorten" }</button>
+            <form {onsubmit} class="flex flex-col items-center space-y-2">
+                <input type="text" name="url" class="input" />
+                <button
+                    type="submit"
+                    class="button"
+                >
+                    { "Shorten" }
+                </button>
             </form>
-        </div>
+        </main>
     }
 }
 

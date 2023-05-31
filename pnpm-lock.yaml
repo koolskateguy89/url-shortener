@@ -147,7 +147,14 @@ importers:
         specifier: ^4.3.9
         version: 4.3.9(@types/node@20.2.5)
 
-  apps/web-yew: {}
+  apps/web-yew:
+    devDependencies:
+      tailwind-config:
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      tailwindcss:
+        specifier: ^3.3.2
+        version: 3.3.2
 
   crates/common: {}
 

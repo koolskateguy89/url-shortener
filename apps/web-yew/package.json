@@ -6,6 +6,11 @@
     "dev": "trunk serve",
     "build": "trunk build --release",
     "start": "trunk serve --release",
-    "lint": "cargo clippy"
+    "lint": "cargo clippy",
+    "css:gen": "tailwindcss -i input.css -o tailwind.css"
+  },
+  "devDependencies": {
+    "tailwind-config": "workspace:*",
+    "tailwindcss": "^3.3.2"
   }
 }

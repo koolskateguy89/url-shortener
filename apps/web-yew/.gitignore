@@ -1,2 +1,5 @@
 # trunk output
 dist/
+
+# Tailwind output
+tailwind.css
