@@ -17,21 +17,9 @@ pub enum ShortenStatus {
     Error(AttrValue),
 }
 
-impl PartialEq for ShortenStatus {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Self::Idle, Self::Idle) => true,
-            (Self::Loading, Self::Loading) => true,
-            (Self::Success(_), Self::Success(_)) => true,
-            (Self::Error(_), Self::Error(_)) => true,
-            _ => false,
-        }
-    }
-}
-
-impl Into<ShortenStatus> for Result<ApiShortenResponse, gloo_net::Error> {
-    fn into(self) -> ShortenStatus {
-        match self {
+impl From<Result<ApiShortenResponse, gloo_net::Error>> for ShortenStatus {
+    fn from(result: Result<ApiShortenResponse, gloo_net::Error>) -> ShortenStatus {
+        match result {
             Ok(result) => ShortenStatus::Success(result.into()),
             Err(err) => ShortenStatus::Error(format!("{err:?}").into()),
         }
@@ -46,12 +34,12 @@ pub struct ApiShortenResponseAttr {
     _id: AttrValue,
 }
 
-impl Into<ApiShortenResponseAttr> for ApiShortenResponse {
-    fn into(self) -> ApiShortenResponseAttr {
-        ApiShortenResponseAttr {
-            local_url: self.local_url.into(),
-            remote_url: self.remote_url.into(),
-            _id: self.id.into(),
+impl From<ApiShortenResponse> for ApiShortenResponseAttr {
+    fn from(value: ApiShortenResponse) -> ApiShortenResponseAttr {
+        Self {
+            local_url: value.local_url.into(),
+            remote_url: value.remote_url.into(),
+            _id: value.id.into(),
         }
     }
 }

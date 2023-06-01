@@ -2,6 +2,18 @@ use yew::prelude::*;
 
 use crate::ShortenStatus;
 
+impl PartialEq for ShortenStatus {
+    fn eq(&self, other: &Self) -> bool {
+        matches!(
+            (self, other),
+            (Self::Idle, Self::Idle)
+                | (Self::Loading, Self::Loading)
+                | (Self::Success(_), Self::Success(_))
+                | (Self::Error(_), Self::Error(_))
+        )
+    }
+}
+
 #[derive(PartialEq, Properties)]
 pub struct StatusDisplayProps {
     pub status: ShortenStatus,
