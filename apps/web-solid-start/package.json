@@ -12,8 +12,8 @@
   "dependencies": {
     "@solidjs/meta": "^0.28.5",
     "@solidjs/router": "^0.8.2",
-    "lucide-solid": "^0.223.0",
-    "solid-js": "^1.7.5",
+    "lucide-solid": "^0.233.0",
+    "solid-js": "^1.7.6",
     "solid-start": "^0.2.26",
     "ui": "workspace:ui-solid@*",
     "undici": "5.22.1",
