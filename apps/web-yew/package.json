@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "trunk serve",
+    "dev": "pnpm css:gen && trunk serve",
     "build": "trunk build --release",
     "start": "trunk serve --release",
     "lint": "cargo clippy",

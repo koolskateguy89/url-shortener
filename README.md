@@ -45,6 +45,7 @@ TODO?: add /target to turbo dev output
 ## Useful Links
 
 - [Sharing Tailwind Config in monorepo](https://github.com/vercel/turbo/tree/main/examples/with-tailwind)
+- [Using Tailwind with Yew & Trunk](https://dev.to/arctic_hen7/how-to-set-up-tailwind-css-with-yew-and-trunk-il9)
 
 ## App progress
 

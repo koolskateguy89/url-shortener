@@ -4,21 +4,54 @@ use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
 mod api;
+mod components;
 
 use api::{shorten, ApiShortenResponse};
+use components::StatusDisplay;
 
-enum ShortenResult {
+#[derive(Debug, Clone)]
+pub enum ShortenStatus {
     Idle,
     Loading,
-    Success(ApiShortenResponse),
-    Error(gloo_net::Error),
+    Success(ApiShortenResponseAttr),
+    Error(AttrValue),
 }
 
-impl Into<ShortenResult> for Result<ApiShortenResponse, gloo_net::Error> {
-    fn into(self) -> ShortenResult {
+impl PartialEq for ShortenStatus {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Idle, Self::Idle) => true,
+            (Self::Loading, Self::Loading) => true,
+            (Self::Success(_), Self::Success(_)) => true,
+            (Self::Error(_), Self::Error(_)) => true,
+            _ => false,
+        }
+    }
+}
+
+impl Into<ShortenStatus> for Result<ApiShortenResponse, gloo_net::Error> {
+    fn into(self) -> ShortenStatus {
         match self {
-            Ok(result) => ShortenResult::Success(result),
-            Err(err) => ShortenResult::Error(err),
+            Ok(result) => ShortenStatus::Success(result.into()),
+            Err(err) => ShortenStatus::Error(format!("{err:?}").into()),
+        }
+    }
+}
+
+/// Variant of ApiShortenResponse with AttrValue instead of String
+#[derive(Debug, Clone)]
+pub struct ApiShortenResponseAttr {
+    local_url: AttrValue,
+    remote_url: AttrValue,
+    _id: AttrValue,
+}
+
+impl Into<ApiShortenResponseAttr> for ApiShortenResponse {
+    fn into(self) -> ApiShortenResponseAttr {
+        ApiShortenResponseAttr {
+            local_url: self.local_url.into(),
+            remote_url: self.remote_url.into(),
+            _id: self.id.into(),
         }
     }
 }
@@ -34,9 +67,9 @@ fn App() -> Html {
         })
     };
 
-    let shorten_result = use_state(|| ShortenResult::Idle);
+    let status = use_state(|| ShortenStatus::Idle);
     let onsubmit = {
-        let shorten_result = shorten_result.clone();
+        let status = status.clone();
 
         Callback::from(move |event: SubmitEvent| {
             event.prevent_default();
@@ -55,43 +88,28 @@ fn App() -> Html {
             log!("url =", &url);
             // TODO: check url is a valid URL before req
 
-            let shorten_result = shorten_result.clone();
+            let status = status.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                shorten_result.set(ShortenResult::Loading);
+                status.set(ShortenStatus::Loading);
 
                 let result = shorten(url).await;
                 log!("result =", format!("{result:?}"));
 
-                shorten_result.set(result.into());
+                status.set(result.into());
             });
         })
     };
+
+    let status = (*status).clone();
 
     // TODO: use local_url as href once routing redirect implemented
     html! {
         <main class="flex h-screen flex-col items-center justify-center space-y-4">
             <button {onclick}>{ "+1" }</button>
             <p>{ *counter }</p>
-            <p>
-                { match &*shorten_result {
-                    ShortenResult::Loading => html! {
-                        { "Loading..." }
-                    },
-                    ShortenResult::Success(result) => html! {
-                        <>
-                            <a href={ result.remote_url.clone() } class="underline">
-                                { &result.local_url }
-                            </a>
-                            <br />
-                            { &result.remote_url }
-                        </>
-                    },
-                    ShortenResult::Error(err) => html! {
-                        { err.to_string() }
-                    },
-                    _ => html!(),
-                } }
-            </p>
+
+            <StatusDisplay {status} />
+
             <form {onsubmit} class="flex flex-col items-center space-y-2">
                 <input type="text" name="url" class="input" />
                 <button
