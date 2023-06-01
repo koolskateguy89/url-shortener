@@ -1,3 +1,3 @@
-mod status;
+mod status_display;
 
-pub use status::*;
+pub use status_display::*;
