@@ -19,8 +19,8 @@ pub struct StatusDisplayProps {
     pub status: ShortenStatus,
 }
 
-#[function_component(StatusDisplay)]
-pub fn status_display(props: &StatusDisplayProps) -> Html {
+#[function_component]
+pub fn StatusDisplay(props: &StatusDisplayProps) -> Html {
     let StatusDisplayProps { status } = props;
 
     let content = move || -> Html {

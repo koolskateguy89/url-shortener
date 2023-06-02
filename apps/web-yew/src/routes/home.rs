@@ -41,8 +41,8 @@ impl From<ApiShortenResponse> for ApiShortenResponseAttr {
     }
 }
 
-#[function_component(HomePage)]
-pub fn home() -> Html {
+#[function_component]
+pub fn HomePage() -> Html {
     let counter = use_state(|| 0);
     let onclick = {
         let counter = counter.clone();

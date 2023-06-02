@@ -1,13 +1,13 @@
 use yew::prelude::*;
 
 #[derive(PartialEq, Properties)]
-pub struct RedirectProps {
+pub struct RedirectPageProps {
     pub id: AttrValue,
 }
 
-#[function_component(RedirectPage)]
-pub fn redirect(props: &RedirectProps) -> Html {
-    let RedirectProps { id } = props;
+#[function_component]
+pub fn RedirectPage(props: &RedirectPageProps) -> Html {
+    let RedirectPageProps { id } = props;
 
     html! {
       <main>

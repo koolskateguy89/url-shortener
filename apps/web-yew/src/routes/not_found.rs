@@ -1,9 +1,9 @@
 use yew::prelude::*;
 
-#[function_component(NotFoundPage)]
-pub fn not_found() -> Html {
+#[function_component]
+pub fn NotFoundPage() -> Html {
     html! {
-      <main>
+      <main class="h-screen flex items-center justify-center">
         { "404" }
       </main>
     }
