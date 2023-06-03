@@ -1,6 +1,8 @@
 use yew::prelude::*;
+use yew_router::prelude::*;
 
 use crate::routes::home::ShortenStatus;
+use crate::routes::Route;
 
 impl PartialEq for ShortenStatus {
     fn eq(&self, other: &Self) -> bool {
@@ -26,14 +28,12 @@ pub fn StatusDisplay(props: &StatusDisplayProps) -> Html {
     let content = move || -> Html {
         match status {
             ShortenStatus::Loading => html!("Loading..."),
-            ShortenStatus::Success(result) => html! {
-                <>
-                    <a href={ result.remote_url.clone() } class="underline">
-                        { &result.local_url }
-                    </a>
-                    <br />
-                    { &result.remote_url }
-                </>
+            ShortenStatus::Success(id) => html! {
+                <Link<Route> to={Route::Redirect { id: id.to_string() }}>
+                    <span class="underline">
+                        { format!("BASE_URL/{}", id) }
+                    </span>
+                </Link<Route>>
             },
             ShortenStatus::Error(err) => html!(err),
             _ => html!(),

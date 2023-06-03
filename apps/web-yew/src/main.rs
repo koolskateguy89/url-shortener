@@ -11,7 +11,7 @@ use routes::{switch, Route};
 fn App() -> Html {
     html! {
         <BrowserRouter>
-            <Switch<Route> render={switch} /> // <- must be child of <BrowserRouter>
+            <Switch<Route> render={switch} />
         </BrowserRouter>
     }
 }

@@ -10,33 +10,15 @@ use crate::components::StatusDisplay;
 pub enum ShortenStatus {
     Idle,
     Loading,
-    Success(ApiShortenResponseAttr),
+    Success(AttrValue),
     Error(AttrValue),
 }
 
 impl From<Result<ApiShortenResponse, gloo_net::Error>> for ShortenStatus {
     fn from(result: Result<ApiShortenResponse, gloo_net::Error>) -> ShortenStatus {
         match result {
-            Ok(result) => ShortenStatus::Success(result.into()),
+            Ok(result) => ShortenStatus::Success(result.id.into()),
             Err(err) => ShortenStatus::Error(format!("{err:?}").into()),
-        }
-    }
-}
-
-/// Variant of ApiShortenResponse with AttrValue instead of String
-#[derive(Debug, Clone)]
-pub struct ApiShortenResponseAttr {
-    pub local_url: AttrValue,
-    pub remote_url: AttrValue,
-    pub _id: AttrValue,
-}
-
-impl From<ApiShortenResponse> for ApiShortenResponseAttr {
-    fn from(value: ApiShortenResponse) -> ApiShortenResponseAttr {
-        Self {
-            local_url: value.local_url.into(),
-            remote_url: value.remote_url.into(),
-            _id: value.id.into(),
         }
     }
 }
@@ -87,7 +69,6 @@ pub fn HomePage() -> Html {
 
     let status = (*status).clone();
 
-    // TODO: use local_url as href once routing redirect implemented
     html! {
         <main class="flex h-screen flex-col items-center justify-center space-y-4">
             <button {onclick} class="button" >{ "+1" }</button>

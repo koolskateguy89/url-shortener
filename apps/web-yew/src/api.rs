@@ -4,7 +4,6 @@ use common::types::{ShortenRequest, ShortenResponse};
 
 #[derive(Debug)]
 pub struct ApiShortenResponse {
-    pub local_url: String,
     pub remote_url: String,
     pub id: String,
 }
@@ -20,9 +19,7 @@ pub async fn shorten(url: String) -> Result<ApiShortenResponse, Error> {
         .json()
         .await?;
 
-    // TODO: use local url, from env/config
     Ok(ApiShortenResponse {
-        local_url: format!("/{}", id),
         remote_url: url,
         id,
     })
