@@ -1,26 +1,23 @@
 use gloo_net::{http::Request, Error};
 
-use common::types::{ShortenRequest, ShortenResponse};
-
-#[derive(Debug)]
-pub struct ApiShortenResponse {
-    pub remote_url: String,
-    pub id: String,
-}
+use common::types::{LengthenResponse, ShortenRequest, ShortenResponse};
 
 /// Make a request to the API to shorten a URL
-pub async fn shorten(url: String) -> Result<ApiShortenResponse, Error> {
+pub async fn shorten(url: String) -> Result<ShortenResponse, Error> {
     let body = ShortenRequest { url };
 
-    let ShortenResponse { url, id } = Request::post("/api")
+    Ok(Request::post("/api")
         .json(&body)?
         .send()
         .await?
         .json()
-        .await?;
+        .await?)
+}
 
-    Ok(ApiShortenResponse {
-        remote_url: url,
-        id,
-    })
+pub async fn lengthen(id: String) -> Result<LengthenResponse, Error> {
+    Ok(Request::get(format!("/api/{id}").as_str())
+        .send()
+        .await?
+        .json()
+        .await?)
 }

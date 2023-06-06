@@ -105,8 +105,6 @@ async fn lengthen_url(
     }
 }
 
-// TODO: a redirect endpoint
-
 #[derive(Debug)]
 struct AppState {
     // pool: PgPool,

@@ -1,10 +1,11 @@
 use gloo_console::log;
-use wasm_bindgen::JsCast;
+use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
-use crate::api::{shorten, ApiShortenResponse};
+use crate::api::shorten;
 use crate::components::StatusDisplay;
+use common::types::ShortenResponse;
 
 #[derive(Debug, Clone)]
 pub enum ShortenStatus {
@@ -14,8 +15,8 @@ pub enum ShortenStatus {
     Error(AttrValue),
 }
 
-impl From<Result<ApiShortenResponse, gloo_net::Error>> for ShortenStatus {
-    fn from(result: Result<ApiShortenResponse, gloo_net::Error>) -> ShortenStatus {
+impl From<Result<ShortenResponse, gloo_net::Error>> for ShortenStatus {
+    fn from(result: Result<ShortenResponse, gloo_net::Error>) -> ShortenStatus {
         match result {
             Ok(result) => ShortenStatus::Success(result.id.into()),
             Err(err) => ShortenStatus::Error(format!("{err:?}").into()),
@@ -42,15 +43,16 @@ pub fn HomePage() -> Html {
             event.prevent_default();
 
             // getting formdata from submit event: https://github.com/yewstack/yew/issues/474#issuecomment-1445382035
-            let target = event.target().expect("Event has no target");
-            let form: HtmlFormElement = target.dyn_into().expect("Event target is not a form");
+            let form: HtmlFormElement = event
+                .target_dyn_into()
+                .expect_throw("Event target is not a form");
 
             let form_data =
-                FormData::new_with_form(&form).expect("Form data could not be instantiated");
+                FormData::new_with_form(&form).expect_throw("Form data could not be instantiated");
             let url = form_data
                 .get("url")
                 .as_string()
-                .expect("Could not get url from form");
+                .expect_throw("Could not get url from form");
 
             log!("url =", &url);
             // TODO: check url is a valid URL before req
