@@ -9,7 +9,6 @@ pub struct ShortenRequest {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ShortenResponse {
-    pub url: String,
     pub id: String,
 }
 

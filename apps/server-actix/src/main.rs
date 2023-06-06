@@ -13,8 +13,6 @@ use std::sync::{Mutex, MutexGuard};
 
 use common::types;
 
-// TODO: make it serve on 0.0.0.0 instead of 127.0.0.1
-
 // TODO: serve static files for yew frontend under /yew
 // https://actix.rs/docs/static-files
 // https://yew.rs/docs/more/deployment
@@ -82,11 +80,7 @@ async fn shorten_url(
     let mut db = get_db(&state)?;
     let id = insert_into_db(body.url.clone(), &mut db)?;
 
-    // TODO: get URL from config (or env var)
-    Ok(web::Json(types::ShortenResponse {
-        url: format!("http://localhost:8000/api/{id}"),
-        id,
-    }))
+    Ok(web::Json(types::ShortenResponse { id }))
 }
 
 // TODO?: rename func, will need to change url path possibly
