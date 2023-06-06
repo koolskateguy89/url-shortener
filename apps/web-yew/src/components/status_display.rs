@@ -3,6 +3,7 @@ use yew_router::prelude::*;
 
 use crate::routes::home::ShortenStatus;
 use crate::routes::Route;
+use common::error::Error;
 
 impl PartialEq for ShortenStatus {
     fn eq(&self, other: &Self) -> bool {
@@ -35,7 +36,8 @@ pub fn StatusDisplay(props: &StatusDisplayProps) -> Html {
                     </span>
                 </Link<Route>>
             },
-            ShortenStatus::Error(err) => html!(err),
+            ShortenStatus::Error(Error::Other(err)) => html!(err),
+            ShortenStatus::Error(err) => html!(format!("{err:?}")),
             _ => html!(),
         }
     };

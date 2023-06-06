@@ -13,7 +13,7 @@ use redirect::RedirectPage;
 pub enum Route {
     #[at("/")]
     Home,
-    #[at("/:id")]
+    #[at("/redirect/:id")]
     Redirect { id: String },
     #[at("/404")]
     #[not_found]

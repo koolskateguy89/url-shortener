@@ -1,6 +1,17 @@
 use serde::{Deserialize, Serialize};
 
-// TODO?: better names
+use crate::error::Error;
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ErrorResponse {
+    pub error: Error,
+}
+
+impl ErrorResponse {
+    pub fn new(error: Error) -> Self {
+        Self { error }
+    }
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ShortenRequest {

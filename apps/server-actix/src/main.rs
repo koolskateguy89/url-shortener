@@ -1,21 +1,69 @@
 use actix_cors::Cors;
 use actix_web::middleware::{Logger, NormalizePath};
 use actix_web::{
-    error, get, post,
+    error, get,
+    http::{header::ContentType, StatusCode},
+    post,
     web::{self, ServiceConfig},
-    Responder, Result,
+    HttpResponse, Responder, Result,
 };
 use log::info;
 use shuttle_actix_web::ShuttleActixWeb;
+use url::Url;
 
 use std::collections::HashMap;
 use std::sync::{Mutex, MutexGuard};
 
-use common::types;
+use common::{
+    error::Error,
+    types::{self, ErrorResponse},
+};
 
 // TODO: serve static files for yew frontend under /yew
 // https://actix.rs/docs/static-files
 // https://yew.rs/docs/more/deployment
+
+use derive_more::{Display, Error};
+
+#[derive(Debug, Display, Error, Clone)]
+pub enum UserError {
+    #[display(fmt = "unused")]
+    InvalidUrl,
+    #[display(fmt = "unused")]
+    NotFound,
+    #[display(fmt = "unused")]
+    InternalError,
+}
+
+impl From<UserError> for Error {
+    fn from(e: UserError) -> Self {
+        match e {
+            UserError::InvalidUrl => Error::InvalidUrl,
+            UserError::NotFound => Error::NotFound,
+            _ => Error::Other(format!("{}", e)),
+        }
+    }
+}
+
+impl error::ResponseError for UserError {
+    fn status_code(&self) -> StatusCode {
+        match *self {
+            UserError::InvalidUrl => StatusCode::BAD_REQUEST,
+            UserError::NotFound => StatusCode::NOT_FOUND,
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+        }
+    }
+
+    fn error_response(&self) -> HttpResponse {
+        HttpResponse::build(self.status_code())
+            .insert_header(ContentType::json())
+            .body({
+                let response = ErrorResponse::new(self.clone().into());
+
+                serde_json::to_string(&response).expect("Should not fail")
+            })
+    }
+}
 
 fn random_id() -> String {
     use nanoid::nanoid;
@@ -25,7 +73,8 @@ fn random_id() -> String {
 /// returns the id
 /// TODO?: upsert
 fn insert_into_db(url: String, db: &mut HashMap<String, String>) -> Result<String> {
-    // TODO: validate url is valid -> bad request err if not
+    // Ensure url is a valid URL
+    Url::parse(&url).map_err(|_| UserError::InvalidUrl)?;
 
     // checks if url is already in db
     let id_in_db = db
@@ -57,10 +106,7 @@ fn get_from_db<'a>(id: &'a String, db: &'a HashMap<String, String>) -> Option<&'
 
 /// placeholder until using actual db
 fn get_db(state: &web::Data<AppState>) -> Result<MutexGuard<HashMap<String, String>>> {
-    state
-        .db
-        .lock()
-        .map_err(|_| error::ErrorInternalServerError("Failed to get db"))
+    state.db.lock().map_err(|_| UserError::InternalError.into())
 }
 
 #[get("/api/all")]
@@ -91,12 +137,11 @@ async fn lengthen_url(
     state: web::Data<AppState>,
 ) -> Result<impl Responder> {
     let db = get_db(&state)?;
-    let url = get_from_db(&path.id, &db);
+    let url = get_from_db(&path.id, &db)
+        .cloned()
+        .ok_or(UserError::NotFound)?;
 
-    match url {
-        Some(url) => Ok(web::Json(types::LengthenResponse { url: url.clone() })),
-        None => Err(error::ErrorNotFound("id not found")),
-    }
+    Ok(web::Json(types::LengthenResponse { url }))
 }
 
 #[derive(Debug)]

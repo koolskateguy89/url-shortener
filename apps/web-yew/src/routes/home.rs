@@ -5,21 +5,21 @@ use yew::prelude::*;
 
 use crate::api::shorten;
 use crate::components::StatusDisplay;
-use common::types::ShortenResponse;
+use common::{error::Error, types::ShortenResponse};
 
 #[derive(Debug, Clone)]
 pub enum ShortenStatus {
     Idle,
     Loading,
     Success(AttrValue),
-    Error(AttrValue),
+    Error(Error),
 }
 
-impl From<Result<ShortenResponse, gloo_net::Error>> for ShortenStatus {
-    fn from(result: Result<ShortenResponse, gloo_net::Error>) -> ShortenStatus {
+impl From<Result<ShortenResponse, Error>> for ShortenStatus {
+    fn from(result: Result<ShortenResponse, Error>) -> ShortenStatus {
         match result {
             Ok(result) => ShortenStatus::Success(result.id.into()),
-            Err(err) => ShortenStatus::Error(format!("{err:?}").into()),
+            Err(err) => ShortenStatus::Error(err),
         }
     }
 }
@@ -55,7 +55,8 @@ pub fn HomePage() -> Html {
                 .expect_throw("Could not get url from form");
 
             log!("url =", &url);
-            // TODO: check url is a valid URL before req
+
+            // URL validation is done server side
 
             let status = status.clone();
             wasm_bindgen_futures::spawn_local(async move {
