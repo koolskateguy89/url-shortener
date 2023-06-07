@@ -40,7 +40,7 @@ impl From<UserError> for Error {
         match e {
             UserError::InvalidUrl => Error::InvalidUrl,
             UserError::NotFound => Error::NotFound,
-            _ => Error::Other(format!("{}", e)),
+            _ => Error::Other(format!("{e}")),
         }
     }
 }
@@ -66,8 +66,7 @@ impl error::ResponseError for UserError {
 }
 
 fn random_id() -> String {
-    use nanoid::nanoid;
-    nanoid!(6)
+    nanoid::nanoid!(6)
 }
 
 /// returns the id
@@ -100,7 +99,7 @@ fn insert_into_db(url: String, db: &mut HashMap<String, String>) -> Result<Strin
     }
 }
 
-fn get_from_db<'a>(id: &'a String, db: &'a HashMap<String, String>) -> Option<&'a String> {
+fn get_from_db<'a>(id: &String, db: &'a HashMap<String, String>) -> Option<&'a String> {
     db.get(id)
 }
 

@@ -24,7 +24,7 @@ pub fn RedirectPage(props: &RedirectPageProps) -> Html {
         use_effect_with_deps(
             move |_| {
                 wasm_bindgen_futures::spawn_local(async move {
-                    match api::lengthen(id.to_string()).await {
+                    match api::lengthen(id).await {
                         Ok(LengthenResponse { url }) => {
                             log!(format!("url = {url:?}"));
 
