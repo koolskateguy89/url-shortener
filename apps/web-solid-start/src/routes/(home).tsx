@@ -1,11 +1,10 @@
 import { type VoidComponent, Show } from "solid-js";
 import { createRouteAction } from "solid-start";
 import type { RouteAction } from "solid-start/data/createRouteAction";
-import { Loader2 } from "lucide-solid";
 import { z } from "zod";
 
 import { type ShortenResponse, api } from "api";
-import { Button, Input } from "ui";
+import { Button, Input, LoadingSpinner } from "ui";
 import { StatusDisplay } from "~/components/status-display";
 
 const formDataSchema = z.object({
@@ -36,10 +35,15 @@ const Home: VoidComponent = () => {
       <StatusDisplay {...shortening} />
 
       <Form class="flex flex-col items-center space-y-2">
-        <Input name="url" disabled={shortening.pending} />
+        <Input
+          type="url"
+          name="url"
+          placeholder="Url"
+          disabled={shortening.pending}
+        />
         <Button type="submit" disabled={shortening.pending}>
           <Show when={shortening.pending}>
-            <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+            <LoadingSpinner />
           </Show>
           Shorten
         </Button>

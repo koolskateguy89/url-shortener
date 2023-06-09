@@ -42,6 +42,12 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: ^0.4.0
         version: 0.4.0(typescript@5.0.4)(zod@3.21.4)
+      api:
+        specifier: workspace:*
+        version: link:../../packages/api
+      lucide-react:
+        specifier: ^0.233.0
+        version: 0.233.0(react@18.2.0)
       next:
         specifier: ^13.4.4
         version: 13.4.4(react-dom@18.2.0)(react@18.2.0)
@@ -97,9 +103,6 @@ importers:
       api:
         specifier: workspace:*
         version: link:../../packages/api
-      lucide-solid:
-        specifier: ^0.233.0
-        version: 0.233.0(solid-js@1.7.6)
       solid-js:
         specifier: ^1.7.6
         version: 1.7.6

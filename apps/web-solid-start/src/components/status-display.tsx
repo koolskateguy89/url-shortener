@@ -12,8 +12,8 @@ export const StatusDisplay: VoidComponent<StatusDisplayProps> = (props) => {
         <Match when={props.pending}>Loading...</Match>
         <Match when={props.result} keyed>
           {({ id }) => (
-            <A href={`/redirect/${id}`} class="underline">
-              BASE_URL/redirect/{id}
+            <A href={`/${id}`} class="underline">
+              BASE_URL/{id}
             </A>
           )}
         </Match>

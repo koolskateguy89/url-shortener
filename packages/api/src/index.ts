@@ -9,10 +9,11 @@ export interface LengthenResponse {
   url: string;
 }
 
+export type Error = "NotFound" | "InvalidUrl";
+
 export interface ErrorResponse {
   error:
-    | "NotFound"
-    | "InvalidUrl"
+    | Error
     | {
         Other: string;
       };

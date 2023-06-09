@@ -1,27 +1,26 @@
-import { type VoidComponent, Suspense } from "solid-js";
+import type { VoidComponent } from "solid-js";
 import {
   type RouteDataArgs,
   createRouteData,
   redirect,
-  useRouteData,
+  Outlet,
 } from "solid-start";
 
 import { api } from "api";
 
-// FIXME: this is just not working, the fetch is failing, idk why
 export function routeData({ params }: RouteDataArgs) {
   return createRouteData(
     async (id) => {
-      console.log("id =", id);
+      const res = await api.lengthen(id);
 
-      // TODO: use api pacakge
-      const res = await fetch(`http://localhost:8000/api/${id}`, {});
-      const result = (await res.json()) as { url: string };
+      if ("error" in res) {
+        const error =
+          typeof res.error === "string" ? res.error : res.error.Other;
 
-      console.log("result =", result);
+        throw redirect(`/${id}/error?cause=${error}`);
+      }
 
-      throw redirect(result.url);
-      return "wtf";
+      return res;
     },
     {
       key: () => params.id,
@@ -29,18 +28,9 @@ export function routeData({ params }: RouteDataArgs) {
   );
 }
 
-const ErrorPage: VoidComponent = () => {
-  const errr = useRouteData<typeof routeData>();
+/**
+ * Is not meant to add any UI.
+ */
+const Wrapper: VoidComponent = () => <Outlet />;
 
-  return (
-    <Suspense fallback="LOADINGGGGG">
-      <div>
-        <h1>Page</h1>
-        If you are seeing this, the URL is invalid.
-        {errr()}
-      </div>
-    </Suspense>
-  );
-};
-
-export default ErrorPage;
+export default Wrapper;
