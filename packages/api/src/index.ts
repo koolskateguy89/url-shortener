@@ -1,5 +1,5 @@
 // TODO: env
-const API_URL = "http://localhost:8000/api";
+const API_URL = "http://127.0.0.1:8000/api";
 
 export interface ShortenResponse {
   id: string;
@@ -37,7 +37,6 @@ async function shorten(url: string): Promise<ShortenResponse> {
 }
 
 async function lengthen(id: string): Promise<LengthenResponse | ErrorResponse> {
-  // TODO?: handle not OK (error response)
   const res = await fetch(`${API_URL}/${id}`);
 
   return (await res.json()) as LengthenResponse | ErrorResponse;
