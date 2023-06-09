@@ -94,6 +94,9 @@ importers:
       '@solidjs/router':
         specifier: ^0.8.2
         version: 0.8.2(solid-js@1.7.6)
+      api:
+        specifier: workspace:*
+        version: link:../../packages/api
       lucide-solid:
         specifier: ^0.233.0
         version: 0.233.0(solid-js@1.7.6)
@@ -157,6 +160,21 @@ importers:
         version: 3.3.2
 
   crates/common: {}
+
+  packages/api:
+    devDependencies:
+      eslint:
+        specifier: ^8.41.0
+        version: 8.41.0
+      eslint-config-custom:
+        specifier: workspace:*
+        version: link:../eslint-config-custom
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
 
   packages/eslint-config-custom:
     dependencies:

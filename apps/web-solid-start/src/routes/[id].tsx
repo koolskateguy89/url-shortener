@@ -6,6 +6,8 @@ import {
   useRouteData,
 } from "solid-start";
 
+import { api } from "api";
+
 // FIXME: this is just not working, the fetch is failing, idk why
 export function routeData({ params }: RouteDataArgs) {
   return createRouteData(

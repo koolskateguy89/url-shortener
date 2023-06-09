@@ -1,20 +1,22 @@
 import { type VoidComponent, Show } from "solid-js";
 import { createRouteAction } from "solid-start";
+import type { RouteAction } from "solid-start/data/createRouteAction";
 import { Loader2 } from "lucide-solid";
 import { z } from "zod";
 
+import { type ShortenResponse, api } from "api";
 import { Button, Input } from "ui";
+import { StatusDisplay } from "~/components/status-display";
 
 const formDataSchema = z.object({
   url: z.string().url(),
 });
 
-// TODO: display error in UI
-// TODO: use API package (TODO) - will need to store API URL in env
+export type ActionStatus = RouteAction<FormData, ShortenResponse>[0];
 
 const Home: VoidComponent = () => {
   const [shortening, { Form }] = createRouteAction(
-    async (formdata: FormData, { fetch }) => {
+    async (formdata: FormData) => {
       const wrappedUrl = formDataSchema.safeParse(Object.fromEntries(formdata));
 
       if (!wrappedUrl.success) {
@@ -24,21 +26,15 @@ const Home: VoidComponent = () => {
 
       const { url } = wrappedUrl.data;
 
-      const res = await fetch("http://localhost:8000/api", {
-        method: "POST",
-        body: JSON.stringify({ url }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const result = (await res.json()) as { url: string; id: string };
-
-      return result;
+      return await api.shorten(url);
     }
   );
+  shortening satisfies ActionStatus;
 
   return (
     <main class="flex h-screen flex-col items-center justify-center space-y-4">
+      <StatusDisplay {...shortening} />
+
       <Form class="flex flex-col items-center space-y-2">
         <Input name="url" disabled={shortening.pending} />
         <Button type="submit" disabled={shortening.pending}>
@@ -48,7 +44,6 @@ const Home: VoidComponent = () => {
           Shorten
         </Button>
       </Form>
-      <div>shortening = {JSON.stringify(shortening, null, 2)}</div>
     </main>
   );
 };
