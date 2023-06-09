@@ -38,7 +38,7 @@ async function shorten(url: string): Promise<ShortenResponse> {
 
 async function lengthen(id: string): Promise<LengthenResponse | ErrorResponse> {
   // TODO?: handle not OK (error response)
-  const res = await fetch(`API_URL/${id}`);
+  const res = await fetch(`${API_URL}/${id}`);
 
   return (await res.json()) as LengthenResponse | ErrorResponse;
 }
