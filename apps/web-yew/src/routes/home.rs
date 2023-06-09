@@ -70,6 +70,8 @@ pub fn HomePage() -> Html {
         })
     };
 
+    let disabled = *status == ShortenStatus::Loading;
+
     let status = (*status).clone();
 
     html! {
@@ -80,10 +82,17 @@ pub fn HomePage() -> Html {
             <StatusDisplay {status} />
 
             <form {onsubmit} class="flex flex-col items-center space-y-2">
-                <input type="text" name="url" class="input" />
+                <input
+                    type="url"
+                    name="url"
+                    placeholder="Url"
+                    class="input"
+                    {disabled}
+                    />
                 <button
                     type="submit"
                     class="button"
+                    {disabled}
                 >
                     { "Shorten" }
                 </button>
