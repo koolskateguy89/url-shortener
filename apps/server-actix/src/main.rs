@@ -40,7 +40,7 @@ impl From<UserError> for Error {
         match e {
             UserError::InvalidUrl => Error::InvalidUrl,
             UserError::NotFound => Error::NotFound,
-            _ => Error::Other(format!("{e}")),
+            _ => Error::Other(format!("{e:?}")),
         }
     }
 }
