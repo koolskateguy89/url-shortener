@@ -4,8 +4,7 @@ A Simple URL Shortener for exploring Rust and other technologies.
 
 Project structure based on [`spa5k/monorepo-typescript-rust`](https://github.com/spa5k/monorepo-typescript-rust), and my **extremely**
 limited knowledge of
-[Turborepo](https://turbo.build/repo)
-,
+[Turborepo](https://turbo.build/repo),
 [Cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html),
 and
 [pnpm workspaces](https://pnpm.io/workspaces).

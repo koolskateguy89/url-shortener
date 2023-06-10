@@ -1,5 +1,10 @@
-// TODO: env
-const API_URL = "http://127.0.0.1:8000/api";
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const API_URL: string =
+  // @ts-expect-error Tryna use both Vite and Next
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  import.meta.env?.VITE_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_URL) throw new Error("No API_URL from environment variables");
 
 export interface ShortenResponse {
   id: string;
