@@ -33,7 +33,7 @@ TODO: table displaying app & port (in dev)
 - `web-nextjs`: 3001
 - `web-yew`: 3002
 
-TODO?: add /target to turbo dev output
+TODO?: add /target to turbo build output
 
 ## Deployments
 
@@ -49,13 +49,33 @@ TODO?: add /target to turbo dev output
 
 ## App progress
 
-- [~] Server
-  - [~] Actix
-- [ ] API - use Tanstack Query ? it's framework agnostic but Solid-Start has good enough default that it TQ isn't needed. But what to do with NextJs? - correction it's backend agnostic so wouldn't work here
-- [ ] Web
-  - [~] Solid-Start
-  - [ ] NextJs
-  - [~] Yew
+- Actix Server
+  - [x] Shorten URL
+  - [x] Lengthen URL
+- Solid-Start
+  - [x] Home (shorten URL)
+  - [x] Redirect
+- NextJs
+  - [x] Home (shorten URL)
+  - [x] Redirect
+- Yew
+  - [x] Home (shorten URL)
+  - [x] Redirect
+
+### Roadmap
+
+- [ ] Auth
+  - [ ] View all my short URLs
+    - [ ] Stats
+  - [ ] Deletion of short URLs
+
+## Web Apps
+
+### Routes
+
+- `/` - Home
+- `/:id` - Redirect
+  - more routes coming in the future (e.g. `:id/stats`)
 
 # Turborepo starter
 
