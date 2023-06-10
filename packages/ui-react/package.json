@@ -10,21 +10,21 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
-    "lucide-react": "^0.233.0",
+    "lucide-react": "^0.241.0",
     "ui-core": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.7",
+    "@types/react": "^18.2.9",
     "@types/react-dom": "^18.2.4",
-    "eslint": "^8.41.0",
+    "eslint": "^8.42.0",
     "eslint-config-custom": "workspace:*",
     "eslint-plugin-react": "^7.32.2",
     "tailwind-config": "workspace:*",
     "tailwindcss": "^3.3.2",
     "tsconfig": "workspace:*",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.3"
   }
 }

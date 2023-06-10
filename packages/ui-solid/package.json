@@ -9,18 +9,18 @@
     "generate:component": "turbo gen react-component"
   },
   "dependencies": {
-    "lucide-solid": "^0.233.0",
+    "lucide-solid": "^0.241.0",
     "ui-core": "workspace:*"
   },
   "peerDependencies": {
     "solid-js": "^1.7.5"
   },
   "devDependencies": {
-    "eslint": "^8.41.0",
+    "eslint": "^8.42.0",
     "eslint-config-custom-solid": "workspace:*",
     "tailwind-config": "workspace:*",
     "tailwindcss": "^3.3.2",
     "tsconfig": "workspace:*",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.3"
   }
 }
