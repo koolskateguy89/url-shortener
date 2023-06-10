@@ -15,8 +15,8 @@ export type ActionStatus = RouteAction<FormData, ShortenResponse>[0];
 
 const Home: VoidComponent = () => {
   const [shortening, { Form }] = createRouteAction(
-    async (formdata: FormData) => {
-      const wrappedUrl = formDataSchema.safeParse(Object.fromEntries(formdata));
+    async (formData: FormData) => {
+      const wrappedUrl = formDataSchema.safeParse(Object.fromEntries(formData));
 
       if (!wrappedUrl.success) {
         alert("Invalid URL");
@@ -43,7 +43,7 @@ const Home: VoidComponent = () => {
         />
         <Button type="submit" disabled={shortening.pending}>
           <Show when={shortening.pending}>
-            <LoadingSpinner />
+            <LoadingSpinner class="mr-2" />
           </Show>
           Shorten
         </Button>
