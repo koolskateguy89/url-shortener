@@ -8,9 +8,9 @@ publish = false
 
 [dependencies]
 common = { package = "url-shortener-common", path = "../../crates/common" }
-shuttle-runtime = "0.17.0"
+shuttle-runtime = "0.18.0"
 actix-web = "4.3.1"
-shuttle-actix-web = "0.17.0"
+shuttle-actix-web = "0.18.0"
 tokio = "1.28.2"
 nanoid = "0.4.0"
 actix-cors = "0.6.4"
