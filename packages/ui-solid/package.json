@@ -9,6 +9,7 @@
     "generate:component": "turbo gen react-component"
   },
   "dependencies": {
+    "@kobalte/core": "^0.9.6",
     "lucide-solid": "^0.241.0",
     "ui-core": "workspace:*"
   },

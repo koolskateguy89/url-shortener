@@ -1,9 +1,9 @@
 import type { Component, JSX } from "solid-js";
-import { mergeProps, splitProps, Show } from "solid-js";
+import { mergeProps, splitProps } from "solid-js";
+import { Button as KobalteButton } from "@kobalte/core";
 
 import { type ButtonVariantProps, buttonVariants } from "ui-core/button";
 import { cn } from "ui-core/utils";
-import { type SlotProps, Slot } from "./slot";
 
 export interface ButtonProps
   extends JSX.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -17,7 +17,6 @@ export const Button: Component<ButtonProps> = (_props) => {
     "class",
     "variant",
     "size",
-    "asChild",
   ]);
 
   const className = () =>
@@ -29,12 +28,5 @@ export const Button: Component<ButtonProps> = (_props) => {
       })
     );
 
-  return (
-    <Show
-      when={localProps.asChild}
-      fallback={<button class={className()} {...otherProps} />}
-    >
-      <Slot class={className()} {...(otherProps as SlotProps)} />
-    </Show>
-  );
+  return <KobalteButton.Root class={className()} {...otherProps} />;
 };
