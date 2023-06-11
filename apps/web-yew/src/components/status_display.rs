@@ -26,25 +26,19 @@ pub struct StatusDisplayProps {
 pub fn StatusDisplay(props: &StatusDisplayProps) -> Html {
     let StatusDisplayProps { status } = props;
 
-    let content = move || -> Html {
-        match status {
-            ShortenStatus::Loading => html!("Loading..."),
-            ShortenStatus::Success(id) => html! {
+    match status {
+        ShortenStatus::Idle => html!(),
+        ShortenStatus::Loading => html!(<p>{ "Loading..." }</p>),
+        ShortenStatus::Success(id) => html! {
+            <p>
                 <Link<Route> to={Route::Redirect { id: id.to_string() }}>
                     <span class="underline">
                         { format!("BASE_URL/{}", id) }
                     </span>
                 </Link<Route>>
-            },
-            ShortenStatus::Error(Error::Other(err)) => html!(err),
-            ShortenStatus::Error(err) => html!(format!("{err:?}")),
-            _ => html!(),
-        }
-    };
-
-    html! {
-        <p>
-            { content() }
-        </p>
+            </p>
+        },
+        ShortenStatus::Error(Error::Other(err)) => html!(<p>{ err }</p>),
+        ShortenStatus::Error(err) => html!(<p>{ format!("{err:?}") }</p>),
     }
 }

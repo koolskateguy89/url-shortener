@@ -3,7 +3,8 @@ const path = require("path");
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ["custom-next"],
+  plugins: ["@tanstack/query"],
+  extends: ["custom-next", "plugin:@tanstack/eslint-plugin-query/recommended"],
   parserOptions: {
     project: path.join(__dirname, "tsconfig.json"),
   },

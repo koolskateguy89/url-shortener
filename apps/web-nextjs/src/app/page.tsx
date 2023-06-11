@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { api } from "api";
 import { Button, Input, LoadingSpinner } from "ui";
+import { StatusDisplay } from "./status-display";
 
 const formDataSchema = z.object({
   url: z.string().url(),
 });
 
-// TODO?: use react query or smthn for handling server state
-
 export default function Page() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [id, setId] = useState<string | null>(null);
+  // FIXME?: isn't erroring when the request fails
+  const shortenMutation = useMutation({
+    mutationFn: async (url: string) => await api.shorten(url),
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -30,27 +30,14 @@ export default function Page() {
     }
 
     const { url } = wrappedUrl.data;
-
-    setIsLoading(true);
-
-    const res = await api.shorten(url);
-    setId(res.id);
-    setIsLoading(false);
+    shortenMutation.mutate(url);
   };
 
+  const isLoading = shortenMutation.isLoading;
+
   return (
-    <main className="space-y-4' flex h-screen flex-col items-center justify-center">
-      <p>
-        TODO: display status (properly)
-        {id && (
-          <>
-            <br />
-            <Link href={`/${id}`} className="underline">
-              BASE_URL/{id}
-            </Link>
-          </>
-        )}
-      </p>
+    <main className="flex h-screen flex-col items-center justify-center space-y-4">
+      <StatusDisplay {...shortenMutation} />
 
       <form
         onSubmit={(e) => void handleSubmit(e)}
@@ -59,7 +46,7 @@ export default function Page() {
         <Input type="url" name="url" placeholder="Url" disabled={isLoading} />
 
         <Button type="submit" disabled={isLoading}>
-          <LoadingSpinner className="mr-2" />
+          {isLoading && <LoadingSpinner className="mr-2" />}
           Shorten
         </Button>
       </form>
