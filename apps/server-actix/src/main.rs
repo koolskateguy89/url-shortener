@@ -26,6 +26,11 @@ use common::{
 
 use derive_more::Display;
 
+#[derive(Debug)]
+struct AppState {
+    pool: PgPool,
+}
+
 #[derive(Clone, Debug, Display)]
 pub enum UserError {
     #[display(fmt = "unused")]
@@ -122,8 +127,6 @@ async fn display_all(state: web::Data<AppState>) -> Result<impl Responder> {
         .into_iter()
         .collect::<HashMap<_, _>>();
 
-    println!("map = {db:?}");
-
     Ok(web::Json(db))
 }
 
@@ -140,7 +143,6 @@ async fn shorten_url(
     Ok(web::Json(types::ShortenResponse { id }))
 }
 
-// TODO?: rename func, will need to change url path possibly
 // TODO?: change url path
 #[get("/api/{id}")]
 async fn lengthen_url(
@@ -152,11 +154,6 @@ async fn lengthen_url(
     let url = get_from_db(&path.id, &state.pool).await?;
 
     Ok(web::Json(types::LengthenResponse { url }))
-}
-
-#[derive(Debug)]
-struct AppState {
-    pool: PgPool,
 }
 
 #[shuttle_runtime::main]
