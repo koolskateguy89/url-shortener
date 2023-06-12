@@ -9,10 +9,11 @@ use actix_web::{
 };
 use log::info;
 use shuttle_actix_web::ShuttleActixWeb;
+use shuttle_runtime::CustomError;
+use sqlx::{Executor, PgPool};
 use url::Url;
 
 use std::collections::HashMap;
-use std::sync::{Mutex, MutexGuard};
 
 use common::{
     error::Error,
@@ -23,9 +24,9 @@ use common::{
 // https://actix.rs/docs/static-files
 // https://yew.rs/docs/more/deployment
 
-use derive_more::{Display, Error};
+use derive_more::Display;
 
-#[derive(Debug, Display, Error, Clone)]
+#[derive(Clone, Debug, Display)]
 pub enum UserError {
     #[display(fmt = "unused")]
     InvalidUrl,
@@ -33,6 +34,8 @@ pub enum UserError {
     NotFound,
     #[display(fmt = "unused")]
     InternalError,
+    #[display(fmt = "unused")]
+    Other(String),
 }
 
 impl From<UserError> for Error {
@@ -40,6 +43,7 @@ impl From<UserError> for Error {
         match e {
             UserError::InvalidUrl => Error::InvalidUrl,
             UserError::NotFound => Error::NotFound,
+            UserError::Other(s) => Error::Other(s),
             _ => Error::Other(format!("{e:?}")),
         }
     }
@@ -69,49 +73,58 @@ fn random_id() -> String {
     nanoid::nanoid!(6)
 }
 
-/// returns the id
-/// TODO?: upsert
-fn insert_into_db(url: String, db: &mut HashMap<String, String>) -> Result<String> {
+/// Returns the id.
+///
+/// Upserts the url into the database.
+async fn insert_into_db(url: &str, pool: &PgPool) -> Result<String> {
     // Ensure url is a valid URL
-    Url::parse(&url).map_err(|_| UserError::InvalidUrl)?;
+    let url = Url::parse(url).map_err(|_| UserError::InvalidUrl)?;
 
-    // checks if url is already in db
-    let id_in_db = db
-        .iter()
-        .find(|(k, v)| {
-            if v == &&url {
-                info!("found url in db: {k} -> {v}");
-                true
-            } else {
-                false
-            }
-        })
-        .map(|(k, _)| k);
+    let id = random_id();
 
-    match id_in_db {
-        Some(id) => Ok(id.clone()),
-        None => {
-            let id = random_id();
-            info!("url not found in db, inserting: {id} -> {url}");
-            db.insert(id.clone(), url.clone());
-            Ok(id)
-        }
-    }
+    // returning upsert: https://stackoverflow.com/a/37543015
+    let (id,) = sqlx::query_as(
+        "
+    INSERT INTO urls(id, url)
+    VALUES ($1, $2)
+    ON CONFLICT (url)
+    DO UPDATE SET
+        url=EXCLUDED.url
+    RETURNING id
+    ",
+    )
+    .bind(&id)
+    .bind(url.as_ref())
+    .fetch_one(pool)
+    .await
+    .map_err(|err| UserError::Other(err.to_string()))?;
+
+    Ok(id)
 }
 
-fn get_from_db<'a>(id: &String, db: &'a HashMap<String, String>) -> Option<&'a String> {
-    db.get(id)
-}
+async fn get_from_db(id: &String, pool: &PgPool) -> Result<String> {
+    let (url,) = sqlx::query_as("SELECT url FROM urls WHERE id = $1")
+        .bind(id)
+        .fetch_optional(pool)
+        .await
+        .map_err(|err| UserError::Other(err.to_string()))?
+        .ok_or(UserError::NotFound)?;
 
-/// placeholder until using actual db
-fn get_db(state: &web::Data<AppState>) -> Result<MutexGuard<HashMap<String, String>>> {
-    state.db.lock().map_err(|_| UserError::InternalError.into())
+    Ok(url)
 }
 
 #[get("/api/all")]
 async fn display_all(state: web::Data<AppState>) -> Result<impl Responder> {
-    let db = get_db(&state)?;
-    Ok(web::Json(db.clone()))
+    let db = sqlx::query_as::<_, (String, String)>("SELECT * FROM urls")
+        .fetch_all(&state.pool)
+        .await
+        .map_err(|err| UserError::Other(err.to_string()))?
+        .into_iter()
+        .collect::<HashMap<_, _>>();
+
+    println!("map = {db:?}");
+
+    Ok(web::Json(db))
 }
 
 // TODO?: change url path to /shorten
@@ -122,8 +135,7 @@ async fn shorten_url(
 ) -> Result<impl Responder> {
     info!("shortening url: {}", body.url);
 
-    let mut db = get_db(&state)?;
-    let id = insert_into_db(body.url.clone(), &mut db)?;
+    let id = insert_into_db(&body.url, &state.pool).await?;
 
     Ok(web::Json(types::ShortenResponse { id }))
 }
@@ -135,33 +147,27 @@ async fn lengthen_url(
     path: web::Path<types::LengthenRequest>,
     state: web::Data<AppState>,
 ) -> Result<impl Responder> {
-    let db = get_db(&state)?;
-    let url = get_from_db(&path.id, &db)
-        .cloned()
-        .ok_or(UserError::NotFound)?;
+    info!("lengthening id: {}", path.id);
+
+    let url = get_from_db(&path.id, &state.pool).await?;
 
     Ok(web::Json(types::LengthenResponse { url }))
 }
 
 #[derive(Debug)]
 struct AppState {
-    // pool: PgPool,
-    /// id -> url
-    db: Mutex<HashMap<String, String>>, // <- Mutex is necessary to mutate safely across threads
+    pool: PgPool,
 }
 
 #[shuttle_runtime::main]
-async fn actix_web(// TODO: db
-    // #[shuttle_shared_db::Postgres] pool: PgPool,
+async fn actix_web(
+    #[shuttle_shared_db::Postgres] pool: PgPool,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
-    // TODO: migration
-    // pool.execute(include_str!("../schema.sql"))
-    // .await
-    // .map_err(CustomError::new)?;
+    pool.execute(include_str!("../schema.sql"))
+        .await
+        .map_err(CustomError::new)?;
 
-    let state = web::Data::new(AppState {
-        db: Mutex::default(),
-    });
+    let state = web::Data::new(AppState { pool });
 
     let config = move |cfg: &mut ServiceConfig| {
         let cors = Cors::permissive();
