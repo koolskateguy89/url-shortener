@@ -1,0 +1,14 @@
+import type { Component, JSX } from "solid-js";
+
+export interface {{ pascalCase name }}Props {
+  children: JSX.Element;
+}
+
+export const {{ pascalCase name }}: Component<{{ pascalCase name }}Props> = (props) => {
+  return (
+    <div>
+      <h1>{{ name }}</h1>
+      {props.children}
+    </div>
+  );
+};
