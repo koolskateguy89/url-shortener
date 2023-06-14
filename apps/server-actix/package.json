@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build": "rm -r -f ./yew && cp -r ../../apps/web-yew/dist/ ./yew",
     "dev": "cargo watch -x \"shuttle run\"",
     "lint": "cargo clippy"
+  },
+  "dependencies": {
+    "web-yew": "workspace:*"
   }
 }

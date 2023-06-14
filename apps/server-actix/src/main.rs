@@ -1,5 +1,3 @@
-use actix_cors::Cors;
-use actix_web::middleware::{Logger, NormalizePath};
 use actix_web::{
     error, get,
     http::{header::ContentType, StatusCode},
@@ -19,10 +17,6 @@ use common::{
     error::Error,
     types::{self, ErrorResponse},
 };
-
-// TODO: serve static files for yew frontend under /yew
-// https://actix.rs/docs/static-files
-// https://yew.rs/docs/more/deployment
 
 use derive_more::Display;
 
@@ -81,7 +75,7 @@ fn random_id() -> String {
 /// Returns the id.
 ///
 /// Upserts the url into the database.
-async fn insert_into_db(url: &str, pool: &PgPool) -> Result<String> {
+async fn insert_into_db(url: &str, pool: &PgPool) -> Result<String, UserError> {
     // Ensure url is a valid URL
     let url = Url::parse(url).map_err(|_| UserError::InvalidUrl)?;
 
@@ -107,7 +101,7 @@ async fn insert_into_db(url: &str, pool: &PgPool) -> Result<String> {
     Ok(id)
 }
 
-async fn get_from_db(id: &String, pool: &PgPool) -> Result<String> {
+async fn get_from_db(id: &str, pool: &PgPool) -> Result<String, UserError> {
     let (url,) = sqlx::query_as("SELECT url FROM urls WHERE id = $1")
         .bind(id)
         .fetch_optional(pool)
@@ -156,10 +150,54 @@ async fn lengthen_url(
     Ok(web::Json(types::LengthenResponse { url }))
 }
 
+/// Serve static files for Yew frontend under `/yew/{mount_path}`
+///
+/// Note: this won't work if using `cargo shuttle run` at repo top level.
+///
+/// https://actix.rs/docs/static-files
+///
+/// https://yew.rs/docs/more/deployment
+fn yew_app(mount_path: &str) -> actix_files::Files {
+    use actix_files::{Files, NamedFile};
+    use actix_web::dev::{fn_service, ServiceRequest, ServiceResponse};
+
+    Files::new(mount_path, "./yew")
+        .index_file("index.html")
+        .redirect_to_slash_directory()
+        // Using a default handler to always show the Yew app
+        // see https://yew.rs/docs/more/deployment#serving-indexhtml-as-fallback
+        .default_handler(fn_service(|req: ServiceRequest| async {
+            let (req, _) = req.into_parts();
+            let index_file = NamedFile::open_async("./yew/index.html").await?;
+            let res = index_file.into_response(&req);
+            Ok(ServiceResponse::new(req, res))
+        }))
+}
+
+mod middleware {
+    use actix_cors::Cors;
+    use actix_web::middleware::{Logger, NormalizePath};
+
+    pub fn cors() -> Cors {
+        Cors::permissive()
+    }
+
+    pub fn logger() -> Logger {
+        // TODO: configure logger, it's too verbose
+        Logger::default()
+    }
+
+    pub fn normalize_path() -> NormalizePath {
+        NormalizePath::trim()
+    }
+}
+
 #[shuttle_runtime::main]
 async fn actix_web(
     #[shuttle_shared_db::Postgres] pool: PgPool,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
+    info!("Running database migration");
+    // TODO: use sqlx::migrate
     pool.execute(include_str!("../schema.sql"))
         .await
         .map_err(CustomError::new)?;
@@ -167,18 +205,23 @@ async fn actix_web(
     let state = web::Data::new(AppState { pool });
 
     let config = move |cfg: &mut ServiceConfig| {
-        let cors = Cors::permissive();
-
-        cfg.app_data(state).service(
-            web::scope("")
-                .wrap(cors)
-                .wrap(Logger::default())
-                .wrap(NormalizePath::trim())
-                .service(display_all)
-                .service(shorten_url)
-                .service(lengthen_url)
-                .service(web::redirect("/", "/api/all")),
-        );
+        cfg.app_data(state)
+            .service(
+                web::scope("/yew")
+                    .wrap(middleware::cors())
+                    .wrap(middleware::logger())
+                    .service(yew_app("/")),
+            )
+            .service(
+                web::scope("")
+                    .wrap(middleware::cors())
+                    .wrap(middleware::logger())
+                    .wrap(middleware::normalize_path())
+                    .service(display_all)
+                    .service(shorten_url)
+                    .service(lengthen_url)
+                    .service(web::redirect("/", "/api/all")),
+            );
     };
 
     Ok(config.into())
