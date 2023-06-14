@@ -1,9 +1,10 @@
+use wasm_bindgen::UnwrapThrowExt;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
 #[function_component]
 pub fn NotFoundPage() -> Html {
-    let location = use_location().expect("idk why not");
+    let location = use_location().expect_throw("location isn't set ???");
     let path = location.path();
 
     html! {
