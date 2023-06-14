@@ -10,15 +10,15 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
-    "lucide-react": "^0.241.0",
+    "lucide-react": "^0.244.0",
     "ui-core": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.9",
-    "@types/react-dom": "^18.2.4",
+    "@types/react": "^18.2.12",
+    "@types/react-dom": "^18.2.5",
     "eslint": "^8.42.0",
     "eslint-config-custom": "workspace:*",
     "eslint-plugin-react": "^7.32.2",

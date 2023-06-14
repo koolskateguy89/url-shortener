@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "eslint-config-custom": "workspace:*",
-    "eslint-config-next": "^13.4.4"
+    "eslint-config-next": "^13.4.5"
   },
   "publishConfig": {
     "access": "public"

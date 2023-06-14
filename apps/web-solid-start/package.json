@@ -20,7 +20,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@types/node": "^20.2.5",
+    "@types/node": "^20.3.1",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.42.0",
     "eslint-config-custom-solid": "workspace:*",
