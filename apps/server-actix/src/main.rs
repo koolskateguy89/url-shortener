@@ -172,16 +172,24 @@ struct AppState {
     static_folder: PathBuf,
 }
 
+/// TODO: once [shuttle#1008](https://github.com/shuttle-hq/shuttle/issues/1008)
+/// is fixed, we can use `#[shuttle_static_folder]`.
 #[shuttle_runtime::main]
 async fn actix_web(
     #[shuttle_shared_db::Postgres] pool: PgPool,
-    #[shuttle_static_folder::StaticFolder(folder = "static")] static_folder: PathBuf,
+    // #[shuttle_static_folder::StaticFolder(folder = "static")] static_folder: PathBuf,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
     info!("Running database migration");
     // TODO: use sqlx::migrate
     pool.execute(include_str!("../schema.sql"))
         .await
         .map_err(CustomError::new)?;
+
+    let static_folder = PathBuf::from("static");
+    log::warn!(
+        "static_folder = {:?}",
+        std::fs::canonicalize(&static_folder)
+    );
 
     let yew_folder = static_folder.join("yew");
 

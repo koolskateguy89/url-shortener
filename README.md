@@ -39,7 +39,7 @@ TODO?: add /target to turbo build output
 - `server-actix`: [https://url-shortener-server-actix.shuttleapp.rs/](https://url-shortener-server-actix.shuttleapp.rs/)
 - `web-solid-start`: [https://url-shortener-solid-start.vercel.app/](https://url-shortener-solid-start.vercel.app/)
 - `web-nextjs`: [https://url-shortener-nextjs-eight.vercel.app/](https://url-shortener-nextjs-eight.vercel.app/)
-- `web-yew`: ... TODO under server-actix/yew
+- `web-yew`: [https://url-shortener-server-actix.shuttleapp.rs/yew](https://url-shortener-server-actix.shuttleapp.rs/yew) (broken until [shuttle#1008](https://github.com/shuttle-hq/shuttle/issues/1008) is fixed)
 
 ## Useful Links
 
