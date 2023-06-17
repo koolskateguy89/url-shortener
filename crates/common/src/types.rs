@@ -24,11 +24,13 @@ pub struct ShortenResponse {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct LengthenRequest {
-    pub id: String,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
 pub struct LengthenResponse {
     pub url: String,
+}
+
+/// TODO: more stats ig
+#[derive(Debug, Deserialize, Serialize)]
+pub struct StatsResponse {
+    pub url: String,
+    pub count: i64,
 }

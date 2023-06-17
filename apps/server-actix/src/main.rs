@@ -137,14 +137,42 @@ async fn shorten_url(
 // TODO?: change url path
 #[get("/api/{id}")]
 async fn lengthen_url(
-    path: web::Path<types::LengthenRequest>,
+    path: web::Path<(String,)>,
     state: web::Data<AppState>,
 ) -> Result<impl Responder> {
-    info!("lengthening id: {}", path.id);
+    let (id,) = path.into_inner();
 
-    let url = get_from_db(&path.id, &state.pool).await?;
+    info!("lengthening id: {}", id);
+
+    // TODO: add stats
+    let url = get_from_db(&id, &state.pool).await?;
 
     Ok(web::Json(types::LengthenResponse { url }))
+}
+
+#[get("/api/{id}/stats")]
+async fn lengthen_stats(
+    path: web::Path<(String,)>,
+    state: web::Data<AppState>,
+) -> Result<impl Responder> {
+    let (id,) = path.into_inner();
+
+    let (url, count): (String, i64) = sqlx::query_as(
+        "
+    SELECT urls.url, count(lengthen_logs.id) from
+    urls
+    LEFT JOIN lengthen_logs ON urls.id = lengthen_logs.id
+    WHERE urls.id = $1
+    GROUP BY urls.url
+    ",
+    )
+    .bind(&id)
+    .fetch_optional(&state.pool)
+    .await
+    .map_err(|err| UserError::Other(err.to_string()))?
+    .ok_or(UserError::NotFound)?;
+
+    Ok(web::Json(types::StatsResponse { url, count }))
 }
 
 /// Serve static files for Yew frontend under `/yew/{mount_path}`
@@ -226,6 +254,7 @@ async fn actix_web(
             .service(display_all)
             .service(shorten_url)
             .service(lengthen_url)
+            .service(self::lengthen_stats)
             .service(web::redirect("/", "/api/all"));
 
         let yew_service = web::scope("/yew").service(yew_app("/", &yew_folder));
@@ -241,3 +270,84 @@ async fn actix_web(
 
     Ok(config.into())
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use actix_web::{http::header, test, App};
+
+//     use super::*;
+
+//     #[actix_web::test]
+//     async fn test_index_redirect() {
+//         let app = test::init_service(
+//             App::new()
+//                 .wrap(middleware::normalize_path())
+//                 // .service(display_all)
+//                 .service(web::redirect("/", "/api/all")),
+//         )
+//         .await;
+
+//         let req = test::TestRequest::get().uri("/").to_request();
+//         let resp = test::call_service(&app, req).await;
+
+//         assert!(resp.status().is_redirection());
+//         assert!(resp.headers().contains_key(header::LOCATION));
+//         assert_eq!(
+//             resp.headers()
+//                 .get(header::LOCATION)
+//                 .expect("Location header not set"),
+//             "/api/all"
+//         )
+//     }
+
+//     #[actix_web::test]
+//     async fn test_display_all() {
+//         // TODO: app state pool - how?
+
+//         let app = test::init_service(
+//             App::new()
+//                 .wrap(middleware::normalize_path())
+//                 .service(display_all),
+//         )
+//         .await;
+
+//         let req = test::TestRequest::get().uri("/api/all").to_request();
+//         let resp = test::call_service(&app, req).await;
+
+//         println!("resp = [{:?}]", resp);
+
+//         assert!(resp.status().is_success());
+//     }
+
+//     #[actix_web::test]
+//     async fn test_shorten_url() {
+//         // TODO: app state pool - how?
+
+//         let app = test::init_service(
+//             App::new()
+//                 .wrap(middleware::normalize_path())
+//                 .service(shorten_url),
+//         )
+//         .await;
+
+//         let req = test::TestRequest::post()
+//             .uri("/api")
+//             .set_json(types::ShortenRequest {
+//                 url: "https://google.com".to_string(),
+//             })
+//             .to_request();
+//         let resp = test::call_service(&app, req).await;
+
+//         println!("resp = [{:?}]", resp);
+
+//         assert!(resp.status().is_success());
+//         assert_eq!(
+//             resp.headers()
+//                 .get(header::CONTENT_TYPE)
+//                 .expect("Content type not set"),
+//             header::ContentType::json().to_string().as_str()
+//         );
+//         // TODO: assert body is valid json
+//         // TODO: assert body is valid ShortenResponse
+//     }
+// }
