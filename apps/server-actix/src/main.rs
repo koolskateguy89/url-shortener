@@ -6,11 +6,11 @@ use actix_web::{
     web::{self, ServiceConfig},
     HttpResponse, Responder, Result,
 };
+use derive_more::Display;
 use log::info;
 use shuttle_actix_web::ShuttleActixWeb;
 use shuttle_runtime::CustomError;
 use sqlx::{Executor, PgPool};
-use url::Url;
 
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -20,7 +20,7 @@ use common::{
     types::{self, ErrorResponse},
 };
 
-use derive_more::Display;
+mod db;
 
 #[derive(Clone, Debug, Display)]
 pub enum UserError {
@@ -65,50 +65,6 @@ impl error::ResponseError for UserError {
     }
 }
 
-fn random_id() -> String {
-    nanoid::nanoid!(6)
-}
-
-/// Returns the id.
-///
-/// Upserts the url into the database.
-async fn insert_into_db(url: &str, pool: &PgPool) -> Result<String, UserError> {
-    // Ensure url is a valid URL
-    let url = Url::parse(url).map_err(|_| UserError::InvalidUrl)?;
-
-    let id = random_id();
-
-    // returning upsert: https://stackoverflow.com/a/37543015
-    let (id,) = sqlx::query_as(
-        "
-    INSERT INTO urls(id, url)
-    VALUES ($1, $2)
-    ON CONFLICT (url)
-    DO UPDATE SET
-        url=EXCLUDED.url
-    RETURNING id
-    ",
-    )
-    .bind(&id)
-    .bind(url.as_ref())
-    .fetch_one(pool)
-    .await
-    .map_err(|err| UserError::Other(err.to_string()))?;
-
-    Ok(id)
-}
-
-async fn get_from_db(id: &str, pool: &PgPool) -> Result<String, UserError> {
-    let (url,) = sqlx::query_as("SELECT url FROM urls WHERE id = $1")
-        .bind(id)
-        .fetch_optional(pool)
-        .await
-        .map_err(|err| UserError::Other(err.to_string()))?
-        .ok_or(UserError::NotFound)?;
-
-    Ok(url)
-}
-
 #[get("/api/all")]
 async fn display_all(state: web::Data<AppState>) -> Result<impl Responder> {
     let db = sqlx::query_as::<_, (String, String)>("SELECT * FROM urls")
@@ -129,7 +85,7 @@ async fn shorten_url(
 ) -> Result<impl Responder> {
     info!("shortening url: {}", body.url);
 
-    let id = insert_into_db(&body.url, &state.pool).await?;
+    let id = db::insert_short_url(&state.pool, &body.url).await?;
 
     Ok(web::Json(types::ShortenResponse { id }))
 }
@@ -144,8 +100,7 @@ async fn lengthen_url(
 
     info!("lengthening id: {}", id);
 
-    // TODO: add stats
-    let url = get_from_db(&id, &state.pool).await?;
+    let url = db::get_long_url(&state.pool, &id).await?;
 
     Ok(web::Json(types::LengthenResponse { url }))
 }
@@ -157,20 +112,7 @@ async fn lengthen_stats(
 ) -> Result<impl Responder> {
     let (id,) = path.into_inner();
 
-    let (url, count): (String, i64) = sqlx::query_as(
-        "
-    SELECT urls.url, count(lengthen_logs.id) from
-    urls
-    LEFT JOIN lengthen_logs ON urls.id = lengthen_logs.id
-    WHERE urls.id = $1
-    GROUP BY urls.url
-    ",
-    )
-    .bind(&id)
-    .fetch_optional(&state.pool)
-    .await
-    .map_err(|err| UserError::Other(err.to_string()))?
-    .ok_or(UserError::NotFound)?;
+    let (url, count) = db::get_lengthen_stats(&state.pool, &id).await?;
 
     Ok(web::Json(types::StatsResponse { url, count }))
 }
