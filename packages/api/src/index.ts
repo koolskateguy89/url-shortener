@@ -14,6 +14,11 @@ export interface LengthenResponse {
   url: string;
 }
 
+export interface StatsResponse {
+  url: string;
+  hits: number;
+}
+
 export type Error = "NotFound" | "InvalidUrl";
 
 export interface ErrorResponse {
@@ -42,13 +47,37 @@ async function shorten(url: string): Promise<ShortenResponse> {
   return (await res.json()) as ShortenResponse;
 }
 
-async function lengthen(id: string): Promise<LengthenResponse | ErrorResponse> {
-  const res = await fetch(`${API_URL}/${id}`);
+async function lengthen(
+  id: string,
+  init: RequestInit = {
+    cache: "no-cache",
+  }
+): Promise<LengthenResponse | ErrorResponse> {
+  const res = await fetch(`${API_URL}/${id}`, init);
 
   return (await res.json()) as LengthenResponse | ErrorResponse;
+}
+
+async function idExists(id: string): Promise<boolean> {
+  const res = await fetch(`${API_URL}/${id}/exists`);
+
+  return res.ok;
+}
+
+async function getStats(
+  id: string,
+  init: RequestInit = {
+    cache: "no-cache",
+  }
+): Promise<StatsResponse | ErrorResponse> {
+  const res = await fetch(`${API_URL}/${id}/stats`, init);
+
+  return (await res.json()) as StatsResponse | ErrorResponse;
 }
 
 export const api = {
   shorten,
   lengthen,
+  idExists,
+  getStats,
 };

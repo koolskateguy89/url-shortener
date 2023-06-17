@@ -7,6 +7,15 @@ fn random_id() -> String {
     nanoid::nanoid!(6)
 }
 
+pub async fn id_exists(pool: &PgPool, id: &str) -> sqlx::Result<bool> {
+    let (exists,) = sqlx::query_as("SELECT EXISTS(SELECT 1 FROM urls WHERE id = $1)")
+        .bind(id)
+        .fetch_one(pool)
+        .await?;
+
+    Ok(exists)
+}
+
 /// Returns the `id`.
 ///
 /// Upserts the url into the database.

@@ -62,3 +62,5 @@ pub async fn lengthen<T: Display>(id: T) -> Result<LengthenResponse, Error> {
         Err(error)
     }
 }
+
+// TODO: function to fetch stats

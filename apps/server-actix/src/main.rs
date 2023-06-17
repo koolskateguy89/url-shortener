@@ -105,6 +105,23 @@ async fn lengthen_url(
     Ok(web::Json(types::LengthenResponse { url }))
 }
 
+#[get("/api/{id}/exists")]
+async fn id_exists(
+    path: web::Path<(String,)>,
+    state: web::Data<AppState>,
+) -> Result<impl Responder> {
+    let (id,) = path.into_inner();
+
+    let exists = db::id_exists(&state.pool, &id)
+        .await
+        .map_err(|err| UserError::Other(err.to_string()))?;
+
+    match exists {
+        true => Ok("exists"),
+        false => Err(UserError::NotFound.into()),
+    }
+}
+
 #[get("/api/{id}/stats")]
 async fn lengthen_stats(
     path: web::Path<(String,)>,
@@ -112,9 +129,9 @@ async fn lengthen_stats(
 ) -> Result<impl Responder> {
     let (id,) = path.into_inner();
 
-    let (url, count) = db::get_lengthen_stats(&state.pool, &id).await?;
+    let (url, hits) = db::get_lengthen_stats(&state.pool, &id).await?;
 
-    Ok(web::Json(types::StatsResponse { url, count }))
+    Ok(web::Json(types::StatsResponse { url, hits }))
 }
 
 /// Serve static files for Yew frontend under `/yew/{mount_path}`
@@ -204,7 +221,8 @@ async fn actix_web(
             .service(display_all)
             .service(shorten_url)
             .service(lengthen_url)
-            .service(self::lengthen_stats)
+            .service(lengthen_stats)
+            .service(id_exists)
             .service(web::redirect("/", "/api/all"));
 
         let yew_service = web::scope("/yew").service(yew_app("/", &yew_folder));

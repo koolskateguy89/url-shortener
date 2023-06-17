@@ -32,5 +32,5 @@ pub struct LengthenResponse {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct StatsResponse {
     pub url: String,
-    pub count: i64,
+    pub hits: i64,
 }

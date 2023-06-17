@@ -11,12 +11,10 @@ export default async function Layout({
     id: string;
   };
 }) {
-  const res = await api.lengthen(params.id);
+  const exists = await api.idExists(params.id);
 
-  if ("error" in res) {
-    const error = typeof res.error === "string" ? res.error : res.error.Other;
-
-    redirect(`/${params.id}/error?cause=${error}`);
+  if (!exists) {
+    redirect(`/${params.id}/error?cause=404`);
   }
 
   return <>{children}</>;

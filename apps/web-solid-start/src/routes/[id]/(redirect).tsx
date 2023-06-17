@@ -1,17 +1,20 @@
 import type { VoidComponent } from "solid-js";
 import { type RouteDataArgs, createRouteData, redirect } from "solid-start";
 
-import type { routeData as idRouteData } from "../[id]";
+import { type LengthenResponse, api } from "api";
 
-// Uses route data from [id] parent layout
-export function routeData({ data }: RouteDataArgs<typeof idRouteData>) {
-  // Will only be called once data from [id] is ready
+export function routeData({ params }: RouteDataArgs) {
   return createRouteData(
-    ({ url }) => {
+    async ({ id }) => {
+      // Guaranteed to not fail because of validation at layout level
+      const { url } = (await api.lengthen(id)) as LengthenResponse;
       throw redirect(url);
     },
     {
-      key: data,
+      key: () => ({
+        id: params.id,
+        key: "redirect",
+      }),
     }
   );
 }

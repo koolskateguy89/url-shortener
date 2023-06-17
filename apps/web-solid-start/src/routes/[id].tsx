@@ -10,20 +10,16 @@ import { api } from "api";
 
 export function routeData({ params }: RouteDataArgs) {
   return createRouteData(
-    async (id) => {
-      const res = await api.lengthen(id);
+    async ({ id }) => {
+      const exists = await api.idExists(id);
 
-      if ("error" in res) {
-        const error =
-          typeof res.error === "string" ? res.error : res.error.Other;
-
-        throw redirect(`/${id}/error?cause=${error}`);
-      }
-
-      return res;
+      if (!exists) throw redirect(`/${id}/error?cause=404`);
     },
     {
-      key: () => params.id,
+      key: () => ({
+        id: params.id,
+        key: "layout",
+      }),
     }
   );
 }
