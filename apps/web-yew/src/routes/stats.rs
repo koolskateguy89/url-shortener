@@ -1,25 +1,75 @@
+use gloo_console::{error, log};
 use yew::prelude::*;
+
+use crate::api;
+use common::{error::Error, types::StatsResponse};
 
 #[derive(PartialEq, Properties)]
 pub struct StatsPageProps {
     pub id: AttrValue,
 }
 
+enum Status {
+    Loading,
+    Success(StatsResponse),
+    Error(Error),
+}
+
 #[function_component]
 pub fn StatsPage(props: &StatsPageProps) -> Html {
     let StatsPageProps { id } = props;
 
-    // TODO: fetch stats from server
+    let status = use_state(|| Status::Loading);
 
-    let url = "placeholder";
-    let hits = 0; // placeholder
+    {
+        let id = id.clone();
+        let status = status.clone();
+
+        use_effect_with_deps(
+            move |_| {
+                wasm_bindgen_futures::spawn_local(async move {
+                    log!(format!("id = {id:?}"));
+
+                    match api::get_stats(id).await {
+                        Ok(stats) => {
+                            log!(format!("stats = {stats:?}"));
+
+                            status.set(Status::Success(stats));
+                        }
+                        Err(err) => {
+                            error!(format!("err = {err:?}"));
+                            status.set(Status::Error(err));
+                        }
+                    }
+                });
+            },
+            (),
+        );
+    }
+
+    let content = move || -> Html {
+        match *status {
+            Status::Loading => html!(<p>{ "Loading..." }</p>),
+            Status::Success(StatsResponse { ref url, ref hits }) => html! {
+                <>
+                    <p>{ "URL:" } {url}</p>
+                    <p>{ "Hits:" } {hits}</p>
+                </>
+            },
+            // TODO: proper UI for errors
+            Status::Error(ref err) => html! {
+                <p>
+                    { "Error loading stats: [" }
+                    { format!("{err:?}]") }
+                </p>
+            },
+        }
+    };
 
     html! {
         <main>
-            { id }
             <h1>{ "Stats" }</h1>
-            <p>{ "URL:" } {url}</p>
-            <p>{ "Hits:" } {hits}</p>
+            { content() }
         </main>
     }
 }

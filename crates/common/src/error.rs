@@ -6,3 +6,5 @@ pub enum Error {
     NotFound,
     Other(String),
 }
+
+pub type Result<T> = std::result::Result<T, Error>;
