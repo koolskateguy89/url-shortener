@@ -141,7 +141,7 @@ async fn lengthen_stats(
 /// https://actix.rs/docs/static-files
 ///
 /// https://yew.rs/docs/more/deployment
-fn yew_app(mount_path: &str, serve_from: &PathBuf) -> Files {
+fn yew_app<T: Into<PathBuf>>(mount_path: &str, serve_from: T) -> Files {
     use actix_web::dev::{fn_service, ServiceRequest, ServiceResponse};
 
     // Using a default handler to always show the Yew app
@@ -174,12 +174,41 @@ mod middleware {
     }
 
     pub fn logger() -> Logger {
-        // TODO: configure logger, it's too verbose
-        Logger::default()
+        Logger::new(r#"%a "%r" %s %Ts"#)
     }
 
     pub fn normalize_path() -> NormalizePath {
         NormalizePath::trim()
+    }
+}
+
+trait Services {
+    fn api_service(&mut self) -> &mut Self;
+    fn yew_service<T: Into<PathBuf>>(&mut self, yew_folder: T) -> &mut Self;
+}
+
+impl Services for ServiceConfig {
+    fn api_service(&mut self) -> &mut Self {
+        self.service(
+            web::scope("")
+                .wrap(middleware::cors())
+                .wrap(middleware::logger())
+                .wrap(middleware::normalize_path())
+                .service(display_all)
+                .service(shorten_url)
+                .service(lengthen_url)
+                .service(lengthen_stats)
+                .service(id_exists)
+                .service(web::redirect("/", "/api/all")),
+        )
+    }
+
+    fn yew_service<T: Into<PathBuf>>(&mut self, yew_folder: T) -> &mut Self {
+        self.service(
+            web::scope("/yew")
+                .wrap(middleware::logger())
+                .service(yew_app("/", yew_folder)),
+        )
     }
 }
 
@@ -194,7 +223,7 @@ struct AppState {
 #[shuttle_runtime::main]
 async fn actix_web(
     #[shuttle_shared_db::Postgres] pool: PgPool,
-    // #[shuttle_static_folder::StaticFolder(folder = "static")] static_folder: PathBuf,
+    #[shuttle_static_folder::StaticFolder(folder = "static")] static_folder: PathBuf,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
     info!("Running database migration");
     // TODO: use sqlx::migrate
@@ -202,7 +231,7 @@ async fn actix_web(
         .await
         .map_err(CustomError::new)?;
 
-    let static_folder = PathBuf::from("static");
+    // TODO: remove
     log::warn!(
         "static_folder = {:?}",
         std::fs::canonicalize(&static_folder)
@@ -216,24 +245,13 @@ async fn actix_web(
     });
 
     let config = move |cfg: &mut ServiceConfig| {
-        let api_service = web::scope("")
-            .wrap(middleware::normalize_path())
-            .service(display_all)
-            .service(shorten_url)
-            .service(lengthen_url)
-            .service(lengthen_stats)
-            .service(id_exists)
-            .service(web::redirect("/", "/api/all"));
-
-        let yew_service = web::scope("/yew").service(yew_app("/", &yew_folder));
-
-        cfg.app_data(state).service(
-            web::scope("")
-                .wrap(middleware::cors())
-                .wrap(middleware::logger())
-                .service(yew_service)
-                .service(api_service),
-        );
+        cfg.app_data(state)
+            // yew app
+            .yew_service(&yew_folder)
+            // api
+            .api_service()
+            // )
+            ;
     };
 
     Ok(config.into())
