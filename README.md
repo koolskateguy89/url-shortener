@@ -16,11 +16,11 @@ and
 - `web-solid-start` - a [Solid-Start](https://start.solidjs.com/) app
 - `web-nextjs`: a [Next.js](https://nextjs.org/) app
 - `web-yew`: a [Yew](https://yew.rs/) app
-- `api`: API to interact with the server -- OR a shared types package
-- `ui-core`: 'core' component library, contains styles and variants using `class-variance-authority`
+- `api`: API to interact with the server
+- `ui-core`: 'core' component library, contains styles and variants using [`class-variance-authority`](https://cva.style/)
 - `ui-solid`: Solid component library
 - `ui-react`: React component library
-- `eslint-config-custom`: base `eslint` configuration
+- `eslint-config-custom`: base [`eslint`](https://eslint.org/) configuration
 - `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-config-next` and `eslint-config-prettier`)
 - `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-plugin-solid` and `eslint-config-prettier`)
 - `tailwind-config`: shared Tailwind CSS configuration
