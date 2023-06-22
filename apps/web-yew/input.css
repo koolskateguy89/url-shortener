@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+    font-family: "Inter", sans-serif;
+
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
 
@@ -82,16 +84,16 @@
 
 @layer components {
   .button-base {
-    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
-    @apply h-10 py-2 px-4;
+    @apply focus-visible:ring-ring ring-offset-background inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    @apply h-10 px-4 py-2;
   }
 
   .button-sm {
-    @apply h-9 px-3 rounded-md;
+    @apply h-9 rounded-md px-3;
   }
 
   .button-lg {
-    @apply h-11 px-8 rounded-md;
+    @apply h-11 rounded-md px-8;
   }
 
   .button {
@@ -106,6 +108,6 @@
   /* TODO: btn-outline, secondary, ghost, link */
 
   .input {
-    @apply flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
   }
 }
