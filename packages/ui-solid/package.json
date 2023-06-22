@@ -10,14 +10,14 @@
   },
   "dependencies": {
     "@kobalte/core": "^0.9.6",
-    "lucide-solid": "^0.244.0",
+    "lucide-solid": "^0.248.0",
     "ui-core": "workspace:*"
   },
   "peerDependencies": {
     "solid-js": "^1.7.5"
   },
   "devDependencies": {
-    "eslint": "^8.42.0",
+    "eslint": "^8.43.0",
     "eslint-config-custom-solid": "workspace:*",
     "tailwind-config": "workspace:*",
     "tailwindcss": "^3.3.2",

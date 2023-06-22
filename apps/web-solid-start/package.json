@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/node": "^20.3.1",
     "autoprefixer": "^10.4.14",
-    "eslint": "^8.42.0",
+    "eslint": "^8.43.0",
     "eslint-config-custom-solid": "workspace:*",
     "postcss": "^8.4.24",
     "solid-start-node": "^0.2.26",

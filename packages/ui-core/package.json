@@ -10,11 +10,11 @@
   "dependencies": {
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
-    "tailwind-merge": "^1.13.1",
+    "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6"
   },
   "devDependencies": {
-    "eslint": "^8.42.0",
+    "eslint": "^8.43.0",
     "eslint-config-custom": "workspace:*",
     "tailwind-config": "workspace:*",
     "tailwindcss": "^3.3.2",
