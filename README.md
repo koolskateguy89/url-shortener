@@ -36,7 +36,7 @@ TODO?: add /target to turbo build output
 
 ## Deployments
 
-- `server-actix`: [https://url-shortener-server-actix.shuttleapp.rs/](https://url-shortener-server-actix.shuttleapp.rs/)
+- `server-actix`: [https://url-shortener-server-actix.shuttleapp.rs/](https://url-shortener-server-actix.shuttleapp.rs/) (broken for now)
 - `web-solid-start`: [https://url-shortener-solid-start.vercel.app/](https://url-shortener-solid-start.vercel.app/)
 - `web-nextjs`: [https://url-shortener-nextjs-eight.vercel.app/](https://url-shortener-nextjs-eight.vercel.app/)
 - `web-yew`: [https://url-shortener-server-actix.shuttleapp.rs/yew](https://url-shortener-server-actix.shuttleapp.rs/yew) (broken for now)
@@ -51,6 +51,8 @@ TODO?: add /target to turbo build output
 - Actix Server
   - [x] Shorten URL
   - [x] Lengthen URL
+  - [ ] Register
+  - [ ] Sign in
 - Solid-Start
   - [x] Home (shorten URL)
   - [x] Redirect
@@ -60,6 +62,9 @@ TODO?: add /target to turbo build output
 - Yew
   - [x] Home (shorten URL)
   - [x] Redirect
+- Tauri
+  - [ ] Home (shorten URL)
+  - [ ] Redirect
 
 ### Roadmap
 
@@ -67,6 +72,7 @@ TODO?: add /target to turbo build output
   - [ ] View all my short URLs
     - [ ] Stats
   - [ ] Deletion of short URLs
+- [ ] Tauri
 
 ## Web Apps
 
