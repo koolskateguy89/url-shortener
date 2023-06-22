@@ -36,5 +36,7 @@ yarn-error.log*
 .vercel
 
 # Added by cargo
-
 /target
+
+# Static files for Shuttle in workspace
+/static
