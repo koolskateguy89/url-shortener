@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
 // @refresh reload
 import { Suspense } from "solid-js";
 import {
@@ -14,9 +13,8 @@ import {
   Link,
 } from "solid-start";
 
+import "@fontsource/inter";
 import "~/styles/globals.css";
-
-// TODO?: inter font (if not already done)
 
 export default function Root() {
   return (

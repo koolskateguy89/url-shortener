@@ -10,6 +10,7 @@
     "lint": "eslint \"**/*.{ts,tsx,js,jsx}\""
   },
   "dependencies": {
+    "@fontsource/inter": "^5.0.3",
     "@solidjs/meta": "^0.28.5",
     "@solidjs/router": "^0.8.2",
     "api": "workspace:*",
