@@ -1,7 +1,37 @@
-use sqlx::PgPool;
+use sqlx::{types::chrono, FromRow, PgPool};
 use url::Url;
 
 use crate::UserError;
+
+#[derive(Debug, FromRow)]
+struct UrlRow {
+    id: String,
+    url: String,
+}
+
+#[derive(Debug, FromRow)]
+struct LengthenLogRow {
+    id: String,
+    created_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Debug)]
+pub struct LengthenStat {
+    pub url: String,
+    pub hits: Vec<i64>,
+}
+
+impl LengthenStat {
+    fn new(url: String, rows: Vec<LengthenLogRow>) -> Self {
+        Self {
+            url,
+            hits: rows
+                .into_iter()
+                .map(|row| row.created_at.timestamp())
+                .collect(),
+        }
+    }
+}
 
 fn random_id() -> String {
     nanoid::nanoid!(6)
@@ -64,24 +94,19 @@ pub async fn get_long_url(pool: &PgPool, id: &str) -> Result<String, UserError> 
     Ok(url)
 }
 
-pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<(String, i64), UserError> {
-    sqlx::query_as(
-        "
-    SELECT
-      urls.url,
-      count(lengthen_logs.id)
-    from
-      urls
-      LEFT JOIN lengthen_logs ON urls.id = lengthen_logs.id
-    WHERE
-      urls.id = $1
-    GROUP BY
-      urls.url
-    ",
-    )
-    .bind(id)
-    .fetch_optional(pool)
-    .await
-    .map_err(|err| UserError::Other(err.to_string()))?
-    .ok_or(UserError::NotFound)
+pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<LengthenStat, UserError> {
+    let (url,): (String,) = sqlx::query_as("SELECT url FROM urls WHERE id = $1")
+        .bind(id)
+        .fetch_optional(pool)
+        .await
+        .map_err(|err| UserError::Other(err.to_string()))?
+        .ok_or(UserError::NotFound)?;
+
+    let rows: Vec<LengthenLogRow> = sqlx::query_as("SELECT * FROM lengthen_logs WHERE id = $1")
+        .bind(id)
+        .fetch_all(pool)
+        .await
+        .map_err(|err| UserError::Other(err.to_string()))?;
+
+    Ok(LengthenStat::new(url, rows))
 }

@@ -16,7 +16,11 @@ export interface LengthenResponse {
 
 export interface StatsResponse {
   url: string;
-  hits: number;
+  num_hits: number;
+  /**
+   * UTC timestamps
+   */
+  hits: number[];
 }
 
 export type Error = "NotFound" | "InvalidUrl";

@@ -15,8 +15,9 @@ CREATE TABLE lengthen_logs (
   id         VARCHAR(6) REFERENCES urls
                           ON DELETE CASCADE
                           ON UPDATE CASCADE,
-  created_at TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMPTZ  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+  -- TODO?: take created_at out of PK
   PRIMARY KEY(id, created_at)
 );
 

@@ -1,5 +1,6 @@
 use actix_files::{Files, NamedFile};
 use actix_web::{
+    dev::{fn_service, ServiceRequest, ServiceResponse},
     error, get,
     http::{header::ContentType, StatusCode},
     post,
@@ -57,11 +58,7 @@ impl error::ResponseError for UserError {
     fn error_response(&self) -> HttpResponse {
         HttpResponse::build(self.status_code())
             .insert_header(ContentType::json())
-            .body({
-                let response = ErrorResponse::new(self.clone().into());
-
-                serde_json::to_string(&response).expect("Should not fail")
-            })
+            .json(ErrorResponse::new(self.clone().into()))
     }
 }
 
@@ -129,9 +126,13 @@ async fn lengthen_stats(
 ) -> Result<impl Responder> {
     let (id,) = path.into_inner();
 
-    let (url, hits) = db::get_lengthen_stats(&state.pool, &id).await?;
+    let db::LengthenStat { url, hits } = db::get_lengthen_stats(&state.pool, &id).await?;
 
-    Ok(web::Json(types::StatsResponse { url, hits }))
+    Ok(web::Json(types::StatsResponse {
+        url,
+        num_hits: hits.len(),
+        hits,
+    }))
 }
 
 /// Serve static files for Yew frontend under `/yew/{mount_path}`
@@ -142,8 +143,6 @@ async fn lengthen_stats(
 ///
 /// https://yew.rs/docs/more/deployment
 fn yew_app<T: Into<PathBuf>>(mount_path: &str, serve_from: T) -> Files {
-    use actix_web::dev::{fn_service, ServiceRequest, ServiceResponse};
-
     // Using a default handler to always show the Yew app
     // see https://yew.rs/docs/more/deployment#serving-indexhtml-as-fallback
     let default_handler = |req: ServiceRequest| async {
@@ -165,6 +164,12 @@ fn yew_app<T: Into<PathBuf>>(mount_path: &str, serve_from: T) -> Files {
         .default_handler(fn_service(default_handler))
 }
 
+async fn not_found_handler(req: ServiceRequest) -> Result<ServiceResponse> {
+    let (req, _) = req.into_parts();
+    let res = HttpResponse::NotFound().body("not found");
+    Ok(ServiceResponse::new(req, res))
+}
+
 mod middleware {
     use actix_cors::Cors;
     use actix_web::middleware::{Logger, NormalizePath};
@@ -174,7 +179,7 @@ mod middleware {
     }
 
     pub fn logger() -> Logger {
-        Logger::new(r#"%a "%r" %s %Ts"#)
+        Logger::new(r#"%a "%r" %s, elapsed: %Dms"#)
     }
 
     pub fn normalize_path() -> NormalizePath {
@@ -218,8 +223,6 @@ struct AppState {
     static_folder: PathBuf,
 }
 
-/// TODO: once [shuttle#1008](https://github.com/shuttle-hq/shuttle/issues/1008)
-/// is fixed, we can use `#[shuttle_static_folder]`.
 #[shuttle_runtime::main]
 async fn actix_web(
     #[shuttle_shared_db::Postgres] pool: PgPool,
@@ -231,27 +234,18 @@ async fn actix_web(
         .await
         .map_err(CustomError::new)?;
 
-    // TODO: remove
-    log::warn!(
-        "static_folder = {:?}",
-        std::fs::canonicalize(&static_folder)
-    );
-
-    let yew_folder = static_folder.join("yew");
-
-    let state = web::Data::new(AppState {
-        pool,
-        static_folder,
-    });
-
     let config = move |cfg: &mut ServiceConfig| {
+        let yew_folder = static_folder.join("yew");
+
+        let state = web::Data::new(AppState {
+            pool,
+            static_folder,
+        });
+
         cfg.app_data(state)
-            // yew app
-            .yew_service(&yew_folder)
-            // api
+            .yew_service(yew_folder)
             .api_service()
-            // )
-            ;
+            .default_service(not_found_handler);
     };
 
     Ok(config.into())

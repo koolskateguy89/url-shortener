@@ -50,10 +50,14 @@ pub fn StatsPage(props: &StatsPageProps) -> Html {
     let content = move || -> Html {
         match *status {
             Status::Loading => html!(<p>{ "Loading..." }</p>),
-            Status::Success(StatsResponse { ref url, ref hits }) => html! {
+            Status::Success(StatsResponse {
+                ref url,
+                hits: _,
+                num_hits,
+            }) => html! {
                 <>
-                    <p>{ "URL:" } {url}</p>
-                    <p>{ "Hits:" } {hits}</p>
+                    <p>{ "URL: " }{url}</p>
+                    <p>{ "Num hits: " }{num_hits}</p>
                 </>
             },
             // TODO: proper UI for errors

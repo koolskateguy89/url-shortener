@@ -9,13 +9,13 @@ export default async function StatsPage({
     id: string;
   };
 }) {
-  const { url, hits } = (await api.getStats(params.id)) as StatsResponse;
+  const { url, num_hits } = (await api.getStats(params.id)) as StatsResponse;
 
   return (
     <main>
       <h1>Stats</h1>
       <p>URL: {url}</p>
-      <p>Hits: {hits}</p>
+      <p>Num hits: {num_hits}</p>
     </main>
   );
 }

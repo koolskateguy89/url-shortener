@@ -29,11 +29,11 @@ const StatsPage: VoidComponent = () => {
 
   return (
     <Show when={stats()} fallback={"Failed to fetch stats"} keyed>
-      {({ url, hits }) => (
+      {({ url, num_hits }) => (
         <main>
           <h1>Stats</h1>
           <p>URL: {url}</p>
-          <p>Hits: {hits}</p>
+          <p>Num hits: {num_hits}</p>
         </main>
       )}
     </Show>
