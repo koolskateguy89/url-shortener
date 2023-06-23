@@ -2,7 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::routes::home::ShortenStatus;
-use crate::routes::Route;
+use crate::routes::UrlRoute;
 use common::error::Error;
 
 impl PartialEq for ShortenStatus {
@@ -31,11 +31,11 @@ pub fn StatusDisplay(props: &StatusDisplayProps) -> Html {
         ShortenStatus::Loading => html!(<p>{ "Loading..." }</p>),
         ShortenStatus::Success(id) => html! {
             <p>
-                <Link<Route> to={Route::Redirect { id: id.to_string() }}>
+                <Link<UrlRoute> to={UrlRoute::Redirect { id: id.to_string() }}>
                     <span class="underline">
                         { format!("BASE_URL/{}", id) }
                     </span>
-                </Link<Route>>
+                </Link<UrlRoute>>
             </p>
         },
         ShortenStatus::Error(Error::Other(err)) => html!(<p>{ err }</p>),

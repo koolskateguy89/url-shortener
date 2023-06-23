@@ -1,21 +1,37 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+pub mod error;
 pub mod home;
 pub mod not_found;
 pub mod redirect;
 pub mod stats;
 
+use error::ErrorPage;
 use home::HomePage;
 use not_found::NotFoundPage;
 use redirect::RedirectPage;
 use stats::StatsPage;
 
+/// Main app router
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
     #[at("/")]
     Home,
-    // TODO: probably gonna want a separate router for `:id`
+    #[at("/:id")]
+    UrlRoot,
+    #[at("/:id/:path")]
+    Url,
+    #[at("/error")]
+    Error,
+    #[at("/404")]
+    #[not_found]
+    NotFound,
+}
+
+/// Router for `/:id/*`
+#[derive(Clone, Routable, PartialEq)]
+pub enum UrlRoute {
     #[at("/:id")]
     Redirect { id: String },
     #[at("/:id/stats")]
@@ -28,8 +44,18 @@ pub enum Route {
 pub fn switch(route: Route) -> Html {
     match route {
         Route::Home => html! { <HomePage /> },
-        Route::Redirect { id } => html! { <RedirectPage {id} /> },
-        Route::Stats { id } => html! { <StatsPage {id} /> },
+        Route::UrlRoot | Route::Url => html! {
+            <Switch<UrlRoute> render={switch_url} />
+        },
+        Route::Error => html! { <ErrorPage /> },
         Route::NotFound => html! { <NotFoundPage /> },
+    }
+}
+
+fn switch_url(route: UrlRoute) -> Html {
+    match route {
+        UrlRoute::Redirect { id } => html! { <RedirectPage {id} /> },
+        UrlRoute::Stats { id } => html! { <StatsPage {id} /> },
+        UrlRoute::NotFound => html! { <NotFoundPage /> },
     }
 }

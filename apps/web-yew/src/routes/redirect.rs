@@ -34,6 +34,7 @@ pub fn RedirectPage(props: &RedirectPageProps) -> Html {
                             location.set_href(&url).expect_throw("Could not redirect");
                         }
                         Err(err) => {
+                            // TODO: redirect to error page
                             error!(format!("err = {err:?}"));
                             is_error.set(true);
                         }

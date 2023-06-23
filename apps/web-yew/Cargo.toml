@@ -9,6 +9,7 @@ edition = "2021"
 common = { package = "url-shortener-common", path = "../../crates/common" }
 gloo-console = "0.2.3"
 gloo-net = "0.2.6"
+serde = { version = "1.0.164", features = ["derive"] }
 wasm-bindgen = "0.2.86"
 wasm-bindgen-futures = "0.4.36"
 web-sys = { version = "0.3.63", features = ["FormData", "HtmlFormElement"]}

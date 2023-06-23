@@ -37,6 +37,7 @@ pub fn StatsPage(props: &StatsPageProps) -> Html {
                             status.set(Status::Success(stats));
                         }
                         Err(err) => {
+                            // TODO: redirect to error page
                             error!(format!("err = {err:?}"));
                             status.set(Status::Error(err));
                         }
