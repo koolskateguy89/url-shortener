@@ -2,7 +2,8 @@ use gloo_console::{error, log};
 use yew::prelude::*;
 
 use crate::api;
-use common::{error::Error, types::StatsResponse};
+use crate::hooks::use_error_redirector;
+use common::types::StatsResponse;
 
 #[derive(PartialEq, Properties)]
 pub struct StatsPageProps {
@@ -12,12 +13,13 @@ pub struct StatsPageProps {
 enum Status {
     Loading,
     Success(StatsResponse),
-    Error(Error),
 }
 
 #[function_component]
 pub fn StatsPage(props: &StatsPageProps) -> Html {
     let StatsPageProps { id } = props;
+
+    let error_redirector = use_error_redirector().unwrap();
 
     let status = use_state(|| Status::Loading);
 
@@ -30,16 +32,15 @@ pub fn StatsPage(props: &StatsPageProps) -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     log!(format!("id = {id:?}"));
 
-                    match api::get_stats(id).await {
+                    match api::get_stats(&id).await {
                         Ok(stats) => {
                             log!(format!("stats = {stats:?}"));
 
                             status.set(Status::Success(stats));
                         }
                         Err(err) => {
-                            // TODO: redirect to error page
                             error!(format!("err = {err:?}"));
-                            status.set(Status::Error(err));
+                            let _ = error_redirector.redirect(id.to_string(), format!("{err:?}"));
                         }
                     }
                 });
@@ -60,13 +61,6 @@ pub fn StatsPage(props: &StatsPageProps) -> Html {
                     <p>{ "URL: " }{url}</p>
                     <p>{ "Num hits: " }{num_hits}</p>
                 </>
-            },
-            // TODO: proper UI for errors
-            Status::Error(ref err) => html! {
-                <p>
-                    { "Error loading stats: [" }
-                    { format!("{err:?}]") }
-                </p>
             },
         }
     };

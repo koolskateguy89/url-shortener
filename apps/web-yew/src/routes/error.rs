@@ -2,11 +2,19 @@ use wasm_bindgen::UnwrapThrowExt;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-#[derive(Debug, serde::Deserialize)]
-struct SearchParams {
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct SearchParams {
     id: String,
     #[allow(dead_code)]
     cause: Option<String>,
+}
+
+impl SearchParams {
+    pub fn new(id: String, cause: Option<String>) -> Self {
+        Self { id, cause }
+    }
 }
 
 #[function_component]

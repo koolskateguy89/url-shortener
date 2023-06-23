@@ -3,6 +3,7 @@ use yew_router::prelude::*;
 
 mod api;
 mod components;
+mod hooks;
 mod routes;
 
 use routes::{switch, Route};
