@@ -14,7 +14,7 @@ export default async function Layout({
   const exists = await api.idExists(params.id);
 
   if (!exists) {
-    redirect(`/${params.id}/error?cause=404`);
+    redirect(`/error?id=${encodeURIComponent(params.id)}&cause=404`);
   }
 
   return <>{children}</>;

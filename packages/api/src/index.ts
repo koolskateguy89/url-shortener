@@ -57,7 +57,7 @@ async function lengthen(
     cache: "no-cache",
   }
 ): Promise<LengthenResponse | ErrorResponse> {
-  const res = await fetch(`${API_URL}/${id}`, init);
+  const res = await fetch(`${API_URL}/${encodeURIComponent(id)}`, init);
 
   return (await res.json()) as LengthenResponse | ErrorResponse;
 }
@@ -74,7 +74,7 @@ async function getStats(
     cache: "no-cache",
   }
 ): Promise<StatsResponse | ErrorResponse> {
-  const res = await fetch(`${API_URL}/${id}/stats`, init);
+  const res = await fetch(`${API_URL}/${encodeURIComponent(id)}/stats`, init);
 
   return (await res.json()) as StatsResponse | ErrorResponse;
 }

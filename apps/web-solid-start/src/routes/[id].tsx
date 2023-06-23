@@ -13,7 +13,8 @@ export function routeData({ params }: RouteDataArgs) {
     async ({ id }) => {
       const exists = await api.idExists(id);
 
-      if (!exists) throw redirect(`/${id}/error?cause=404`);
+      // FIXME: redirect is not working
+      if (!exists) throw redirect(`/error?id=${id}&cause=404`);
     },
     {
       key: () => ({
