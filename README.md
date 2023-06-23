@@ -13,7 +13,7 @@ and
 
 - `server-actix`: an [Actix Web](https://actix.rs/) web server, with [Shuttle](https://www.shuttle.rs/) infrastructure
 - `common`: shared Rust code
-- `web-solid-start` - a [Solid-Start](https://start.solidjs.com/) app
+- `web-solid-start`: a [Solid-Start](https://start.solidjs.com/) app
 - `web-nextjs`: a [Next.js](https://nextjs.org/) app
 - `web-yew`: a [Yew](https://yew.rs/) app
 - `api`: API to interact with the server
@@ -21,25 +21,21 @@ and
 - `ui-solid`: Solid component library
 - `ui-react`: React component library
 - `eslint-config-custom`: base [`eslint`](https://eslint.org/) configuration
-- `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-config-next` and `eslint-config-prettier`)
-- `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-plugin-solid` and `eslint-config-prettier`)
-- `tailwind-config`: shared Tailwind CSS configuration
+- `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-plugin-solid`)
+- `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-config-next`)
+- `tailwind-config`: shared [Tailwind CSS](https://tailwindcss.com/) configuration
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
-
-TODO: table displaying app & port (in dev)
-- `server-actix`: 8000
-- `web-solid-start`: 3000
-- `web-nextjs`: 3001
-- `web-yew`: 3002
 
 TODO?: add /target to turbo build output
 
 ## Deployments
 
-- `server-actix`: [https://url-shortener-server-actix.shuttleapp.rs/](https://url-shortener-server-actix.shuttleapp.rs/) (broken for now)
-- `web-solid-start`: [https://url-shortener-solid-start.vercel.app/](https://url-shortener-solid-start.vercel.app/)
-- `web-nextjs`: [https://url-shortener-nextjs-eight.vercel.app/](https://url-shortener-nextjs-eight.vercel.app/)
-- `web-yew`: [https://url-shortener-server-actix.shuttleapp.rs/yew](https://url-shortener-server-actix.shuttleapp.rs/yew) (broken for now)
+| App             | Port (dev) | Deployment                                                                                                                    |
+|-----------------|------------|-------------------------------------------------------------------------------------------------------------------------------|
+| server-actix    | 8000       | [https://url-shortener-server-actix.shuttleapp.rs/](https://url-shortener-server-actix.shuttleapp.rs/) (broken for now)       |
+| web-solid-start | 3000       | [https://url-shortener-solid-start.vercel.app/](https://url-shortener-solid-start.vercel.app/)                                |
+| web-nextjs      | 3001       | [https://url-shortener-nextjs-eight.vercel.app/](https://url-shortener-nextjs-eight.vercel.app/)                              |
+| web-yew         | 3002       | [https://url-shortener-server-actix.shuttleapp.rs/yew](https://url-shortener-server-actix.shuttleapp.rs/yew) (broken for now) |
 
 ## Useful Links
 
@@ -56,15 +52,22 @@ TODO?: add /target to turbo build output
 - Solid-Start
   - [x] Home (shorten URL)
   - [x] Redirect
+  - [~] Stats
+  - [~] URL Error Page
 - NextJs
-  - [x] Home (shorten URL)
+  - [x] Home
   - [x] Redirect
+  - [~] Stats
+  - [~] URL Error Page
 - Yew
-  - [x] Home (shorten URL)
+  - [x] Home
   - [x] Redirect
+  - [~] Stats
+  - [~] URL Error Page
 - Tauri
-  - [ ] Home (shorten URL)
+  - [ ] Home
   - [ ] Redirect
+  - [ ] Stats
 
 ### Roadmap
 
