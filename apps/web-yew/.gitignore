@@ -2,4 +2,4 @@
 dist/
 
 # Tailwind output
-output.css
+assets/output.css

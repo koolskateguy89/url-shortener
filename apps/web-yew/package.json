@@ -7,7 +7,7 @@
     "build": "pnpm css:gen && trunk build --release --public-url /yew/",
     "start": "trunk serve --release",
     "lint": "cargo clippy",
-    "css:gen": "tailwindcss -i input.css -o output.css"
+    "css:gen": "tailwindcss -i input.css -o assets/output.css"
   },
   "devDependencies": {
     "tailwind-config": "workspace:*",
