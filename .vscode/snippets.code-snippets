@@ -31,7 +31,8 @@
 					"    }",
 					"}"
 			],
-			"description": "Create a minimal Yew function component"
+			"description": "Create a minimal Yew function component",
+			"scope": "rust",
 	},
 	"New Yew struct component": {
 			"prefix": "yewsc",
@@ -56,6 +57,7 @@
 					"    }",
 					"}"
 			],
-			"description": "Create a new Yew component with a message enum"
+			"description": "Create a new Yew component with a message enum",
+			"scope": "rust",
 	},
 }
