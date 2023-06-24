@@ -35,6 +35,7 @@ impl LengthenStat {
     }
 }
 
+/// Returns a random 6 character string.
 fn random_id() -> String {
     nanoid::nanoid!(6)
 }
@@ -111,4 +112,40 @@ pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<LengthenStat,
         .map_err(|err| UserError::Other(err.to_string()))?;
 
     Ok(LengthenStat::new(url, rows))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::{TimeZone, Utc};
+
+    #[test]
+    fn test_random_id() {
+        let id = random_id();
+        assert_eq!(id.len(), 6);
+
+        let another_id = random_id();
+        assert_ne!(id, another_id);
+    }
+
+    #[test]
+    fn test_lengthen_stat() {
+        let url = "https://example.com".to_string();
+
+        let rows = vec![
+            LengthenLogRow {
+                id: "id".to_string(),
+                created_at: Utc.timestamp_opt(1, 0).unwrap(),
+            },
+            LengthenLogRow {
+                id: "id".to_string(),
+                created_at: Utc.timestamp_opt(2, 0).unwrap(),
+            },
+        ];
+
+        let stat = LengthenStat::new(url, rows);
+
+        assert_eq!(stat.url, "https://example.com");
+        assert_eq!(stat.hits, vec![1, 2]);
+    }
 }
