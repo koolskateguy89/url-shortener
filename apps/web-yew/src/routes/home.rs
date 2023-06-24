@@ -26,15 +26,6 @@ impl From<Result<ShortenResponse, Error>> for ShortenStatus {
 
 #[function_component]
 pub fn HomePage() -> Html {
-    let counter = use_state(|| 0);
-    let onclick = {
-        let counter = counter.clone();
-        Callback::from(move |_| {
-            let value = *counter + 1;
-            counter.set(value);
-        })
-    };
-
     let status = use_state(|| ShortenStatus::Idle);
     let onsubmit = {
         let status = status.clone();
@@ -76,9 +67,6 @@ pub fn HomePage() -> Html {
 
     html! {
         <main class="flex h-screen flex-col items-center justify-center space-y-4">
-            <button {onclick} class="button" >{ "+1" }</button>
-            <p class="font-semibold bg-green-700 px-8 py-4 text-white">{ *counter }</p>
-
             <StatusDisplay {status} />
 
             <form {onsubmit} class="flex flex-col items-center space-y-2">
