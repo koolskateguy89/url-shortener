@@ -30,12 +30,12 @@ TODO?: add /target to turbo build output
 
 ## Deployments
 
-| App             | Port (dev) | Deployment                                                                                                                    |
-|-----------------|------------|-------------------------------------------------------------------------------------------------------------------------------|
-| server-actix    | 8000       | [https://url-shortener-server-actix.shuttleapp.rs/](https://url-shortener-server-actix.shuttleapp.rs/) (broken for now)       |
-| web-solid-start | 3000       | [https://url-shortener-solid-start.vercel.app/](https://url-shortener-solid-start.vercel.app/)                                |
-| web-nextjs      | 3001       | [https://url-shortener-nextjs-eight.vercel.app/](https://url-shortener-nextjs-eight.vercel.app/)                              |
-| web-yew         | 3002       | [https://url-shortener-server-actix.shuttleapp.rs/yew](https://url-shortener-server-actix.shuttleapp.rs/yew) (broken for now) |
+| App             | Port (dev) | Deployment                                                                                                                             |
+|-----------------|------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| server-actix    | 8000       | [https://url-shortener-server-actix.shuttleapp.rs/](https://url-shortener-server-actix.shuttleapp.rs/)                                 |
+| web-solid-start | 3000       | [https://url-shortener-solid-start.vercel.app/](https://url-shortener-solid-start.vercel.app/)                                         |
+| web-nextjs      | 3001       | [https://url-shortener-nextjs-eight.vercel.app/](https://url-shortener-nextjs-eight.vercel.app/)                                       |
+| web-yew         | 3002       | [https://url-shortener-server-actix.shuttleapp.rs/yew](https://url-shortener-server-actix.shuttleapp.rs/yew) (somewhat broken for now) |
 
 ## Useful Links
 
