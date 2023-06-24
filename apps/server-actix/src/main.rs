@@ -23,6 +23,14 @@ use common::{
 
 mod db;
 
+// FIXME: dev is broken, but prod works
+/*
+Error: spawning runtime process
+
+Caused by:
+    The system cannot find the file specified. (os error 2)
+*/
+
 #[derive(Clone, Debug, Display)]
 pub enum UserError {
     #[display(fmt = "unused")]
@@ -142,7 +150,7 @@ async fn lengthen_stats(
 /// https://actix.rs/docs/static-files
 ///
 /// https://yew.rs/docs/more/deployment
-fn yew_app<T: Into<PathBuf>>(mount_path: &str, serve_from: T) -> Files {
+fn yew_app(mount_path: &str, serve_from: impl Into<PathBuf>) -> Files {
     // Using a default handler to always show the Yew app
     // see https://yew.rs/docs/more/deployment#serving-indexhtml-as-fallback
     let default_handler = |req: ServiceRequest| async {
@@ -189,7 +197,7 @@ mod middleware {
 
 trait Services {
     fn api_service(&mut self) -> &mut Self;
-    fn yew_service<T: Into<PathBuf>>(&mut self, yew_folder: T) -> &mut Self;
+    fn yew_service(&mut self, yew_folder: impl Into<PathBuf>) -> &mut Self;
 }
 
 impl Services for ServiceConfig {
@@ -208,7 +216,7 @@ impl Services for ServiceConfig {
         )
     }
 
-    fn yew_service<T: Into<PathBuf>>(&mut self, yew_folder: T) -> &mut Self {
+    fn yew_service(&mut self, yew_folder: impl Into<PathBuf>) -> &mut Self {
         self.service(
             web::scope("/yew")
                 .wrap(middleware::logger())
