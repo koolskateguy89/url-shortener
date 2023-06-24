@@ -11,11 +11,7 @@
       ]
     },
     "server-actix#build": {
-      "dependsOn": ["web-yew#build"],
-      "outputs": [
-        "dist/**",
-        "static/**"
-      ]
+      "dependsOn": ["web-yew#build"]
     },
     "solid:build": {
       "dependsOn": ["web-solid-start#build"],

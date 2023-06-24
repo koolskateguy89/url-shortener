@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "sh bin/yew-to-actix.sh",
     "dev": "cargo watch -x \"shuttle run\"",
     "lint": "cargo clippy"
   }
