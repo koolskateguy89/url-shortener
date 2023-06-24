@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm css:gen && trunk serve",
-    "rs:build": "pnpm css:gen && trunk build --release --public-url /yew/",
+    "build": "pnpm css:gen && trunk build --release --public-url /yew/",
     "start": "trunk serve --release",
     "lint": "cargo clippy",
     "css:gen": "tailwindcss -i input.css -o tailwind.css"

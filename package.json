@@ -3,7 +3,6 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "rs:build": "turbo run rs:build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -15,7 +14,10 @@
     "solid:dev": "turbo run dev --filter=server-actix --filter=web-solid-start",
     "next:dev": "turbo run dev --filter=server-actix --filter=web-nextjs",
     "yew:dev": "turbo run dev --filter=server-actix --filter=web-yew",
-    "server:build": "turbo run build --filter=server-actix"
+    "server:build": "turbo run server-actix#build",
+    "solid:build": "turbo run solid:build",
+    "next:build": "turbo run next:build",
+    "yew:build": "turbo run build --filter=web-yew"
   },
   "devDependencies": {
     "@turbo/gen": "^1.10.6",

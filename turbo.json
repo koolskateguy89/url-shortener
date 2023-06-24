@@ -10,17 +10,35 @@
         ".solid/**"
       ]
     },
-    "lint": {},
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "rs:build": {
-      "dependsOn": ["^rs:build"],
+    "server-actix#build": {
+      "dependsOn": ["web-yew#build"],
       "outputs": [
         "dist/**",
         "static/**"
       ]
+    },
+    "solid:build": {
+      "dependsOn": ["web-solid-start#build"],
+      "outputs": [
+        ".solid/**"
+      ]
+    },
+    "next:build": {
+      "dependsOn": ["web-nextjs#build"],
+      "outputs": [
+        ".next/**", "!.next/cache/**"
+      ]
+    },
+    "web-yew#build": {
+      "dependsOn": [],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "lint": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
     }
   }
 }
