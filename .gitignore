@@ -37,6 +37,3 @@ yarn-error.log*
 
 # Added by cargo
 /target
-
-# Static files for Shuttle in workspace
-/static
