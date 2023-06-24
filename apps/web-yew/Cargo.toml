@@ -12,6 +12,6 @@ gloo-net = "0.2.6"
 serde = { version = "1.0.164", features = ["derive"] }
 wasm-bindgen = "0.2.86"
 wasm-bindgen-futures = "0.4.36"
-web-sys = { version = "0.3.63", features = ["FormData", "HtmlFormElement"]}
+web-sys = { version = "0.3.63", features = ["FormData", "HtmlFormElement"] }
 yew = { version = "0.20.0", features = ["csr"] }
 yew-router = "0.17.0"
