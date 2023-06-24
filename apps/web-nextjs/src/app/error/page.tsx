@@ -5,8 +5,7 @@ export default function ErrorPage({
 }: {
   searchParams: {
     id: string;
-    // TODO: include string while still keeping autocomplete
-    cause?: Error;
+    cause?: Error | (string & {});
   };
 }) {
   return (

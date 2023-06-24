@@ -4,8 +4,10 @@ import { useSearchParams } from "solid-start";
 import type { Error } from "api";
 
 const ErrorPage: VoidComponent = () => {
-  // TODO: include string while still keeping autocomplete
-  const [searchParams] = useSearchParams<{ id: string; cause?: Error }>();
+  const [searchParams] = useSearchParams<{
+    id: string;
+    cause?: Error | (string & {});
+  }>();
 
   return (
     <main>

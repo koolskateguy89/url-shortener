@@ -26,5 +26,6 @@ module.exports = {
         allowSingleExtends: true,
       },
     ],
+    "@typescript-eslint/ban-types": "off",
   },
 };
