@@ -4,12 +4,14 @@ use url::Url;
 use crate::UserError;
 
 #[derive(Debug, FromRow)]
+#[allow(dead_code)]
 struct UrlRow {
     id: String,
     url: String,
 }
 
 #[derive(Debug, FromRow)]
+#[allow(dead_code)]
 struct LengthenLogRow {
     id: String,
     created_at: chrono::DateTime<chrono::Utc>,

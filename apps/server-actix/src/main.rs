@@ -5,7 +5,7 @@ use actix_web::{
     http::{header::ContentType, StatusCode},
     post,
     web::{self, ServiceConfig},
-    HttpResponse, Responder, Result,
+    HttpRequest, HttpResponse, Responder, Result,
 };
 use derive_more::Display;
 use log::info;
@@ -161,21 +161,37 @@ fn yew_app(mount_path: &str, serve_from: impl Into<PathBuf>) -> Files {
 
         let index_file = NamedFile::open_async(index_file).await?;
 
-        let (req, _) = req.into_parts();
-        let res = index_file.into_response(&req);
-        Ok(ServiceResponse::new(req, res))
+        let res = index_file.into_response(req.request());
+        Ok(req.into_response(res))
+    };
+
+    // This is only really for home page (/yew/)
+    // Use custom files listing renderer to always show the Yew app
+    let dir_renderer = |dir: &actix_files::Directory, req: &HttpRequest| {
+        // /yew will show 404 in yew app
+        // TODO: if path is /yew, redir to /yew/
+        // but unforunately have no way to know if it's /yew,
+        // - if url is /yew or /yew/,
+        // `req` gives /yew
+        // and `dir` doesn't help
+
+        let index_file = NamedFile::open(dir.path.join("index.html"))?;
+        let res = index_file.into_response(req);
+        Ok(ServiceResponse::new(req.clone(), res))
     };
 
     Files::new(mount_path, serve_from)
-        .index_file("index.html")
-        .redirect_to_slash_directory()
+        // .index_file("index.html")
+        // .redirect_to_slash_directory()
+        .prefer_utf8(true)
+        .show_files_listing()
+        .files_listing_renderer(dir_renderer)
         .default_handler(fn_service(default_handler))
 }
 
 async fn not_found_handler(req: ServiceRequest) -> Result<ServiceResponse> {
-    let (req, _) = req.into_parts();
     let res = HttpResponse::NotFound().body("not found");
-    Ok(ServiceResponse::new(req, res))
+    Ok(req.into_response(res))
 }
 
 mod middleware {
