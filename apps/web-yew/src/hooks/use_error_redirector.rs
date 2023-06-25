@@ -21,5 +21,6 @@ impl ErrorRedirector {
 
 #[hook]
 pub fn use_error_redirector() -> Option<ErrorRedirector> {
-    use_navigator().map(|navigator| ErrorRedirector { navigator })
+    let navigator = use_navigator()?;
+    Some(ErrorRedirector { navigator })
 }
