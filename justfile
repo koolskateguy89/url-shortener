@@ -18,9 +18,8 @@ default:
 uai:
   git update-index --again
 
-# pnpm outdated seems to be broken - idk it wasnt working for me
 outdated:
-  pnpm outdated -r
+  -pnpm -r outdated
 
 upgrade-npm-deps:
   pnpm up -r --latest
