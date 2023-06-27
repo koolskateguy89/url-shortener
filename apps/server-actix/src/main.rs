@@ -1,4 +1,4 @@
-use actix_files::{Files, NamedFile};
+use actix_files::{Directory, Files, NamedFile};
 use actix_web::{
     dev::{fn_service, ServiceRequest, ServiceResponse},
     error, get,
@@ -23,13 +23,10 @@ use common::{
 
 mod db;
 
-// FIXME: dev is broken, but prod works
-/*
-Error: spawning runtime process
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-*/
+// https://discord.com/channels/803236282088161321/1122643649503694919
+// Shuttle windows bug has been fixed, had to build from source
+// cargo install cargo-shuttle --git=https://github.com/shuttle-hq/shuttle
+// , will cargo-binstall when it's released
 
 #[derive(Clone, Debug, Display)]
 pub enum UserError {
@@ -167,7 +164,7 @@ fn yew_app(mount_path: &str, serve_from: impl Into<PathBuf>) -> Files {
 
     // This is only really for home page (/yew/)
     // Use custom files listing renderer to always show the Yew app
-    let dir_renderer = |dir: &actix_files::Directory, req: &HttpRequest| {
+    let dir_renderer = |dir: &Directory, req: &HttpRequest| {
         // /yew will show 404 in yew app
         // TODO: if path is /yew, redir to /yew/
         // but unforunately have no way to know if it's /yew,
