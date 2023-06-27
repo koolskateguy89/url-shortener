@@ -1,0 +1,3 @@
+# Include Yew app in Shuttle deployments
+# https://docs.shuttle.rs/resources/shuttle-static-folder#static-folders-in-gitignore
+!/static/yew

@@ -28,7 +28,7 @@ dev:
   pnpm dev --concurrency 15
 
 # Build the Actix server artifacts and deploy to Shuttle
-@deploy-shuttle:
+@shuttle-deploy:
   @pnpm server:build
   echo Removing static folder \'{{STATIC_FOLDER}}\'
   -rm -r {{STATIC_FOLDER}}
