@@ -1,12 +1,9 @@
-use actix_files::{Directory, Files, NamedFile};
-use actix_identity::Identity;
 use actix_web::{
-    dev::{fn_service, ServiceRequest, ServiceResponse},
-    error, get,
+    dev::{ServiceRequest, ServiceResponse},
+    error,
     http::{header::ContentType, StatusCode},
-    post,
     web::{self, ServiceConfig},
-    HttpMessage, HttpRequest, HttpResponse, Responder, Result,
+    HttpResponse, Result,
 };
 use derive_more::Display;
 use log::info;
@@ -15,16 +12,15 @@ use shuttle_runtime::CustomError;
 use shuttle_secrets::SecretStore;
 use sqlx::{Executor, PgPool};
 
-use std::collections::HashMap;
 use std::path::PathBuf;
 
-use common::{
-    error::Error as CommonError,
-    types::{self, ErrorResponse},
-};
+use common::{error::Error as CommonError, types::ErrorResponse};
 
 mod db;
 mod middleware;
+mod services;
+
+use crate::services::{api::ApiService, yew::YewService};
 
 // https://discord.com/channels/803236282088161321/1122643649503694919
 // Shuttle windows bug has been fixed, had to build from source
@@ -70,241 +66,13 @@ impl error::ResponseError for UserError {
     }
 }
 
-#[get("/api/urls")]
-async fn get_all_urls(state: web::Data<AppState>) -> Result<impl Responder> {
-    let db = sqlx::query_as::<_, (String, String)>("SELECT * FROM urls")
-        .fetch_all(&state.pool)
-        .await
-        .map_err(|err| UserError::Other(err.to_string()))?
-        .into_iter()
-        .collect::<HashMap<_, _>>();
-
-    Ok(web::Json(db))
-}
-
-#[post("/api/url/shorten")]
-async fn shorten_url(
-    body: web::Json<types::ShortenRequest>,
-    state: web::Data<AppState>,
-) -> Result<impl Responder> {
-    info!("shortening url: {}", body.url);
-
-    let id = db::insert_short_url(&state.pool, &body.url).await?;
-
-    Ok(web::Json(types::ShortenResponse { id }))
-}
-
-#[get("/api/url/{id}/lengthen")]
-async fn lengthen_url(
-    path: web::Path<(String,)>,
-    state: web::Data<AppState>,
-) -> Result<impl Responder> {
-    let (id,) = path.into_inner();
-
-    info!("lengthening id: {}", id);
-
-    let url = db::get_long_url(&state.pool, &id).await?;
-
-    Ok(web::Json(types::LengthenResponse { url }))
-}
-
-#[get("/api/url/{id}/exists")]
-async fn id_exists(
-    path: web::Path<(String,)>,
-    state: web::Data<AppState>,
-) -> Result<impl Responder> {
-    let (id,) = path.into_inner();
-
-    let exists = db::id_exists(&state.pool, &id)
-        .await
-        .map_err(|err| UserError::Other(err.to_string()))?;
-
-    match exists {
-        true => Ok("exists"),
-        false => Err(UserError::NotFound.into()),
-    }
-}
-
-#[get("/api/url/{id}/stats")]
-async fn lengthen_stats(
-    path: web::Path<(String,)>,
-    state: web::Data<AppState>,
-) -> Result<impl Responder> {
-    let (id,) = path.into_inner();
-
-    let db::LengthenStat { url, hits } = db::get_lengthen_stats(&state.pool, &id).await?;
-
-    Ok(web::Json(types::StatsResponse {
-        url,
-        num_hits: hits.len(),
-        hits,
-    }))
-}
-
-#[get("/api/users")]
-async fn get_all_users(state: web::Data<AppState>) -> Result<impl Responder> {
-    let usernames: Vec<String> = sqlx::query_as("SELECT username FROM users")
-        .fetch_all(&state.pool)
-        .await
-        .map_err(|err| UserError::Other(err.to_string()))?
-        .into_iter()
-        .map(|(username,)| username)
-        .collect();
-
-    Ok(web::Json(usernames))
-}
-
-#[get("/api/whoami")]
-async fn whoami(user: Option<Identity>) -> impl Responder {
-    let res = match user {
-        Some(user) => user.id().unwrap(),
-        None => "not logged in".to_string(),
-    };
-
-    log::warn!("whoami = {:?}", res);
-
-    res
-}
-
-// FIXME: identity not working
-// whoami still says not logged in after login DEFINITELY working
-// Set-Cookie header is set in response but _shrug_
-#[post("/api/login")]
-async fn login(
-    body: web::Json<types::LoginRequest>,
-    state: web::Data<AppState>,
-    req: HttpRequest,
-) -> Result<impl Responder> {
-    let types::LoginRequest { username, password } = body.into_inner();
-
-    let user_exists = db::user_exists(&state.pool, &username)
-        .await
-        .map_err(|err| UserError::Other(err.to_string()))?;
-
-    if !user_exists {
-        log::warn!("user `{}` not found", username);
-        return Err(UserError::NotFound.into());
-    }
-
-    // TODO: check pw correct
-
-    // TODO: propagate error
-    Identity::login(&req.extensions(), username).unwrap();
-
-    Ok(HttpResponse::Ok().finish())
-}
-
-#[post("/api/logout")]
-async fn logout(user: Identity) -> impl Responder {
-    user.logout();
-    HttpResponse::Ok()
-}
-
-#[post("/api/register")]
-async fn register(
-    body: web::Json<types::RegisterRequest>,
-    state: web::Data<AppState>,
-    req: HttpRequest,
-) -> Result<impl Responder> {
-    let types::RegisterRequest { username, password } = body.into_inner();
-
-    // TODO: validate pw and if user exists
-
-    Err::<String, _>(error::ErrorInternalServerError("not implemented"))
-}
-
-/// Serve static files for Yew frontend under `/yew/{mount_path}`
-///
-/// Note: this won't work if using `cargo shuttle run` at repo top level.
-///
-/// https://actix.rs/docs/static-files
-///
-/// https://yew.rs/docs/more/deployment
-fn yew_app(mount_path: &str, serve_from: impl Into<PathBuf>) -> Files {
-    // Using a default handler to always show the Yew app
-    // see https://yew.rs/docs/more/deployment#serving-indexhtml-as-fallback
-    let default_handler = |req: ServiceRequest| async {
-        let state: &web::Data<AppState> = req.app_data().expect("App data not set");
-
-        let yew_folder = state.static_folder.join("yew");
-        let index_file = yew_folder.join("index.html");
-
-        let index_file = NamedFile::open_async(index_file).await?;
-
-        let res = index_file.into_response(req.request());
-        Ok(req.into_response(res))
-    };
-
-    // This is only really for home page (/yew/)
-    // Use custom files listing renderer to always show the Yew app
-    let dir_renderer = |dir: &Directory, req: &HttpRequest| {
-        // /yew will show 404 in yew app
-        // TODO: if path is /yew, redir to /yew/
-        // but unforunately have no way to know if it's /yew,
-        // - if url is /yew or /yew/,
-        // `req` gives /yew
-        // and `dir` doesn't help
-
-        let index_file = NamedFile::open(dir.path.join("index.html"))?;
-        let res = index_file.into_response(req);
-        Ok(ServiceResponse::new(req.clone(), res))
-    };
-
-    Files::new(mount_path, serve_from)
-        // .index_file("index.html")
-        // .redirect_to_slash_directory()
-        .prefer_utf8(true)
-        .show_files_listing()
-        .files_listing_renderer(dir_renderer)
-        .default_handler(fn_service(default_handler))
-}
-
 async fn not_found_handler(req: ServiceRequest) -> Result<ServiceResponse> {
     let res = HttpResponse::NotFound().body("not found");
     Ok(req.into_response(res))
 }
 
-trait Services {
-    fn api_service(&mut self, session_key: &[u8]) -> &mut Self;
-    fn yew_service(&mut self, yew_folder: impl Into<PathBuf>) -> &mut Self;
-}
-
-impl Services for ServiceConfig {
-    fn api_service(&mut self, session_key: &[u8]) -> &mut Self {
-        self.service(
-            web::scope("")
-                .wrap(middleware::cors())
-                .wrap(middleware::logger())
-                .wrap(middleware::normalize_path())
-                .wrap(middleware::identity())
-                .wrap(middleware::session(session_key))
-                // url shortener
-                .service(get_all_urls)
-                .service(web::redirect("/", "/api/urls"))
-                .service(shorten_url)
-                .service(lengthen_url)
-                .service(lengthen_stats)
-                .service(id_exists)
-                // user auth
-                .service(get_all_users)
-                .service(whoami)
-                .service(login)
-                .service(logout)
-                .service(register),
-        )
-    }
-
-    fn yew_service(&mut self, yew_folder: impl Into<PathBuf>) -> &mut Self {
-        self.service(
-            web::scope("/yew")
-                .wrap(middleware::logger())
-                .service(yew_app("/", yew_folder)),
-        )
-    }
-}
-
 #[derive(Debug)]
-struct AppState {
+pub struct AppState {
     pool: PgPool,
     static_folder: PathBuf,
 }
@@ -342,6 +110,8 @@ async fn actix_web(
 
     Ok(config.into())
 }
+
+// TODO: split tests into separate files
 
 // #[cfg(test)]
 // mod tests {
