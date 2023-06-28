@@ -23,6 +23,16 @@ export interface StatsResponse {
   hits: number[];
 }
 
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  username: string;
+  password: string;
+}
+
 export type Error = "NotFound" | "InvalidUrl";
 
 export interface ErrorResponse {
@@ -40,7 +50,7 @@ export interface ErrorResponse {
  * @returns
  */
 async function shorten(url: string): Promise<ShortenResponse> {
-  const res = await fetch(API_URL, {
+  const res = await fetch(`${API_URL}/url/shorten`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -57,13 +67,16 @@ async function lengthen(
     cache: "no-cache",
   }
 ): Promise<LengthenResponse | ErrorResponse> {
-  const res = await fetch(`${API_URL}/${encodeURIComponent(id)}`, init);
+  const res = await fetch(
+    `${API_URL}/url/${encodeURIComponent(id)}/lengthen`,
+    init
+  );
 
   return (await res.json()) as LengthenResponse | ErrorResponse;
 }
 
 async function idExists(id: string): Promise<boolean> {
-  const res = await fetch(`${API_URL}/${id}/exists`);
+  const res = await fetch(`${API_URL}/url/${id}/exists`);
 
   return res.ok;
 }
@@ -74,9 +87,50 @@ async function getStats(
     cache: "no-cache",
   }
 ): Promise<StatsResponse | ErrorResponse> {
-  const res = await fetch(`${API_URL}/${encodeURIComponent(id)}/stats`, init);
+  const res = await fetch(
+    `${API_URL}/url/${encodeURIComponent(id)}/stats`,
+    init
+  );
 
   return (await res.json()) as StatsResponse | ErrorResponse;
+}
+
+async function whoami(): Promise<string> {
+  const res = await fetch(`${API_URL}/whoami`);
+
+  return res.text();
+}
+
+async function login(credentials: LoginRequest): Promise<boolean> {
+  const res = await fetch(`${API_URL}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  return res.ok;
+}
+
+async function logout(): Promise<boolean> {
+  const res = await fetch(`${API_URL}/logout`, {
+    method: "POST",
+  });
+
+  return res.ok;
+}
+
+async function register(body: RegisterRequest): Promise<boolean> {
+  const res = await fetch(`${API_URL}/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return res.ok;
 }
 
 export const api = {
@@ -84,4 +138,8 @@ export const api = {
   lengthen,
   idExists,
   getStats,
+  whoami,
+  login,
+  logout,
+  register,
 };

@@ -5,7 +5,10 @@ use std::fmt::{Debug, Display};
 
 use common::{
     error::{Error, Result},
-    types::{ErrorResponse, LengthenResponse, ShortenRequest, ShortenResponse, StatsResponse},
+    types::{
+        ErrorResponse, LengthenResponse, LoginRequest, RegisterRequest, ShortenRequest,
+        ShortenResponse, StatsResponse,
+    },
 };
 
 fn to_error<T: Debug>(s: T) -> Error {
@@ -16,7 +19,7 @@ fn to_error<T: Debug>(s: T) -> Error {
 pub async fn shorten(url: String) -> Result<ShortenResponse> {
     let body = ShortenRequest { url };
 
-    let response = Request::post("/api")
+    let response = Request::post("/api/url/shorten")
         .json(&body)
         .map_err(to_error)? // should not happen
         .send()
@@ -41,7 +44,7 @@ pub async fn shorten(url: String) -> Result<ShortenResponse> {
 }
 
 pub async fn lengthen<T: Display>(id: T) -> Result<LengthenResponse> {
-    let response = Request::get(&format!("/api/{id}"))
+    let response = Request::get(&format!("/api/url/{id}/lengthen"))
         .send()
         .await
         .map_err(to_error)?;
@@ -64,7 +67,7 @@ pub async fn lengthen<T: Display>(id: T) -> Result<LengthenResponse> {
 }
 
 pub async fn get_stats<T: Display>(id: T) -> Result<StatsResponse> {
-    let response = Request::get(&format!("/api/{id}/stats"))
+    let response = Request::get(&format!("/api/url/{id}/stats"))
         .send()
         .await
         .map_err(to_error)?;
@@ -84,4 +87,36 @@ pub async fn get_stats<T: Display>(id: T) -> Result<StatsResponse> {
 
         Err(error)
     }
+}
+
+pub async fn whoami() -> Result<String> {
+    let response = Request::get("/api/whoami").send().await.map_err(to_error)?;
+
+    response
+        .text()
+        .await
+        .map_err(|e| Error::Other(format!("text error: {e}"))) // should not happen
+}
+
+// TODO?: login error enum for result
+pub async fn login(username: impl Into<String>, password: impl Into<String>) -> Result<()> {
+    let body = LoginRequest {
+        username: username.into(),
+        password: password.into(),
+    };
+
+    todo!()
+}
+
+pub async fn logout() -> Result<()> {
+    todo!()
+}
+
+pub async fn register(username: impl Into<String>, password: impl Into<String>) -> Result<()> {
+    let body = RegisterRequest {
+        username: username.into(),
+        password: password.into(),
+    };
+
+    todo!()
 }

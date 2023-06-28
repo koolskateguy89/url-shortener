@@ -35,3 +35,17 @@ pub struct StatsResponse {
     pub num_hits: usize,
     pub hits: Vec<i64>,
 }
+
+// Auth
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct LoginRequest {
+    pub username: String,
+    pub password: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct RegisterRequest {
+    pub username: String,
+    pub password: String,
+}

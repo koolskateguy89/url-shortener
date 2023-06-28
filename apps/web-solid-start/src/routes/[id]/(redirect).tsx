@@ -8,6 +8,7 @@ export function routeData({ params }: RouteDataArgs) {
     async ({ id }) => {
       // Guaranteed to not fail because of validation at layout level
       const { url } = (await api.lengthen(id)) as LengthenResponse;
+      // FIXME: isn't working when opening the URL in a new tab
       throw redirect(url);
     },
     {

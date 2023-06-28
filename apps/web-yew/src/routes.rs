@@ -3,12 +3,14 @@ use yew_router::prelude::*;
 
 pub mod error;
 pub mod home;
+pub mod login;
 pub mod not_found;
 pub mod redirect;
 pub mod stats;
 
 use error::ErrorPage;
 use home::HomePage;
+use login::LoginPage;
 use not_found::NotFoundPage;
 use redirect::RedirectPage;
 use stats::StatsPage;
@@ -24,6 +26,8 @@ pub enum Route {
     Url,
     #[at("/error")]
     Error,
+    #[at("/login")]
+    Login,
     #[at("/404")]
     #[not_found]
     NotFound,
@@ -48,6 +52,7 @@ pub fn switch(route: Route) -> Html {
             <Switch<UrlRoute> render={switch_url} />
         },
         Route::Error => html! { <ErrorPage /> },
+        Route::Login => html! { <LoginPage /> },
         Route::NotFound => html! { <NotFoundPage /> },
     }
 }

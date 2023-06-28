@@ -48,22 +48,25 @@ TODO?: add /target to turbo build output
   - [x] Shorten URL
   - [x] Lengthen URL
   - [ ] Register
-  - [ ] Sign in
+  - [...] Sign in
 - Solid-Start
   - [x] Home (shorten URL)
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
+  - [...] Sign in
 - NextJs
   - [x] Home
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
+  - [...] Sign in
 - Yew
   - [x] Home
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
+  - [...] Sign in
 - Tauri
   - [ ] Home
   - [ ] Redirect
@@ -71,7 +74,7 @@ TODO?: add /target to turbo build output
 
 ### Roadmap
 
-- [ ] Auth
+- [~] Auth
   - [ ] View all my short URLs
     - [ ] Stats
   - [ ] Deletion of short URLs

@@ -3,6 +3,9 @@ use url::Url;
 
 use crate::UserError;
 
+// TODO: split into separate files,
+// auth and url
+
 #[derive(Debug, FromRow)]
 #[allow(dead_code)]
 struct UrlRow {
@@ -21,6 +24,13 @@ struct LengthenLogRow {
 pub struct LengthenStat {
     pub url: String,
     pub hits: Vec<i64>,
+}
+
+#[derive(Debug, FromRow)]
+#[allow(dead_code)]
+pub struct UserRow {
+    username: String,
+    password: String,
 }
 
 impl LengthenStat {
@@ -113,6 +123,17 @@ pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<LengthenStat,
 
     Ok(LengthenStat::new(url, rows))
 }
+
+pub async fn user_exists(pool: &PgPool, username: &str) -> sqlx::Result<bool> {
+    let (exists,) = sqlx::query_as("SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)")
+        .bind(username)
+        .fetch_one(pool)
+        .await?;
+
+    Ok(exists)
+}
+
+// TODO: find password hashing lib
 
 #[cfg(test)]
 mod tests {

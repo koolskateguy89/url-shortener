@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { api } from "api";
+import { type Error, api } from "api";
 
 export default async function Layout({
   children,
@@ -14,7 +14,11 @@ export default async function Layout({
   const exists = await api.idExists(params.id);
 
   if (!exists) {
-    redirect(`/error?id=${encodeURIComponent(params.id)}&cause=404`);
+    redirect(
+      `/error?id=${encodeURIComponent(params.id)}&cause=${
+        "NotFound" satisfies Error
+      }`
+    );
   }
 
   return <>{children}</>;

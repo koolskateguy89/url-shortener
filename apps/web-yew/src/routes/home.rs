@@ -75,6 +75,7 @@ pub fn HomePage() -> Html {
                     name="url"
                     placeholder="Url"
                     class="input"
+                    required=true
                     {disabled}
                     />
                 <button
