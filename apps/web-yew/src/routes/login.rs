@@ -3,23 +3,20 @@ use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
-use crate::api::login;
-use common::error::Error;
+use crate::api::auth::{login, logout, whoami};
 
 // TODO: extract fetch status enum to a common module (in web-yew),
 // with generic types for success and error
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum LoginStatus {
     Idle,
     Loading,
     Success,
-    // TODO: will probably change inner to login error type
-    Error(Error),
+    Error(gloo_net::Error),
 }
 
-// TODO: probably change error type to login error type
-impl From<Result<(), Error>> for LoginStatus {
-    fn from(result: Result<(), Error>) -> LoginStatus {
+impl From<Result<(), gloo_net::Error>> for LoginStatus {
+    fn from(result: Result<(), gloo_net::Error>) -> LoginStatus {
         match result {
             Ok(_) => LoginStatus::Success,
             Err(err) => LoginStatus::Error(err),
@@ -45,8 +42,13 @@ pub fn LoginPage() -> Html {
 
     let handle_logout = {
         Callback::from(move |_| {
-            // TODO
-            log!("logout");
+            wasm_bindgen_futures::spawn_local(async move {
+                // TODO?
+                match logout().await {
+                    Ok(logout_successful) => log!("logout_successful =", logout_successful),
+                    Err(err) => log!(format!("err = {err:?}")),
+                }
+            });
         })
     };
 

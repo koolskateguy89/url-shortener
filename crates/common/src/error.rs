@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+// TODO?: rename to UrlError, it's used in a lot of places
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum Error {
     InvalidUrl,
@@ -7,4 +8,4 @@ pub enum Error {
     Other(String),
 }
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type UrlResult<T> = std::result::Result<T, Error>;

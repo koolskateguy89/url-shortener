@@ -32,7 +32,7 @@ pub fn StatsPage(props: &StatsPageProps) -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     log!(format!("id = {id:?}"));
 
-                    match api::get_stats(&id).await {
+                    match api::url::get_stats(&id).await {
                         Ok(stats) => {
                             log!(format!("stats = {stats:?}"));
 

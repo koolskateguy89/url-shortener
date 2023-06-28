@@ -3,7 +3,7 @@ use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
-use crate::api::shorten;
+use crate::api::url::shorten;
 use crate::components::StatusDisplay;
 use common::{error::Error, types::ShortenResponse};
 
