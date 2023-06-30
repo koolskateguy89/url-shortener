@@ -27,8 +27,8 @@ upgrade-npm-deps:
 dev:
   pnpm dev --concurrency 15
 
-# Build the Actix server artifacts and deploy to Shuttle
-@shuttle-deploy:
+# Build the Actix server artifacts
+@build-static:
   @pnpm server:build
   echo Removing static folder \'{{STATIC_FOLDER}}\'
   -rm -r {{STATIC_FOLDER}}
@@ -36,4 +36,7 @@ dev:
   mkdir -p {{STATIC_FOLDER}}
   echo Copying Yew static files to \'{{STATIC_FOLDER}}\'
   cp -r apps/web-yew/dist {{STATIC_FOLDER}}/yew
+
+# Build the Actix server artifacts and deploy to Shuttle
+@shuttle-deploy: build-static
   @cargo shuttle deploy --allow-dirty
