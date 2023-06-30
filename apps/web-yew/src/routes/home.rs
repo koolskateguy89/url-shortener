@@ -3,17 +3,11 @@ use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
-use crate::api::url::shorten;
+use crate::api::{url::shorten, RequestStatus};
 use crate::components::StatusDisplay;
 use common::{error::Error, types::ShortenResponse};
 
-#[derive(Debug, Clone)]
-pub enum ShortenStatus {
-    Idle,
-    Loading,
-    Success(AttrValue),
-    Error(Error),
-}
+pub type ShortenStatus = RequestStatus<AttrValue, Error>;
 
 impl From<Result<ShortenResponse, Error>> for ShortenStatus {
     fn from(result: Result<ShortenResponse, Error>) -> ShortenStatus {
@@ -61,7 +55,7 @@ pub fn HomePage() -> Html {
         })
     };
 
-    let disabled = *status == ShortenStatus::Loading;
+    let disabled = matches!(*status, ShortenStatus::Loading);
 
     let status = (*status).clone();
 

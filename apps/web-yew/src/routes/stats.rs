@@ -10,10 +10,7 @@ pub struct StatsPageProps {
     pub id: AttrValue,
 }
 
-enum Status {
-    Loading,
-    Success(StatsResponse),
-}
+type Status = api::RequestStatus<StatsResponse, ()>;
 
 #[function_component]
 pub fn StatsPage(props: &StatsPageProps) -> Html {
@@ -49,9 +46,9 @@ pub fn StatsPage(props: &StatsPageProps) -> Html {
         );
     }
 
+    // TODO: actually handle all cases
     let content = move || -> Html {
         match *status {
-            Status::Loading => html!(<p>{ "Loading..." }</p>),
             Status::Success(StatsResponse {
                 ref url,
                 hits: _,
@@ -62,6 +59,7 @@ pub fn StatsPage(props: &StatsPageProps) -> Html {
                     <p>{ "Num hits: " }{num_hits}</p>
                 </>
             },
+            _ => html!(<p>{ "Loading..." }</p>),
         }
     };
 

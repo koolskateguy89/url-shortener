@@ -3,22 +3,18 @@ use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
-use crate::api::auth::{login, logout, whoami};
+use crate::api::{
+    auth::{login, logout, whoami},
+    NetResult, RequestStatus,
+};
+use crate::components::Whoami;
 
-// TODO: extract fetch status enum to a common module (in web-yew),
-// with generic types for success and error
-#[derive(Debug)]
-pub enum LoginStatus {
-    Idle,
-    Loading,
-    Success,
-    Error(gloo_net::Error),
-}
+type LoginStatus = RequestStatus<bool, gloo_net::Error>;
 
-impl From<Result<(), gloo_net::Error>> for LoginStatus {
-    fn from(result: Result<(), gloo_net::Error>) -> LoginStatus {
+impl From<NetResult<bool>> for LoginStatus {
+    fn from(result: NetResult<bool>) -> LoginStatus {
         match result {
-            Ok(_) => LoginStatus::Success,
+            Ok(logged_in) => LoginStatus::Success(logged_in),
             Err(err) => LoginStatus::Error(err),
         }
     }
@@ -32,18 +28,45 @@ pub fn LoginPage() -> Html {
 
         Callback::from(move |event: SubmitEvent| {
             event.prevent_default();
-            // TODO
-            log!("submit");
+
+            // getting formdata from submit event: https://github.com/yewstack/yew/issues/474#issuecomment-1445382035
+            let form: HtmlFormElement = event
+                .target_dyn_into()
+                .expect_throw("Event target is not a form");
+
+            let form_data =
+                FormData::new_with_form(&form).expect_throw("Form data could not be instantiated");
+
+            let username = form_data
+                .get("username")
+                .as_string()
+                .expect_throw("Could not get username from form");
+            let password = form_data
+                .get("password")
+                .as_string()
+                .expect_throw("Could not get password from form");
+
+            let status = status.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                status.set(LoginStatus::Loading);
+
+                log!(format!("username = {username}"));
+                log!(format!("password = {password}"));
+
+                let result = login(username, password).await;
+                log!(format!("result = {result:?}"));
+
+                status.set(result.into());
+            });
         })
     };
 
     let loading = matches!(*status, LoginStatus::Loading);
-    let loading = true;
 
     let handle_logout = {
         Callback::from(move |_| {
             wasm_bindgen_futures::spawn_local(async move {
-                // TODO?
+                // TODO: handle properly
                 match logout().await {
                     Ok(logout_successful) => log!("logout_successful =", logout_successful),
                     Err(err) => log!(format!("err = {err:?}")),
@@ -54,6 +77,8 @@ pub fn LoginPage() -> Html {
 
     html! {
       <main class="flex h-screen flex-col items-center justify-center space-y-4">
+        <Whoami />
+
         <div class="mb-20 flex flex-col gap-y-4">
           <pre>
             { "me = " }
