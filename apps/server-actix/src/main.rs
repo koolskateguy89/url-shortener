@@ -22,11 +22,6 @@ mod services;
 
 use crate::services::{api::ApiService, yew::YewService};
 
-// https://discord.com/channels/803236282088161321/1122643649503694919
-// Shuttle windows bug has been fixed, had to build from source
-// cargo install cargo-shuttle --git=https://github.com/shuttle-hq/shuttle
-// , will cargo-binstall when it's released
-
 #[derive(Clone, Debug, Display)]
 pub enum UserError {
     #[display(fmt = "unused")]
