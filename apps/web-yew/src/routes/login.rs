@@ -4,7 +4,7 @@ use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
 use crate::api::{
-    auth::{login, logout, whoami},
+    auth::{login, logout},
     NetResult, RequestStatus,
 };
 use crate::components::Whoami;
@@ -53,10 +53,10 @@ pub fn LoginPage() -> Html {
                 log!(format!("username = {username}"));
                 log!(format!("password = {password}"));
 
-                let result = login(username, password).await;
-                log!(format!("result = {result:?}"));
+                let login_result = login(username, password).await;
+                log!(format!("login_result = {login_result:?}"));
 
-                status.set(result.into());
+                status.set(login_result.into());
             });
         })
     };
@@ -77,18 +77,8 @@ pub fn LoginPage() -> Html {
 
     html! {
       <main class="flex h-screen flex-col items-center justify-center space-y-4">
-        <Whoami />
-
-        <div class="mb-20 flex flex-col gap-y-4">
-          <pre>
-            { "me = " }
-            <code>
-              if loading {
-                <svg class="h-4 w-4 animate-spin mr-2 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-              }
-              { "TODO: fetch whoami" }
-            </code>
-          </pre>
+        <div class="mb-12 flex flex-col gap-y-4">
+          <Whoami />
           <button onclick={handle_logout} class="button-destructive">
             { "LOG out" }
           </button>
@@ -98,7 +88,7 @@ pub fn LoginPage() -> Html {
           <input
             name="username"
             placeholder="Username"
-            auto-complete="username"
+            autocomplete="username"
             class="input"
             required=true
             disabled={loading}
@@ -107,7 +97,7 @@ pub fn LoginPage() -> Html {
             type="password"
             name="password"
             placeholder="Password"
-            auto-complete="current-password"
+            autocomplete="current-password"
             class="input"
             required=true
             disabled={loading}
