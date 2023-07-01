@@ -8,23 +8,27 @@ use crate::api::{
     NetResult, RequestStatus,
 };
 use crate::components::Whoami;
+use crate::hooks::{use_mutation, MutationDispatcher};
 
 type LoginStatus = RequestStatus<bool, gloo_net::Error>;
 
 impl From<NetResult<bool>> for LoginStatus {
-    fn from(result: NetResult<bool>) -> LoginStatus {
+    fn from(result: NetResult<bool>) -> Self {
         match result {
-            Ok(logged_in) => LoginStatus::Success(logged_in),
-            Err(err) => LoginStatus::Error(err),
+            Ok(logged_in) => Self::Success(logged_in),
+            Err(err) => Self::Error(err),
         }
     }
 }
 
 #[function_component]
 pub fn LoginPage() -> Html {
-    let status = use_state(|| LoginStatus::Idle);
+    let login_mut = use_mutation(move |(username, password): (String, String)| async move {
+        login(username, password).await
+    });
+
     let onsubmit = {
-        let status = status.clone();
+        let login_mut = login_mut.clone();
 
         Callback::from(move |event: SubmitEvent| {
             event.prevent_default();
@@ -46,22 +50,11 @@ pub fn LoginPage() -> Html {
                 .as_string()
                 .expect_throw("Could not get password from form");
 
-            let status = status.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                status.set(LoginStatus::Loading);
-
-                log!(format!("username = {username}"));
-                log!(format!("password = {password}"));
-
-                let login_result = login(username, password).await;
-                log!(format!("login_result = {login_result:?}"));
-
-                status.set(login_result.into());
-            });
+            login_mut.mutate((username, password));
         })
     };
 
-    let loading = matches!(*status, LoginStatus::Loading);
+    let loading = matches!(login_mut.status, LoginStatus::Loading);
 
     let handle_logout = {
         Callback::from(move |_| {

@@ -1,45 +1,45 @@
-use yew::prelude::*;
-
 use std::fmt::Debug;
 use std::{future::Future, rc::Rc};
+use yew::prelude::*;
 
 use crate::api::RequestStatus;
 
-pub struct Query<F, Succ, Err> {
+pub struct Mutation<F, Succ, Err> {
     func: Rc<F>,
     pub status: RequestStatus<Succ, Err>,
 }
 
 /// Generic hook for querying data. Tried to copy react-query
 #[hook]
-pub fn use_query<F, Fut, Succ, Err>(func: F) -> UseStateHandle<Query<F, Succ, Err>>
+pub fn use_mutation<F, In, Fut, Succ, Err>(func: F) -> UseStateHandle<Mutation<F, Succ, Err>>
 where
-    F: Fn() -> Fut + 'static,
+    F: Fn(In) -> Fut + 'static,
+    In: 'static,
     Fut: Future<Output = Result<Succ, Err>>,
     Succ: Debug + PartialEq + 'static,
     Err: Debug + 'static,
 {
-    let query = use_state(|| Query {
+    let mutation = use_state(|| Mutation {
         func: Rc::new(func),
         status: RequestStatus::Idle,
     });
 
-    query
+    mutation
 }
 
-pub trait QueryDispatcher {
-    fn fetch(&self);
+pub trait MutationDispatcher<In> {
+    fn mutate(&self, input: In);
 }
 
-impl<F, Fut, Succ, Err> QueryDispatcher for UseStateHandle<Query<F, Succ, Err>>
+impl<F, In, Fut, Succ, Err> MutationDispatcher<In> for UseStateHandle<Mutation<F, Succ, Err>>
 where
-    F: Fn() -> Fut + 'static,
+    F: Fn(In) -> Fut + 'static,
+    In: 'static,
     Fut: Future<Output = Result<Succ, Err>>,
     Succ: Debug + PartialEq + 'static,
     Err: Debug + 'static,
 {
-    // TODO?: accept input for func
-    fn fetch(&self) {
+    fn mutate(&self, input: In) {
         if matches!(self.status, RequestStatus::Loading) {
             return;
         }
@@ -48,22 +48,22 @@ where
         let func = self.func.clone();
 
         wasm_bindgen_futures::spawn_local(async move {
-            handle.set(Query {
+            handle.set(Mutation {
                 func: func.clone(),
                 status: RequestStatus::Loading,
             });
 
-            let result = func().await;
+            let result = func(input).await;
 
             match result {
                 Ok(data) => {
-                    handle.set(Query {
+                    handle.set(Mutation {
                         func,
                         status: RequestStatus::Success(data),
                     });
                 }
                 Err(err) => {
-                    handle.set(Query {
+                    handle.set(Mutation {
                         func,
                         status: RequestStatus::Error(err),
                     });

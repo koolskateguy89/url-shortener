@@ -1,15 +1,13 @@
 use yew::prelude::*;
 
 use crate::api::{auth::whoami, NetResult, RequestStatus};
-use crate::hooks::{use_query, QueryDispatcher, QueryStatus};
+use crate::hooks::{use_query, QueryDispatcher};
 
-type WhoamiStatus = RequestStatus<String, gloo_net::Error>;
-
-impl From<NetResult<String>> for WhoamiStatus {
-    fn from(result: NetResult<String>) -> WhoamiStatus {
+impl From<NetResult<String>> for RequestStatus<String, gloo_net::Error> {
+    fn from(result: NetResult<String>) -> Self {
         match result {
-            Ok(me) => WhoamiStatus::Success(me),
-            Err(err) => WhoamiStatus::Error(err),
+            Ok(me) => Self::Success(me),
+            Err(err) => Self::Error(err),
         }
     }
 }
@@ -38,9 +36,9 @@ pub fn Whoami() -> Html {
         })
     };
 
-    let loading = matches!(whoami_query.status, WhoamiStatus::Loading);
+    let loading = matches!(whoami_query.status, RequestStatus::Loading);
 
-    let me = if let QueryStatus::Success(me) = &whoami_query.status {
+    let me = if let RequestStatus::Success(me) = &whoami_query.status {
         format!("\"{me}\"")
     } else {
         "".to_string()
@@ -54,7 +52,6 @@ pub fn Whoami() -> Html {
                     <img class="h-4 w-4 animate-spin mr-2 inline" src="assets/loader-2.svg" alt="loading" />
                 }
                 <code>{ me }</code>
-                <img class="h-4 w-4 animate-spin mr-2" src="assets/yew.svg" alt="yew logo hopefully (nope)" />
             </pre>
 
             <button onclick={handle_refetch} class="button-destructive">
