@@ -21,8 +21,8 @@ impl From<NetResult<bool>> for LoginStatus {
     }
 }
 
-#[function_component]
-pub fn LoginPage() -> Html {
+#[function_component(LoginPage)]
+pub fn login_page() -> Html {
     let login_mut = use_mutation(move |(username, password): (String, String)| async move {
         login(username, password).await
     });

@@ -12,8 +12,8 @@ pub struct RedirectPageProps {
     pub id: AttrValue,
 }
 
-#[function_component]
-pub fn RedirectPage(props: &RedirectPageProps) -> Html {
+#[function_component(RedirectPage)]
+pub fn redirect_page(props: &RedirectPageProps) -> Html {
     let RedirectPageProps { id } = props;
 
     let error_redirector = use_error_redirector().unwrap();

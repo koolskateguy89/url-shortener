@@ -18,8 +18,8 @@ impl From<Result<ShortenResponse, Error>> for ShortenStatus {
     }
 }
 
-#[function_component]
-pub fn HomePage() -> Html {
+#[function_component(HomePage)]
+pub fn home_page() -> Html {
     let status = use_state(|| ShortenStatus::Idle);
     let onsubmit = {
         let status = status.clone();

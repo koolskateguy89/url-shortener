@@ -12,8 +12,8 @@ impl From<NetResult<String>> for RequestStatus<String, gloo_net::Error> {
     }
 }
 
-#[function_component]
-pub fn Whoami() -> Html {
+#[function_component(Whoami)]
+pub fn who_am_i() -> Html {
     let whoami_query = use_query(whoami);
 
     {

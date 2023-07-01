@@ -8,8 +8,8 @@ mod routes;
 
 use routes::{switch, Route};
 
-#[function_component]
-fn App() -> Html {
+#[function_component(App)]
+fn app() -> Html {
     html! {
         <BrowserRouter>
             <Switch<Route> render={switch} />

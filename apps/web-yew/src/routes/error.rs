@@ -17,8 +17,8 @@ impl SearchParams {
     }
 }
 
-#[function_component]
-pub fn ErrorPage() -> Html {
+#[function_component(ErrorPage)]
+pub fn error_page() -> Html {
     let location = use_location().expect_throw("location isn't set ???");
     let search_params: SearchParams = location.query().expect_throw("query couldn't be parsed");
 

@@ -12,8 +12,8 @@ pub struct StatsPageProps {
 
 type Status = api::RequestStatus<StatsResponse, ()>;
 
-#[function_component]
-pub fn StatsPage(props: &StatsPageProps) -> Html {
+#[function_component(StatsPage)]
+pub fn stats_page(props: &StatsPageProps) -> Html {
     let StatsPageProps { id } = props;
 
     let error_redirector = use_error_redirector().unwrap();
