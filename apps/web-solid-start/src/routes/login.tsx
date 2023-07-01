@@ -59,7 +59,7 @@ const LoginPage: VoidComponent = () => {
         <Input
           name="username"
           placeholder="Username"
-          auto-complete="username"
+          autocomplete="username"
           disabled={isLoading}
         />
 
@@ -67,7 +67,7 @@ const LoginPage: VoidComponent = () => {
           type="password"
           name="password"
           placeholder="Password"
-          auto-complete="current-password"
+          autocomplete="current-password"
           disabled={isLoading}
         />
 
