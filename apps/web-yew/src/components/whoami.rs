@@ -14,29 +14,17 @@ impl From<NetResult<String>> for RequestStatus<String, gloo_net::Error> {
 
 #[function_component(Whoami)]
 pub fn who_am_i() -> Html {
-    let whoami_query = use_query(whoami);
-
-    {
-        // fetch whoami on mount
-        let whoami_query = whoami_query.clone();
-
-        use_effect_with_deps(
-            move |_| {
-                whoami_query.fetch();
-            },
-            (),
-        );
-    }
+    let whoami_query = use_query((), |_| async move { whoami().await });
 
     let handle_refetch = {
         let whoami_query = whoami_query.clone();
 
         Callback::from(move |_| {
-            whoami_query.fetch();
+            whoami_query.fetch(());
         })
     };
 
-    let loading = matches!(whoami_query.status, RequestStatus::Loading);
+    let loading = whoami_query.is_loading();
 
     let me = if let RequestStatus::Success(me) = &whoami_query.status {
         format!("\"{me}\"")

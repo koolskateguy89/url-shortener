@@ -3,23 +3,9 @@ use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
-use crate::api::{
-    auth::{login, logout},
-    NetResult, RequestStatus,
-};
+use crate::api::auth::{login, logout};
 use crate::components::Whoami;
 use crate::hooks::{use_mutation, MutationDispatcher};
-
-type LoginStatus = RequestStatus<bool, gloo_net::Error>;
-
-impl From<NetResult<bool>> for LoginStatus {
-    fn from(result: NetResult<bool>) -> Self {
-        match result {
-            Ok(logged_in) => Self::Success(logged_in),
-            Err(err) => Self::Error(err),
-        }
-    }
-}
 
 #[function_component(LoginPage)]
 pub fn login_page() -> Html {
@@ -54,7 +40,7 @@ pub fn login_page() -> Html {
         })
     };
 
-    let loading = matches!(login_mut.status, LoginStatus::Loading);
+    let loading = login_mut.is_loading();
 
     let handle_logout = {
         Callback::from(move |_| {

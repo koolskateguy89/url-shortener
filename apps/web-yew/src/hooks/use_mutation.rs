@@ -1,12 +1,30 @@
-use std::fmt::Debug;
-use std::{future::Future, rc::Rc};
 use yew::prelude::*;
+
+use std::{future::Future, rc::Rc};
 
 use crate::api::RequestStatus;
 
 pub struct Mutation<F, Succ, Err> {
     func: Rc<F>,
     pub status: RequestStatus<Succ, Err>,
+}
+
+impl<F, Succ, Err> Mutation<F, Succ, Err> {
+    pub fn is_idle(&self) -> bool {
+        matches!(self.status, RequestStatus::Idle)
+    }
+
+    pub fn is_loading(&self) -> bool {
+        matches!(self.status, RequestStatus::Loading)
+    }
+
+    pub fn is_success(&self) -> bool {
+        matches!(self.status, RequestStatus::Success(_))
+    }
+
+    pub fn is_error(&self) -> bool {
+        matches!(self.status, RequestStatus::Error(_))
+    }
 }
 
 /// Generic hook for querying data. Tried to copy react-query
@@ -16,8 +34,8 @@ where
     F: Fn(In) -> Fut + 'static,
     In: 'static,
     Fut: Future<Output = Result<Succ, Err>>,
-    Succ: Debug + PartialEq + 'static,
-    Err: Debug + 'static,
+    Succ: 'static,
+    Err: 'static,
 {
     let mutation = use_state(|| Mutation {
         func: Rc::new(func),
@@ -36,8 +54,8 @@ where
     F: Fn(In) -> Fut + 'static,
     In: 'static,
     Fut: Future<Output = Result<Succ, Err>>,
-    Succ: Debug + PartialEq + 'static,
-    Err: Debug + 'static,
+    Succ: 'static,
+    Err: 'static,
 {
     fn mutate(&self, input: In) {
         if matches!(self.status, RequestStatus::Loading) {

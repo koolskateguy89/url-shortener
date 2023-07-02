@@ -1,6 +1,5 @@
 use yew::prelude::*;
 
-use std::fmt::Debug;
 use std::{future::Future, rc::Rc};
 
 use crate::api::RequestStatus;
@@ -10,36 +9,67 @@ pub struct Query<F, Succ, Err> {
     pub status: RequestStatus<Succ, Err>,
 }
 
+impl<F, Succ, Err> Query<F, Succ, Err> {
+    pub fn is_idle(&self) -> bool {
+        matches!(self.status, RequestStatus::Idle)
+    }
+
+    pub fn is_loading(&self) -> bool {
+        matches!(self.status, RequestStatus::Loading)
+    }
+
+    pub fn is_success(&self) -> bool {
+        matches!(self.status, RequestStatus::Success(_))
+    }
+
+    pub fn is_error(&self) -> bool {
+        matches!(self.status, RequestStatus::Error(_))
+    }
+}
+
 /// Generic hook for querying data. Tried to copy react-query
 #[hook]
-pub fn use_query<F, Fut, Succ, Err>(func: F) -> UseStateHandle<Query<F, Succ, Err>>
+pub fn use_query<F, In, Fut, Succ, Err>(input: In, func: F) -> UseStateHandle<Query<F, Succ, Err>>
 where
-    F: Fn() -> Fut + 'static,
+    F: Fn(In) -> Fut + 'static,
+    In: 'static,
     Fut: Future<Output = Result<Succ, Err>>,
-    Succ: Debug + PartialEq + 'static,
-    Err: Debug + 'static,
+    Succ: 'static,
+    Err: 'static,
 {
     let query = use_state(|| Query {
         func: Rc::new(func),
         status: RequestStatus::Idle,
     });
 
+    // fetch on mount
+    {
+        let query = query.clone();
+
+        use_effect_with_deps(
+            move |_| {
+                query.fetch(input);
+            },
+            (),
+        );
+    }
+
     query
 }
 
-pub trait QueryDispatcher {
-    fn fetch(&self);
+pub trait QueryDispatcher<Input> {
+    fn fetch(&self, input: Input);
 }
 
-impl<F, Fut, Succ, Err> QueryDispatcher for UseStateHandle<Query<F, Succ, Err>>
+impl<F, In, Fut, Succ, Err> QueryDispatcher<In> for UseStateHandle<Query<F, Succ, Err>>
 where
-    F: Fn() -> Fut + 'static,
+    F: Fn(In) -> Fut + 'static,
+    In: 'static,
     Fut: Future<Output = Result<Succ, Err>>,
-    Succ: Debug + PartialEq + 'static,
-    Err: Debug + 'static,
+    Succ: 'static,
+    Err: 'static,
 {
-    // TODO?: accept input for func
-    fn fetch(&self) {
+    fn fetch(&self, input: In) {
         if matches!(self.status, RequestStatus::Loading) {
             return;
         }
@@ -53,7 +83,7 @@ where
                 status: RequestStatus::Loading,
             });
 
-            let result = func().await;
+            let result = func(input).await;
 
             match result {
                 Ok(data) => {
@@ -72,3 +102,5 @@ where
         });
     }
 }
+
+// TODO: write tests - but how to test hooks?
