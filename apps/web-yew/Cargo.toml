@@ -15,3 +15,7 @@ wasm-bindgen-futures = "0.4.36"
 web-sys = { version = "0.3.63", features = ["FormData", "HtmlFormElement"] }
 yew = { version = "0.20.0", features = ["csr"] }
 yew-router = "0.17.0"
+
+[dev-dependencies]
+gloo = "0.8.1"
+wasm-bindgen-test = "0.3.37"
