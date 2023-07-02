@@ -3,6 +3,11 @@
   "globalDependencies": ["**/.env.*local"],
   "globalEnv": ["NODE_ENV", "VITE_API_URL", "NEXT_PUBLIC_API_URL"],
   "pipeline": {
+    "lint": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": [
@@ -31,10 +36,11 @@
         "dist/**"
       ]
     },
-    "lint": {},
-    "dev": {
-      "cache": false,
-      "persistent": true
+    "svelte:build": {
+      "dependsOn": ["web-svelte-kit#build"],
+      "outputs": [
+        ".svelte-kit/**"
+      ]
     }
   }
 }

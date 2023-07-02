@@ -14,10 +14,12 @@
     "solid:dev": "turbo run dev --filter=server-actix --filter=web-solid-start",
     "next:dev": "turbo run dev --filter=server-actix --filter=web-nextjs",
     "yew:dev": "turbo run dev --filter=server-actix --filter=web-yew",
+    "svelte:dev": "turbo run dev --filter=server-actix --filter=web-svelte-kit",
     "server:build": "turbo run server-actix#build",
     "solid:build": "turbo run solid:build",
     "next:build": "turbo run next:build",
-    "yew:build": "turbo run build --filter=web-yew"
+    "yew:build": "turbo run build --filter=web-yew",
+    "svelte:build": "turbo run svelte:build"
   },
   "devDependencies": {
     "@turbo/gen": "^1.10.6",

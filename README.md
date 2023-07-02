@@ -16,6 +16,7 @@ and
 - `web-solid-start`: a [Solid-Start](https://start.solidjs.com/) app
 - `web-nextjs`: a [Next.js](https://nextjs.org/) app
 - `web-yew`: a [Yew](https://yew.rs/) app
+- `web-svelte-kit`: a [SvelteKit](https://kit.svelte.dev/) app
 - `api`: API to interact with the server
 - `ui-core`: 'core' component library, contains styles and variants using [`class-variance-authority`](https://cva.style/)
 - `ui-solid`: Solid component library
@@ -26,8 +27,6 @@ and
 - `tailwind-config`: shared [Tailwind CSS](https://tailwindcss.com/) configuration
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
-TODO?: add /target to turbo build output
-
 ## Deployments
 
 | App             | Port (dev) | Deployment                                                                                                                             |
@@ -36,6 +35,7 @@ TODO?: add /target to turbo build output
 | web-solid-start | 3000       | [https://url-shortener-solid-start.vercel.app/](https://url-shortener-solid-start.vercel.app/)                                         |
 | web-nextjs      | 3001       | [https://url-shortener-nextjs-eight.vercel.app/](https://url-shortener-nextjs-eight.vercel.app/)                                       |
 | web-yew         | 3002       | [https://url-shortener-server-actix.shuttleapp.rs/yew/](https://url-shortener-server-actix.shuttleapp.rs/yew/)                         |
+| web-svelte-kit  | 5173       | [https://url-shortener-svelte-kit.vercel.app/](https://url-shortener-svelte-kit.vercel.app/)                                           |
 
 ## Useful Links
 
@@ -43,6 +43,8 @@ TODO?: add /target to turbo build output
 - [Using Tailwind with Yew & Trunk](https://dev.to/arctic_hen7/how-to-set-up-tailwind-css-with-yew-and-trunk-il9)
 
 ## App progress
+
+TODO: change to table?
 
 - Actix Server
   - [x] Shorten URL
@@ -67,6 +69,12 @@ TODO?: add /target to turbo build output
   - [~] Stats
   - [~] URL Error Page
   - [...] Sign in
+- SvelteKit
+  - [ ] Home
+  - [ ] Redirect
+  - [ ] Stats
+  - [ ] URL Error Page
+  - [ ] Sign in
 - Tauri
   - [ ] Home
   - [ ] Redirect
