@@ -25,7 +25,7 @@ upgrade-npm-deps:
   pnpm up -r --latest
 
 dev:
-  pnpm dev --concurrency 15
+  pnpm dev --concurrency 16
 
 # Build the Actix server artifacts
 @build-static:
