@@ -1,3 +1,16 @@
+TODO: sort out tailwind & postcss
+look at
+https://github.com/svelte-add/tailwindcss
+https://github.com/svelte-add/postcss
+TODO: extend base tsconfig
+TODO: create new eslint config package?
+
+TODO: use shadcn-svelte
+https://www.shadcn-svelte.com/docs/cli
+
+TODO: look at turbo sveltekit example
+https://github.com/vercel/turbo/tree/main/examples/with-svelte
+
 # create-svelte
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).

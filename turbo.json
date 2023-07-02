@@ -12,7 +12,9 @@
       "dependsOn": ["^build"],
       "outputs": [
         ".next/**", "!.next/cache/**",
-        ".solid/**"
+        ".solid/**",
+        "dist/**",
+        ".svelte-kit/**", ".vercel/**"
       ]
     },
     "server-actix#build": {
@@ -39,7 +41,7 @@
     "svelte:build": {
       "dependsOn": ["web-svelte-kit#build"],
       "outputs": [
-        ".svelte-kit/**"
+        ".svelte-kit/**", ".vercel/**"
       ]
     }
   }
