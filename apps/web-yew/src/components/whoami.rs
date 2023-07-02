@@ -29,7 +29,7 @@ pub fn who_am_i() -> Html {
     let me = if let RequestStatus::Success(me) = &whoami_query.status {
         format!("\"{me}\"")
     } else {
-        "".to_string()
+        String::default()
     };
 
     html! {

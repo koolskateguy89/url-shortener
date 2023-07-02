@@ -84,12 +84,14 @@ async fn actix_web(
         .await
         .map_err(CustomError::new)?;
 
-    let config = move |cfg: &mut ServiceConfig| {
-        let session_key = secret_store
-            .get("SESSION_KEY")
-            .expect("`SESSION_KEY` secret not set")
-            .into_bytes();
+    let session_key = secret_store
+        .get("SESSION_KEY")
+        .ok_or_else(|| {
+            shuttle_runtime::Error::BuildPanic("`SESSION_KEY` secret not set".to_string())
+        })?
+        .into_bytes();
 
+    let config = move |cfg: &mut ServiceConfig| {
         let yew_folder = static_folder.join("yew");
 
         let state = web::Data::new(AppState {
