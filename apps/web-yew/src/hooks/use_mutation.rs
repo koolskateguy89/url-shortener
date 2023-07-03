@@ -4,12 +4,12 @@ use std::{future::Future, rc::Rc};
 
 use crate::api::RequestStatus;
 
-pub struct Mutation<F, Succ, Err> {
+pub struct Mutation<F, SUCC, ERR> {
     func: Rc<F>,
-    pub status: RequestStatus<Succ, Err>,
+    pub status: RequestStatus<SUCC, ERR>,
 }
 
-impl<F, Succ, Err> Mutation<F, Succ, Err> {
+impl<F, SUCC, ERR> Mutation<F, SUCC, ERR> {
     pub fn is_idle(&self) -> bool {
         matches!(self.status, RequestStatus::Idle)
     }
@@ -29,13 +29,13 @@ impl<F, Succ, Err> Mutation<F, Succ, Err> {
 
 /// Generic hook for querying data. Tried to copy react-query
 #[hook]
-pub fn use_mutation<F, In, Fut, Succ, Err>(func: F) -> UseStateHandle<Mutation<F, Succ, Err>>
+pub fn use_mutation<F, In, Fut, SUCC, ERR>(func: F) -> UseStateHandle<Mutation<F, SUCC, ERR>>
 where
     F: Fn(In) -> Fut + 'static,
     In: 'static,
-    Fut: Future<Output = Result<Succ, Err>>,
-    Succ: 'static,
-    Err: 'static,
+    Fut: Future<Output = Result<SUCC, ERR>>,
+    SUCC: 'static,
+    ERR: 'static,
 {
     let mutation = use_state(|| Mutation {
         func: Rc::new(func),
@@ -49,13 +49,13 @@ pub trait MutationDispatcher<In> {
     fn mutate(&self, input: In);
 }
 
-impl<F, In, Fut, Succ, Err> MutationDispatcher<In> for UseStateHandle<Mutation<F, Succ, Err>>
+impl<F, In, Fut, SUCC, ERR> MutationDispatcher<In> for UseStateHandle<Mutation<F, SUCC, ERR>>
 where
     F: Fn(In) -> Fut + 'static,
     In: 'static,
-    Fut: Future<Output = Result<Succ, Err>>,
-    Succ: 'static,
-    Err: 'static,
+    Fut: Future<Output = Result<SUCC, ERR>>,
+    SUCC: 'static,
+    ERR: 'static,
 {
     fn mutate(&self, input: In) {
         if matches!(self.status, RequestStatus::Loading) {

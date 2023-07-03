@@ -1,7 +1,8 @@
+use gloo_console::log;
 use yew::prelude::*;
 
 use crate::api::{auth::whoami, NetResult, RequestStatus};
-use crate::hooks::{use_query, QueryDispatcher};
+use crate::hooks::{use_query, QueryRefetcher};
 
 impl From<NetResult<String>> for RequestStatus<String, gloo_net::Error> {
     fn from(result: NetResult<String>) -> Self {
@@ -12,31 +13,38 @@ impl From<NetResult<String>> for RequestStatus<String, gloo_net::Error> {
     }
 }
 
-#[function_component(Whoami)]
+#[function_component(WhoAmI)]
 pub fn who_am_i() -> Html {
-    let whoami_query = use_query((), |_| async move { whoami().await });
+    let whoami_query = use_query((), |_| async move {
+        use std::time::Duration;
+        use yew::platform::time::sleep;
+
+        sleep(Duration::from_secs(4)).await;
+
+        let me = whoami().await;
+        log!(format!("i am: {me:?}"));
+        me
+    });
 
     let handle_refetch = {
         let whoami_query = whoami_query.clone();
 
         Callback::from(move |_| {
-            whoami_query.fetch(());
+            whoami_query.refetch(());
         })
     };
 
-    let loading = whoami_query.is_loading();
-
-    let me = if let RequestStatus::Success(me) = &whoami_query.status {
-        format!("\"{me}\"")
-    } else {
-        String::default()
-    };
+    // TODO: show previous data (will need to use different enum in use_query)
+    let me = whoami_query
+        .data()
+        .map(|me| format!("\"{me}\""))
+        .unwrap_or_default();
 
     html! {
-        <div>
+        <>
             <pre>
                 { "me = " }
-                if loading {
+                if whoami_query.is_fetching() {
                     <img class="h-4 w-4 animate-spin mr-2 inline" src="assets/loader-2.svg" alt="loading" />
                 }
                 <code>{ me }</code>
@@ -45,6 +53,6 @@ pub fn who_am_i() -> Html {
             <button onclick={handle_refetch} class="button-destructive">
                 { "Refetch" }
             </button>
-        </div>
+        </>
     }
 }

@@ -1,9 +1,10 @@
-import { type VoidComponent, createResource } from "solid-js";
+import type { VoidComponent } from "solid-js";
 import { createRouteAction } from "solid-start";
 import { z } from "zod";
 
 import { type LoginRequest, api } from "api";
 import { Button, Input, LoadingSpinner } from "ui";
+import { WhoAmI } from "~/components/who-am-i";
 
 const formDataSchema = z.object({
   username: z.string(),
@@ -11,10 +12,6 @@ const formDataSchema = z.object({
 }) satisfies z.ZodType<LoginRequest>;
 
 const LoginPage: VoidComponent = () => {
-  const [whoami, { refetch }] = createResource(async () => {
-    return await api.whoami();
-  });
-
   const [loggingIn, { Form }] = createRouteAction(
     async (formData: FormData) => {
       const sfp = formDataSchema.safeParse(Object.fromEntries(formData));
@@ -28,29 +25,21 @@ const LoginPage: VoidComponent = () => {
 
       const loggedIn = await api.login(credentials);
       alert(loggedIn ? "Logged in" : "Failed to log in");
-
-      await refetch();
     }
   );
 
   const isLoading = loggingIn.pending;
 
-  const handleLogout = async () => {
-    await api.logout();
-    await refetch();
+  const handleLogout = () => {
+    void api.logout();
   };
 
   return (
     <main class="flex h-screen flex-col items-center justify-center space-y-4">
-      <div class="mb-20 flex flex-col gap-y-4">
-        <pre>
-          me ={" "}
-          <code>
-            {whoami.loading && <LoadingSpinner class="mr-2 inline" />}
-            {JSON.stringify(whoami(), null, 2)}
-          </code>
-        </pre>
-        <Button onClick={() => void handleLogout()} variant="destructive">
+      <div class="mb-12 flex flex-col gap-y-4">
+        <WhoAmI />
+
+        <Button onClick={handleLogout} variant="destructive">
           LOG out
         </Button>
       </div>

@@ -12,6 +12,7 @@ impl ErrorRedirector {
     pub fn redirect(
         &self,
         id: impl Into<String>,
+        // TODO: make `cause` an enum
         cause: impl Into<String>,
     ) -> NavigationResult<()> {
         let query = SearchParams::new(id.into(), Some(cause.into()));

@@ -4,7 +4,7 @@ use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
 use crate::api::auth::{login, logout};
-use crate::components::Whoami;
+use crate::components::WhoAmI;
 use crate::hooks::{use_mutation, MutationDispatcher};
 
 #[function_component(LoginPage)]
@@ -27,6 +27,7 @@ pub fn login_page() -> Html {
             let form_data =
                 FormData::new_with_form(&form).expect_throw("Form data could not be instantiated");
 
+            // TODO: min pw length - maybe just handle it on server
             let username = form_data
                 .get("username")
                 .as_string()
@@ -40,24 +41,23 @@ pub fn login_page() -> Html {
         })
     };
 
-    let loading = login_mut.is_loading();
+    let handle_logout = Callback::from(move |_| {
+        wasm_bindgen_futures::spawn_local(async move {
+            // TODO: handle properly
+            match logout().await {
+                Ok(logout_successful) => log!("logout_successful =", logout_successful),
+                Err(err) => log!(format!("err = {err:?}")),
+            }
+        });
+    });
 
-    let handle_logout = {
-        Callback::from(move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                // TODO: handle properly
-                match logout().await {
-                    Ok(logout_successful) => log!("logout_successful =", logout_successful),
-                    Err(err) => log!(format!("err = {err:?}")),
-                }
-            });
-        })
-    };
+    let loading = login_mut.is_loading();
 
     html! {
       <main class="flex h-screen flex-col items-center justify-center space-y-4">
         <div class="mb-12 flex flex-col gap-y-4">
-          <Whoami />
+          <WhoAmI />
+
           <button onclick={handle_logout} class="button-destructive">
             { "LOG out" }
           </button>
