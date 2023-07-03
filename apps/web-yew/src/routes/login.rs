@@ -2,10 +2,10 @@ use gloo_console::log;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
+use yew_query::{use_mutation, MutationDispatcher};
 
 use crate::api::auth::{login, logout};
 use crate::components::WhoAmI;
-use crate::hooks::{use_mutation, MutationDispatcher};
 
 #[function_component(LoginPage)]
 pub fn login_page() -> Html {

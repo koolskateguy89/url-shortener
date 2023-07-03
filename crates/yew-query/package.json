@@ -1,0 +1,9 @@
+{
+  "name": "yew-query-rs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "cargo clippy",
+    "test": "wasm-pack test --headless --chrome"
+  }
+}

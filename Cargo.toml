@@ -4,4 +4,5 @@ members = [
   "apps/server-actix",
   "apps/web-yew",
   "crates/common",
+  "crates/yew-query",
 ]

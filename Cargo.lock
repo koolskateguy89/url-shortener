@@ -3397,6 +3397,7 @@ dependencies = [
  "wasm-bindgen-test",
  "web-sys",
  "yew",
+ "yew-query",
  "yew-router",
 ]
 
@@ -3751,6 +3752,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "yew-query"
+version = "0.1.0"
+dependencies = [
+ "gloo",
+ "wasm-bindgen-futures",
+ "wasm-bindgen-test",
+ "web-sys",
+ "yew",
 ]
 
 [[package]]

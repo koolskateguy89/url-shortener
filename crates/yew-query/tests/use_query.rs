@@ -1,18 +1,14 @@
 use std::time::Duration;
-
 use wasm_bindgen_test::*;
 use yew::platform::time::sleep;
 use yew::prelude::*;
-
-use url_shortener_web_yew::hooks::{use_query, QueryRefetcher};
+use yew_query::use_query;
 
 mod common;
 
-use crate::common::obtain_result;
+use common::obtain_result;
 
 wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-
-// TODO?: bascially proxy request responses, if can - that's more for testing /api
 
 #[wasm_bindgen_test]
 async fn use_query_works() {
@@ -45,6 +41,8 @@ async fn use_query_works() {
     assert_eq!(result.as_str(), MESSAGE);
 }
 
+// tbh this tests .data()
+// TODO: directly check the status with if let QueryStatus::Success
 #[wasm_bindgen_test]
 async fn use_query_with_delay() {
     static DELAY: Duration = Duration::from_millis(100);
@@ -96,4 +94,20 @@ async fn has_old_data_while_refetching() {
 #[wasm_bindgen_test]
 async fn is_xxx_while_refetching() {
     // TODO: test impl functions (is_xxx) with refetching
+
+    // {
+    //     // this is just here to test `use_query`
+    //     use std::time::Duration;
+    //     use yew::platform::time::sleep;
+    //     sleep(Duration::from_secs(1)).await;
+    // }
+
+    // // this is just here to test `use_query`
+    // let initial_loading = whoami_query.is_initial_loading();
+    // let fetching = whoami_query.is_fetching();
+
+    // <br />
+    // {"initial_loading = "}{initial_loading}
+    // <br />
+    // {"fetching = "}{fetching}
 }

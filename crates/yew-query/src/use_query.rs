@@ -2,11 +2,7 @@ use std::{future::Future, rc::Rc};
 
 use yew::prelude::*;
 
-// TODO?: extract this into it's own crate
-// idts cos it lacks basically all the non-trivial react query features
-// e.g. query keys, invalidating by query key, global query client
-// might still do it within this project
-
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum QueryStatus<SUCC, ERR> {
     Idle, // - remove? because of fetch on mount
     /// Initial loading state
@@ -16,6 +12,7 @@ pub enum QueryStatus<SUCC, ERR> {
     Refetching(Option<Result<Rc<SUCC>, Rc<ERR>>>),
 }
 
+#[derive(Clone, Debug)]
 pub struct Query<F, SUCC, ERR> {
     func: Rc<F>,
     pub status: QueryStatus<SUCC, ERR>,

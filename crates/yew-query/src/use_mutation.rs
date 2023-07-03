@@ -2,28 +2,49 @@ use yew::prelude::*;
 
 use std::{future::Future, rc::Rc};
 
-use crate::api::RequestStatus;
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum MutationStatus<SUCC, ERR> {
+    Idle,
+    Loading,
+    Success(SUCC),
+    Error(ERR),
+}
 
+#[derive(Clone, Debug)]
 pub struct Mutation<F, SUCC, ERR> {
     func: Rc<F>,
-    pub status: RequestStatus<SUCC, ERR>,
+    pub status: MutationStatus<SUCC, ERR>,
 }
 
 impl<F, SUCC, ERR> Mutation<F, SUCC, ERR> {
+    pub fn data(&self) -> Option<&SUCC> {
+        match &self.status {
+            MutationStatus::Success(data) => Some(data),
+            _ => None,
+        }
+    }
+
+    pub fn error(&self) -> Option<&ERR> {
+        match &self.status {
+            MutationStatus::Error(err) => Some(err),
+            _ => None,
+        }
+    }
+
     pub fn is_idle(&self) -> bool {
-        matches!(self.status, RequestStatus::Idle)
+        matches!(self.status, MutationStatus::Idle)
     }
 
     pub fn is_loading(&self) -> bool {
-        matches!(self.status, RequestStatus::Loading)
+        matches!(self.status, MutationStatus::Loading)
     }
 
     pub fn is_success(&self) -> bool {
-        matches!(self.status, RequestStatus::Success(_))
+        matches!(self.status, MutationStatus::Success(_))
     }
 
     pub fn is_error(&self) -> bool {
-        matches!(self.status, RequestStatus::Error(_))
+        matches!(self.status, MutationStatus::Error(_))
     }
 }
 
@@ -39,7 +60,7 @@ where
 {
     let mutation = use_state(|| Mutation {
         func: Rc::new(func),
-        status: RequestStatus::Idle,
+        status: MutationStatus::Idle,
     });
 
     mutation
@@ -58,7 +79,7 @@ where
     ERR: 'static,
 {
     fn mutate(&self, input: In) {
-        if matches!(self.status, RequestStatus::Loading) {
+        if matches!(self.status, MutationStatus::Loading) {
             return;
         }
 
@@ -68,7 +89,7 @@ where
         wasm_bindgen_futures::spawn_local(async move {
             handle.set(Mutation {
                 func: func.clone(),
-                status: RequestStatus::Loading,
+                status: MutationStatus::Loading,
             });
 
             let result = func(input).await;
@@ -77,13 +98,13 @@ where
                 Ok(data) => {
                     handle.set(Mutation {
                         func,
-                        status: RequestStatus::Success(data),
+                        status: MutationStatus::Success(data),
                     });
                 }
                 Err(err) => {
                     handle.set(Mutation {
                         func,
-                        status: RequestStatus::Error(err),
+                        status: MutationStatus::Error(err),
                     });
                 }
             }
