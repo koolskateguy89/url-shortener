@@ -4,7 +4,7 @@ use wasm_bindgen_test::*;
 use yew::platform::time::sleep;
 use yew::prelude::*;
 
-use url_shortener_web_yew::hooks::{use_query, QueryDispatcher};
+use url_shortener_web_yew::hooks::{use_query, QueryRefetcher};
 
 mod common;
 
@@ -90,5 +90,10 @@ async fn use_query_with_delay() {
 
 #[wasm_bindgen_test]
 async fn has_old_data_while_refetching() {
-    // TODO
+    // TODO: test impl functions (data/error) with refetching
+}
+
+#[wasm_bindgen_test]
+async fn is_xxx_while_refetching() {
+    // TODO: test impl functions (is_xxx) with refetching
 }

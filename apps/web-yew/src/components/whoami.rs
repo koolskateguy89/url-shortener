@@ -16,10 +16,12 @@ impl From<NetResult<String>> for RequestStatus<String, gloo_net::Error> {
 #[function_component(WhoAmI)]
 pub fn who_am_i() -> Html {
     let whoami_query = use_query((), |_| async move {
-        use std::time::Duration;
-        use yew::platform::time::sleep;
-
-        sleep(Duration::from_secs(4)).await;
+        {
+            // this is just here to test `use_query`
+            use std::time::Duration;
+            use yew::platform::time::sleep;
+            sleep(Duration::from_secs(1)).await;
+        }
 
         let me = whoami().await;
         log!(format!("i am: {me:?}"));
@@ -34,11 +36,14 @@ pub fn who_am_i() -> Html {
         })
     };
 
-    // TODO: show previous data (will need to use different enum in use_query)
     let me = whoami_query
         .data()
         .map(|me| format!("\"{me}\""))
         .unwrap_or_default();
+
+    // this is just here to test `use_query`
+    let initial_loading = whoami_query.is_initial_loading();
+    let fetching = whoami_query.is_fetching();
 
     html! {
         <>
@@ -48,6 +53,10 @@ pub fn who_am_i() -> Html {
                     <img class="h-4 w-4 animate-spin mr-2 inline" src="assets/loader-2.svg" alt="loading" />
                 }
                 <code>{ me }</code>
+                <br />
+                {"initial_loading = "}{initial_loading}
+                <br />
+                {"fetching = "}{fetching}
             </pre>
 
             <button onclick={handle_refetch} class="button-destructive">
