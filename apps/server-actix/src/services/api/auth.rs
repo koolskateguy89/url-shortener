@@ -34,6 +34,7 @@ pub async fn whoami(user: Option<Identity>) -> impl Responder {
 // FIXME: identity not working
 // whoami still says not logged in after login DEFINITELY working
 // Set-Cookie header is set in response but _shrug_
+// it works in yew, but not solid not next
 #[post("/api/login")]
 pub async fn login(
     body: web::Json<types::LoginRequest>,
