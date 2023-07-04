@@ -13,7 +13,6 @@ import {
   Link,
 } from "solid-start";
 
-import "@fontsource/inter";
 import "~/styles/globals.css";
 
 export default function Root() {
