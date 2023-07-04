@@ -11,8 +11,13 @@ and
 
 ## Apps, Packages and Crates
 
+TODO?: try to [on a non-very-basic level] port React Query to Yew
+
+TODO: `logger` package
+
 - `server-actix`: an [Actix Web](https://actix.rs/) web server, with [Shuttle](https://www.shuttle.rs/) infrastructure
 - `common`: shared Rust code
+- `yew-query`: a VERY basic port of [Tanstack Query](https://tanstack.com/query/latest/) for [Yew](https://yew.rs/)
 - `web-solid-start`: a [Solid-Start](https://start.solidjs.com/) app
 - `web-nextjs`: a [Next.js](https://nextjs.org/) app
 - `web-yew`: a [Yew](https://yew.rs/) app
