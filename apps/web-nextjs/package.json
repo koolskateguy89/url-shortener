@@ -6,7 +6,8 @@
     "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "prettier --check --ignore-path=../../.prettierignore . && next lint",
+    "format": "prettier --write --ignore-path=../../.prettierignore ."
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.6.0",

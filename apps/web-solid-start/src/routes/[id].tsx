@@ -14,9 +14,8 @@ export function routeData({ params }: RouteDataArgs) {
       const exists = await api.idExists(id);
 
       // FIXME: redirect is not working
-      if (!exists) throw redirect(`/error?id=${id}&cause=${
-        "NotFound" satisfies Error
-      }`);
+      if (!exists)
+        throw redirect(`/error?id=${id}&cause=${"NotFound" satisfies Error}`);
     },
     {
       key: () => ({

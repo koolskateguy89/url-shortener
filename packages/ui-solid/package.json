@@ -5,7 +5,8 @@
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.ts*\"",
+    "lint": "prettier --check --ignore-path=../../.prettierignore . && eslint \"**/*.ts*\"",
+    "format": "prettier --write --ignore-path=../../.prettierignore .",
     "generate:component": "turbo gen solid-component"
   },
   "dependencies": {
