@@ -15,6 +15,7 @@
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^5.0.4",
+		"@fontsource/inter": "^5.0.4",
 		"@neoconfetti/svelte": "^1.0.0",
 		"@playwright/test": "^1.35.1",
 		"@sveltejs/adapter-auto": "^2.1.0",
@@ -39,7 +40,8 @@
 		"typescript": "^5.1.6",
 		"ui": "workspace:ui-svelte@*",
 		"vite": "^4.3.9",
-		"vitest": "^0.32.4"
+		"vitest": "^0.32.4",
+		"zod": "^3.21.4"
 	},
 	"type": "module"
 }

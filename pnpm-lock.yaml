@@ -168,6 +168,9 @@ importers:
       '@fontsource/fira-mono':
         specifier: ^5.0.4
         version: 5.0.4
+      '@fontsource/inter':
+        specifier: ^5.0.4
+        version: 5.0.4
       '@neoconfetti/svelte':
         specifier: ^1.0.0
         version: 1.0.0
@@ -243,6 +246,9 @@ importers:
       vitest:
         specifier: ^0.32.4
         version: 0.32.4
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
 
   apps/web-yew:
     devDependencies:
@@ -1853,7 +1859,6 @@ packages:
 
   /@fontsource/inter@5.0.4:
     resolution: {integrity: sha512-rUiTktdsh6B45XRZYTsZb2y4+TVkiVJhkqCSnSXfWxdUl0Rp6Cheu27IcurdjSfxJPUD+nl18wYp5RFf5P5zlA==}
-    dev: false
 
   /@formatjs/ecma402-abstract@1.17.0:
     resolution: {integrity: sha512-6ueQTeJZtwKjmh23bdkq/DMqH4l4bmfvtQH98blOSbiXv/OUiyijSW6jU22IT8BNM1ujCaEvJfTtyCYVH38EMQ==}
@@ -7420,4 +7425,3 @@ packages:
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
-    dev: false
