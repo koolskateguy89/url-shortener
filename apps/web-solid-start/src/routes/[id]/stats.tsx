@@ -1,5 +1,11 @@
 import { type VoidComponent, Show } from "solid-js";
-import { type RouteDataArgs, createRouteData, useRouteData } from "solid-start";
+import {
+  type RouteDataArgs,
+  createRouteData,
+  useParams,
+  useRouteData,
+  Title,
+} from "solid-start";
 
 import { type StatsResponse, api } from "api";
 
@@ -25,12 +31,15 @@ export function routeData({ params }: RouteDataArgs) {
 const StatsPage: VoidComponent = () => {
   const stats = useRouteData<typeof routeData>();
 
+  const params = useParams<{ id: string }>();
+
   console.log("stats =", stats());
 
   return (
     <Show when={stats()} fallback={"Failed to fetch stats"} keyed>
       {({ url, num_hits }) => (
         <main>
+          <Title>{params.id} Stats</Title>
           <h1>Stats</h1>
           <p>URL: {url}</p>
           <p>Num hits: {num_hits}</p>
