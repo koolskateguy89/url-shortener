@@ -1,6 +1,7 @@
 {
   "extends": "tsconfig/solid.json",
   "compilerOptions": {
+    "types": ["solid-start/env"],
     "baseUrl": "./",
     "paths": {
       "~/*": ["./src/*"]

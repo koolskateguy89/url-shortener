@@ -8,8 +8,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "jsxImportSource": "solid-js",
-    "jsx": "preserve",
-    "types": ["solid-start/env"]
+    "jsx": "preserve"
   },
   "exclude": ["node_modules"]
 }
