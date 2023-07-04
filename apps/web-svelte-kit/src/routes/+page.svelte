@@ -48,7 +48,7 @@
 
 	<form class="flex flex-col items-center space-y-2" on:submit|preventDefault={handleSubmit}>
 		<Input type="url" name="url" placeholder="Url" />
-		<Button type="button">
+		<Button type="submit">
 			{#await promise}
 				<LoadingSpinner class="mr-2" />
 			{/await}
