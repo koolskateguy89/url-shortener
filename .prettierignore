@@ -20,3 +20,7 @@ yarn.lock
 .solid
 .turbo
 .vercel
+
+# Playwright
+/test-results/
+playwright-report
