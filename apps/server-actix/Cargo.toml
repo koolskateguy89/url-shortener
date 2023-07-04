@@ -12,6 +12,7 @@ actix-files = "0.6.2"
 actix-identity = "0.5.2"
 actix-session = { version = "0.7.2", features = ["cookie-session"] }
 actix-web = "4.3.1"
+argon2 = "0.5.0"
 common = { package = "url-shortener-common", path = "../../crates/common" }
 derive_more = "0.99.17"
 log = "0.4.19"

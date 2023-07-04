@@ -1,5 +1,5 @@
 use actix_identity::Identity;
-use actix_web::{error, get, post, web, HttpMessage, HttpRequest, HttpResponse, Responder, Result};
+use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse, Responder, Result};
 
 use common::types;
 
@@ -41,23 +41,32 @@ pub async fn login(
     state: web::Data<AppState>,
     req: HttpRequest,
 ) -> Result<impl Responder> {
+    use db::auth::LoginError;
+
     let types::LoginRequest { username, password } = body.into_inner();
 
-    let user_exists = db::auth::user_exists(&state.pool, &username)
-        .await
-        .map_err(|err| UserError::Other(err.to_string()))?;
+    let result = db::auth::can_login(&state.pool, &username, &password).await;
 
-    if !user_exists {
-        log::warn!("user `{}` not found", username);
-        return Err(UserError::NotFound.into());
+    match result {
+        Ok(_) => {
+            log::debug!("login successful for `{username}`");
+
+            Identity::login(&req.extensions(), username).unwrap();
+            Ok(HttpResponse::Ok().finish())
+        }
+        Err(LoginError::UserNotFound) => {
+            log::debug!("user `{username}` not found");
+            Err(UserError::UserNotFound.into())
+        }
+        Err(LoginError::IncorrectPassword) => {
+            log::debug!("incorrect password for user `{username}`");
+            Err(UserError::UserIncorrectPassword.into())
+        }
+        Err(LoginError::Sqlx(sqlx_error)) => {
+            log::warn!("sqlx error: {sqlx_error:?}");
+            Err(UserError::InternalError.into())
+        }
     }
-
-    // TODO: check pw correct
-
-    // TODO: propagate error
-    Identity::login(&req.extensions(), username).unwrap();
-
-    Ok(HttpResponse::Ok().finish())
 }
 
 #[post("/api/logout")]
@@ -70,11 +79,25 @@ pub async fn logout(user: Identity) -> impl Responder {
 pub async fn register(
     body: web::Json<types::RegisterRequest>,
     state: web::Data<AppState>,
-    req: HttpRequest,
 ) -> Result<impl Responder> {
+    use db::auth::RegisterError;
+
     let types::RegisterRequest { username, password } = body.into_inner();
 
-    // TODO: validate pw and if user exists
+    let result = db::auth::register_user(&state.pool, &username, &password).await;
 
-    Err::<String, _>(error::ErrorInternalServerError("not implemented"))
+    match result {
+        Ok(_) => {
+            log::debug!("registration successful for `{username}`");
+            Ok(HttpResponse::Ok().finish())
+        }
+        Err(RegisterError::UsernameTaken) => {
+            log::debug!("tried to register already taken username `{username}`");
+            Err(UserError::UsernameTaken.into())
+        }
+        Err(RegisterError::Sqlx(sqlx_error)) => {
+            log::warn!("sqlx error: {sqlx_error:?}");
+            Err(UserError::InternalError.into())
+        }
+    }
 }

@@ -9,3 +9,5 @@ pub enum Error {
 }
 
 pub type UrlResult<T> = std::result::Result<T, Error>;
+
+// TODO: auth related errors

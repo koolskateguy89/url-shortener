@@ -16,6 +16,7 @@ use std::path::PathBuf;
 
 use common::{error::Error as CommonError, types::ErrorResponse};
 
+mod auth;
 mod db;
 mod middleware;
 mod services;
@@ -24,10 +25,19 @@ use crate::services::{api::ApiService, yew::YewService};
 
 #[derive(Clone, Debug, Display)]
 pub enum UserError {
+    // url
     #[display(fmt = "unused")]
     InvalidUrl,
     #[display(fmt = "unused")]
     NotFound,
+    // auth
+    #[display(fmt = "unused")]
+    UserNotFound,
+    #[display(fmt = "unused")]
+    UserIncorrectPassword,
+    #[display(fmt = "unused")]
+    UsernameTaken,
+    // common
     #[display(fmt = "unused")]
     InternalError,
     #[display(fmt = "unused")]
@@ -49,7 +59,9 @@ impl error::ResponseError for UserError {
     fn status_code(&self) -> StatusCode {
         match *self {
             UserError::InvalidUrl => StatusCode::BAD_REQUEST,
-            UserError::NotFound => StatusCode::NOT_FOUND,
+            UserError::NotFound | UserError::UserNotFound => StatusCode::NOT_FOUND,
+            UserError::UsernameTaken => StatusCode::CONFLICT,
+            UserError::UserIncorrectPassword => StatusCode::UNAUTHORIZED,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
@@ -83,6 +95,10 @@ async fn actix_web(
     pool.execute(include_str!("../schema.sql"))
         .await
         .map_err(CustomError::new)?;
+
+    db::auth::register_user(&pool, "test", "testpw")
+        .await
+        .expect("could not register test user");
 
     let session_key = secret_store
         .get("SESSION_KEY")
