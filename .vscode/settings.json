@@ -1,23 +1,25 @@
 {
-  // Prettier format on save
-  "[javascript]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+
+  "svelte.enable-ts-plugin": true,
+
+  "[javascript][typescript][typescriptreact]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescriptreact]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     // word wrap for Tailwind
     "editor.wordWrap": "on"
   },
-
-  // Prisma format on save
-  "[prisma]": {
-    "editor.formatOnSave": true
+  "[svelte]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "svelte.svelte-vscode",
+  },
+  "[rust]": {
+    "editor.formatOnSave": true,
+    "files.eol": "\n",
+    "editor.tabSize": 4,
   },
 
   // Tailwind
@@ -27,13 +29,4 @@
   "editor.quickSuggestions": {
     "strings": true
   },
-
-  // Rust format on save
-  "[rust]": {
-    "editor.formatOnSave": true,
-    "files.eol": "\n",
-  },
-
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.tsdk": "node_modules\\typescript\\lib",
 }

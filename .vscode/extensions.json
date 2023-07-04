@@ -6,7 +6,6 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "prisma.prisma",
     "bradlc.vscode-tailwindcss",
     "rust-lang.rust-analyzer",
     "techtheawesome.rust-yew",
