@@ -54,32 +54,36 @@ TODO: change to table?
 - Actix Server
   - [x] Shorten URL
   - [x] Lengthen URL
-  - [ ] Register
+  - [x] Register
   - [...] Sign in
 - Solid-Start
   - [x] Home (shorten URL)
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
-  - [...] Sign in
+  - [x] Sign in
+  - [x] Register
 - NextJs
   - [x] Home
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
-  - [...] Sign in
+  - [x] Sign in
+  - [x] Register
 - Yew
   - [x] Home
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
-  - [...] Sign in
+  - [x] Sign in
+  - [ ] Register
 - SvelteKit
   - [ ] Home
   - [ ] Redirect
   - [ ] Stats
   - [ ] URL Error Page
   - [ ] Sign in
+  - [ ] Register
 - Tauri
   - [ ] Home
   - [ ] Redirect
