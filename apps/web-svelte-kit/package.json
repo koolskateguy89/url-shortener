@@ -14,13 +14,10 @@
 		"test:unit": "vitest run"
 	},
 	"devDependencies": {
-		"@fontsource/fira-mono": "^5.0.4",
 		"@fontsource/inter": "^5.0.4",
-		"@neoconfetti/svelte": "^1.0.0",
 		"@playwright/test": "^1.35.1",
 		"@sveltejs/adapter-auto": "^2.1.0",
 		"@sveltejs/kit": "^1.21.0",
-		"@types/cookie": "^0.5.1",
 		"@typescript-eslint/eslint-plugin": "^5.61.0",
 		"@typescript-eslint/parser": "^5.61.0",
 		"api": "workspace:*",

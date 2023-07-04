@@ -165,15 +165,9 @@ importers:
 
   apps/web-svelte-kit:
     devDependencies:
-      '@fontsource/fira-mono':
-        specifier: ^5.0.4
-        version: 5.0.4
       '@fontsource/inter':
         specifier: ^5.0.4
         version: 5.0.4
-      '@neoconfetti/svelte':
-        specifier: ^1.0.0
-        version: 1.0.0
       '@playwright/test':
         specifier: ^1.35.1
         version: 1.35.1
@@ -183,9 +177,6 @@ importers:
       '@sveltejs/kit':
         specifier: ^1.21.0
         version: 1.21.0(svelte@4.0.3)(vite@4.3.9)
-      '@types/cookie':
-        specifier: ^0.5.1
-        version: 0.5.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.61.0
         version: 5.61.0(@typescript-eslint/parser@5.61.0)(eslint@8.44.0)(typescript@5.1.6)
@@ -1853,10 +1844,6 @@ packages:
       '@floating-ui/core': 1.3.1
     dev: false
 
-  /@fontsource/fira-mono@5.0.4:
-    resolution: {integrity: sha512-Qe4WNf6IAoV1h0a5VOSnVYQTRl2Rizx3GFJcVhC7PknsxOksl+6r2bQomltTgcVjJ0M50M/8OxYbnckr289TYw==}
-    dev: true
-
   /@fontsource/inter@5.0.4:
     resolution: {integrity: sha512-rUiTktdsh6B45XRZYTsZb2y4+TVkiVJhkqCSnSXfWxdUl0Rp6Cheu27IcurdjSfxJPUD+nl18wYp5RFf5P5zlA==}
 
@@ -2034,10 +2021,6 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
-
-  /@neoconfetti/svelte@1.0.0:
-    resolution: {integrity: sha512-SmksyaJAdSlMa9cTidVSIqYo1qti+WTsviNDwgjNVm+KQ3DRP2Df9umDIzC4vCcpEYY+chQe0i2IKnLw03AT8Q==}
-    dev: true
 
   /@next/env@13.4.8:
     resolution: {integrity: sha512-twuSf1klb3k9wXI7IZhbZGtFCWvGD4wXTY2rmvzIgVhXhs7ISThrbNyutBx3jWIL8Y/Hk9+woytFz5QsgtcRKQ==}
