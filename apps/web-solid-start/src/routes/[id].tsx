@@ -6,7 +6,7 @@ import {
   Outlet,
 } from "solid-start";
 
-import { api } from "api";
+import { type Error, api } from "api";
 
 export function routeData({ params }: RouteDataArgs) {
   return createRouteData(
@@ -14,7 +14,9 @@ export function routeData({ params }: RouteDataArgs) {
       const exists = await api.idExists(id);
 
       // FIXME: redirect is not working
-      if (!exists) throw redirect(`/error?id=${id}&cause=404`);
+      if (!exists) throw redirect(`/error?id=${id}&cause=${
+        "NotFound" satisfies Error
+      }`);
     },
     {
       key: () => ({
