@@ -1,8 +1,5 @@
 <script lang="ts">
-	// idk if the `lang="ts"` is necessary, becuase of svelte kit config settings,
-	// it seems it does type checking by default, need to read more docs
-
-	import { Button, LoadingSpinner } from 'ui';
+	import { Button, Input, LoadingSpinner } from 'ui';
 
 	// TODO: will probably put this in +page.ts, in form action
 	// import { api } from 'api';
@@ -17,7 +14,7 @@
 
 	<!-- TODO?: action -->
 	<form class="flex flex-col items-center space-y-2">
-		<input type="url" name="url" placeholder="Url" />
+		<Input type="url" name="url" placeholder="Url" />
 		<Button type="submit">
 			<LoadingSpinner class="mr-2" />
 			Shorten

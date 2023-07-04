@@ -8,7 +8,7 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[typescriptreact]": {
+  "[typescriptreact][svelte]": {
     // word wrap for Tailwind
     "editor.wordWrap": "on"
   },
