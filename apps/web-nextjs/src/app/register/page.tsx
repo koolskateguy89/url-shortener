@@ -1,28 +1,26 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 
-import { type LoginRequest, api } from "api";
+import { type RegisterRequest, api } from "api";
 import { Button, Input, LoadingSpinner } from "ui";
-import { WhoAmI } from "./who-am-i";
 
-// TODO: make sure conforms to LoginRequest with satisfies
-// but for some reason it thinks it outputs a Partial<_>
-// it works fine in the solid version
-// idrk what to do about this, I have no idea why it isn't working
-// I've tried reinstalling `node_modules` and it's still the same
+// TODO: make sure conforms to RegisterRequest with satisfies
 const formDataSchema = z.object({
   username: z.string(),
   password: z.string().min(4),
-}) satisfies z.ZodType<Partial<LoginRequest>>;
-// }) satisfies z.ZodType<LoginRequest>;
+}) satisfies z.ZodType<Partial<RegisterRequest>>;
+// }) satisfies z.ZodType<RegisterRequest>;
 
-export default function LoginPage() {
-  const loginMutation = useMutation({
-    mutationFn: async (credentials: LoginRequest) =>
-      await api.login(credentials),
+export default function RegisterPage() {
+  const router = useRouter();
+
+  const registerMutation = useMutation({
+    mutationFn: async (credentials: RegisterRequest) =>
+      await api.register(credentials),
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,28 +36,18 @@ export default function LoginPage() {
     }
 
     // TODO: remove type cast once above TODO is fixed
-    const credentials = sfp.data as LoginRequest;
+    const credentials = sfp.data as RegisterRequest;
 
-    const loggedIn = await loginMutation.mutateAsync(credentials);
-    alert(loggedIn ? "Logged in" : "Failed to log in");
+    const registered = await api.register(credentials);
+    alert(registered ? "Registered" : "Failed to register");
+
+    if (registered) router.push("/login");
   };
 
-  const handleLogout = () => {
-    void api.logout();
-  };
-
-  const isLoading = loginMutation.isLoading;
+  const isLoading = registerMutation.isLoading;
 
   return (
     <main className="flex h-screen flex-col items-center justify-center space-y-4">
-      <div className="mb-12 flex flex-col gap-y-4">
-        <WhoAmI />
-
-        <Button onClick={handleLogout} variant="destructive">
-          LOG out
-        </Button>
-      </div>
-
       <form
         onSubmit={(e) => void handleSubmit(e)}
         className="flex flex-col items-center space-y-2"
@@ -75,17 +63,17 @@ export default function LoginPage() {
           type="password"
           name="password"
           placeholder="Password"
-          autoComplete="current-password"
+          autoComplete="new-password"
           disabled={isLoading}
         />
 
         <div>
+          <Button variant="link" asChild>
+            <Link href="/login">Login</Link>
+          </Button>
           <Button type="submit" disabled={isLoading}>
             {isLoading && <LoadingSpinner className="mr-2" />}
-            Login
-          </Button>
-          <Button variant="link" asChild>
-            <Link href="/register">Register</Link>
+            Register
           </Button>
         </div>
       </form>
