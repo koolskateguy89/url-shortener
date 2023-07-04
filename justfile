@@ -30,7 +30,7 @@ dev:
 udeps:
   cargo +nightly udeps
 
-# Build the Actix server artifacts
+# Build the Actix server static artifacts
 @build-static:
   @pnpm server:build
   echo Removing static folder \'{{STATIC_FOLDER}}\'

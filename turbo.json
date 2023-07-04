@@ -8,13 +8,17 @@
       "cache": false,
       "persistent": true
     },
+    "test": {
+      "dependsOn": [],
+      "outputs": []
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": [
         ".next/**", "!.next/cache/**",
-        ".solid/**",
-        "dist/**",
-        ".svelte-kit/**", ".vercel/**"
+        ".solid/**", ".vercel/**",
+        ".svelte-kit/**",
+        "dist/**"
       ]
     },
     "server-actix#build": {
@@ -23,7 +27,7 @@
     "solid:build": {
       "dependsOn": ["web-solid-start#build"],
       "outputs": [
-        ".solid/**"
+        ".solid/**", ".vercel/**"
       ]
     },
     "next:build": {

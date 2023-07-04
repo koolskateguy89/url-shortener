@@ -7,4 +7,9 @@ module.exports = {
   parserOptions: {
     project: path.join(__dirname, "tsconfig.json"),
   },
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
 };

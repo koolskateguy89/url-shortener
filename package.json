@@ -5,7 +5,8 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+		"format": "pnpm -r format",
+    "test": "turbo run test",
     "server-actix": "pnpm --filter=server-actix",
     "web-solid-start": "pnpm --filter=web-solid-start",
     "web-nextjs": "pnpm --filter=web-nextjs",
@@ -33,5 +34,5 @@
     "turbo": "^1.10.7",
     "typescript": "^5.1.6"
   },
-  "packageManager": "pnpm@8.0.0"
+  "packageManager": "pnpm@8.6.5"
 }
