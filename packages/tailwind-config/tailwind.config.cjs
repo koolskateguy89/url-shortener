@@ -1,5 +1,4 @@
 // https://github.com/vercel/turbo/blob/main/examples/with-tailwind/packages/tailwind-config/tailwind.config.js
-// content is set by ui-core/tailwind.config.cjs
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

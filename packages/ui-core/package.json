@@ -10,14 +10,12 @@
   "dependencies": {
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
-    "tailwind-merge": "^1.13.2",
-    "tailwindcss-animate": "^1.0.6"
+    "tailwind-merge": "^1.13.2"
   },
   "devDependencies": {
     "eslint": "^8.43.0",
     "eslint-config-custom": "workspace:*",
     "tailwind-config": "workspace:*",
-    "tailwindcss": "^3.3.2",
     "tsconfig": "workspace:*",
     "typescript": "^5.1.5"
   }

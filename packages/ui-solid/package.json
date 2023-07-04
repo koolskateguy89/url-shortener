@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint \"**/*.ts*\"",
-    "generate:component": "turbo gen react-component"
+    "generate:component": "turbo gen solid-component"
   },
   "dependencies": {
     "@kobalte/core": "^0.9.7",
@@ -19,8 +19,6 @@
   "devDependencies": {
     "eslint": "^8.43.0",
     "eslint-config-custom-solid": "workspace:*",
-    "tailwind-config": "workspace:*",
-    "tailwindcss": "^3.3.2",
     "tsconfig": "workspace:*",
     "typescript": "^5.1.5"
   }
