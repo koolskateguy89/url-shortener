@@ -1,12 +1,16 @@
+TODO: create new eslint config package?
+
+TODO: use shadcn-svelte in `ui-svelte` package
+https://www.shadcn-svelte.com/docs/cli
+TODO: inter font
+
+TODO: env package (see t3)
+
 TODO: sort out tailwind & postcss
 look at
 https://github.com/svelte-add/tailwindcss
 https://github.com/svelte-add/postcss
 TODO: extend base tsconfig
-TODO: create new eslint config package?
-
-TODO: use shadcn-svelte
-https://www.shadcn-svelte.com/docs/cli
 
 TODO: look at turbo sveltekit example
 https://github.com/vercel/turbo/tree/main/examples/with-svelte

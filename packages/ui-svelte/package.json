@@ -1,0 +1,25 @@
+{
+	"name": "ui-svelte",
+	"version": "0.0.0",
+	"main": "./index.ts",
+	"types": "./index.ts",
+	"license": "MIT",
+	"scripts": {
+		"lint": "prettier --check --ignore-path=../../.prettierignore . **.svelte && eslint .",
+		"format": "prettier --write --ignore-path=../../.prettierignore . **.svelte",
+		"generate:component": "turbo gen svelte-component"
+	},
+	"dependencies": {
+		"lucide-svelte": "^0.258.0",
+		"ui-core": "workspace:*"
+	},
+	"devDependencies": {
+		"eslint": "^8.28.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-svelte": "^2.30.0",
+		"prettier": "^2.8.0",
+		"prettier-plugin-svelte": "^2.10.1",
+		"svelte": "^4.0.0",
+		"typescript": "^5.1.5"
+	}
+}
