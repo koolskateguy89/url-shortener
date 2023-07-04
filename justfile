@@ -14,18 +14,21 @@ alias up := upgrade-npm-deps
 default:
   @just --list --unsorted
 
-# TODO: make this a git alias instead
-uai:
-  git update-index --again
-
+# List outdated cargo npm dependencies
 outdated:
+  cargo outdated
   -pnpm -r outdated
 
 upgrade-npm-deps:
   pnpm up -r --latest
 
+# Run all apps in development mode
 dev:
   pnpm dev --concurrency 18
+
+# Unused Cargo deps - https://github.com/est31/cargo-udeps
+udeps:
+  cargo +nightly udeps
 
 # Build the Actix server artifacts
 @build-static:
