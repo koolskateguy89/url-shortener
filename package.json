@@ -5,7 +5,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-		"format": "pnpm -r format",
+    "format": "pnpm -r format",
     "test": "turbo run test",
     "server-actix": "pnpm --filter=server-actix",
     "web-solid-start": "pnpm --filter=web-solid-start",
