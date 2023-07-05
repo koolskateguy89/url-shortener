@@ -79,9 +79,9 @@ TODO: change to table?
   - [ ] Register
 - SvelteKit
   - [x] Home
-  - [ ] Redirect
-  - [ ] Stats
-  - [ ] URL Error Page
+  - [x] Redirect
+  - [~] Stats
+  - [~] URL Error Page
   - [ ] Sign in
   - [ ] Register
 - Tauri

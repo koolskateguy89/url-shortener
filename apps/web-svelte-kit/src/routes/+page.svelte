@@ -34,12 +34,16 @@
 		<p>
 			{#await promise}
 				Loading...
-			{:then data}
-				{@const { id } = data}
-				{JSON.stringify(data, null, 2)}
-				<a href="/{id}" class="underline">
-					BASE_URL/{id}
-				</a>
+			{:then res}
+				{#if res.success}
+					{@const { id } = res.data}
+					{JSON.stringify(res.data, null, 2)}
+					<a href="/{id}" class="underline">
+						BASE_URL/{id}
+					</a>
+				{:else}
+					error = <pre>{JSON.stringify(res.error, null, 2)}</pre>
+				{/if}
 			{:catch error}
 				Error = {JSON.stringify(error, null, 2)}
 			{/await}
