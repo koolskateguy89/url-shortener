@@ -12,7 +12,6 @@ const formDataSchema = z.object({
 });
 
 export default function HomePage() {
-  // FIXME?: isn't erroring when the request fails
   const shortenMutation = useMutation({
     mutationFn: async (url: string) => await api.shorten(url),
   });
