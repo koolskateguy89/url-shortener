@@ -43,13 +43,44 @@ export interface ErrorResponse {
       };
 }
 
+type ApiResponse<T, F> =
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      error: F;
+    };
+
+function apiResponse<T extends object>(
+  data: T | ErrorResponse
+): ApiResponse<T, ErrorResponse> {
+  if ("error" in data)
+    return {
+      success: false,
+      error: data,
+    };
+
+  return {
+    success: true,
+    data,
+  };
+}
+
+export function errorUrl(id: string, cause: Error): string {
+  return `/error?id=${encodeURIComponent(id)}&cause=${cause}`;
+}
+
 /**
  * Error response should not occur, but if it does, it will be a 500.
  *
  * @param url
  * @returns
  */
-async function shorten(url: string): Promise<ShortenResponse> {
+async function shorten(
+  url: string
+): Promise<ApiResponse<ShortenResponse, ErrorResponse>> {
   const res = await fetch(`${API_URL}/url/shorten`, {
     method: "POST",
     headers: {
@@ -58,7 +89,8 @@ async function shorten(url: string): Promise<ShortenResponse> {
     body: JSON.stringify({ url }),
   });
 
-  return (await res.json()) as ShortenResponse;
+  const body = (await res.json()) as ShortenResponse | ErrorResponse;
+  return apiResponse(body);
 }
 
 async function lengthen(
@@ -66,13 +98,14 @@ async function lengthen(
   init: RequestInit = {
     cache: "no-cache",
   }
-): Promise<LengthenResponse | ErrorResponse> {
+): Promise<ApiResponse<LengthenResponse, ErrorResponse>> {
   const res = await fetch(
     `${API_URL}/url/${encodeURIComponent(id)}/lengthen`,
     init
   );
 
-  return (await res.json()) as LengthenResponse | ErrorResponse;
+  const body = (await res.json()) as LengthenResponse | ErrorResponse;
+  return apiResponse(body);
 }
 
 async function idExists(id: string): Promise<boolean> {
@@ -86,13 +119,14 @@ async function getStats(
   init: RequestInit = {
     cache: "no-cache",
   }
-): Promise<StatsResponse | ErrorResponse> {
+): Promise<ApiResponse<StatsResponse, ErrorResponse>> {
   const res = await fetch(
     `${API_URL}/url/${encodeURIComponent(id)}/stats`,
     init
   );
 
-  return (await res.json()) as StatsResponse | ErrorResponse;
+  const body = (await res.json()) as StatsResponse | ErrorResponse;
+  return apiResponse(body);
 }
 
 async function whoami(): Promise<string> {

@@ -2,22 +2,24 @@ import { type VoidComponent, Show } from "solid-js";
 import {
   type RouteDataArgs,
   createRouteData,
+  redirect,
   useParams,
   useRouteData,
   Title,
 } from "solid-start";
 
-import { type StatsResponse, api } from "api";
+import { api, errorUrl } from "api";
 
 export function routeData({ params }: RouteDataArgs) {
   return createRouteData(
     async ({ id }) => {
-      // Guaranteed to not fail because of validation at layout level
-      const stats = (await api.getStats(id)) as StatsResponse;
+      const res = await api.getStats(id);
 
-      console.log("(server) stats =", stats);
+      if (!res.success) throw redirect(errorUrl(id, "NotFound"));
 
-      return stats;
+      console.log("(server) stats =", res.data);
+
+      return res.data;
     },
     {
       key: () => ({

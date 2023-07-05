@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { UseMutationResult } from "@tanstack/react-query";
 
 import type { ShortenResponse } from "api";
@@ -21,9 +22,9 @@ export const StatusDisplay = ({
       {isLoading && <p>Loading...</p>}
       {isSuccess && (
         <p>
-          <a href={`/${data.id}`} className="underline">
+          <Link href={`/${data.id}`} className="underline">
             BASE_URL/{data.id}
-          </a>
+          </Link>
         </p>
       )}
       {isError && <p>Error: ${JSON.stringify(error, null, 2)}</p>}

@@ -1,6 +1,5 @@
-// TODO
-
-import { type StatsResponse, api } from "api";
+import { api, errorUrl } from "api";
+import { redirect } from "next/navigation";
 
 export default async function StatsPage({
   params,
@@ -9,7 +8,11 @@ export default async function StatsPage({
     id: string;
   };
 }) {
-  const { url, num_hits } = (await api.getStats(params.id)) as StatsResponse;
+  const res = await api.getStats(params.id);
+
+  if (!res.success) throw redirect(errorUrl(params.id, "NotFound"));
+
+  const { url, num_hits } = res.data;
 
   return (
     <main>

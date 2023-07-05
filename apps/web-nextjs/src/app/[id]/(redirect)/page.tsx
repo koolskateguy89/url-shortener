@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { type LengthenResponse, api } from "api";
+import { api, errorUrl } from "api";
 
 export default async function RedirectPage({
   params,
@@ -9,8 +9,11 @@ export default async function RedirectPage({
     id: string;
   };
 }) {
-  // ID is checked in layout file
-  const { url } = (await api.lengthen(params.id)) as LengthenResponse;
+  const res = await api.lengthen(params.id);
 
-  redirect(url);
+  if (res.success) {
+    redirect(res.data.url);
+  } else {
+    redirect(errorUrl(params.id, "NotFound"));
+  }
 }
