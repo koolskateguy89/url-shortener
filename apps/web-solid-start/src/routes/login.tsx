@@ -35,7 +35,7 @@ const LoginPage: VoidComponent = () => {
   };
 
   return (
-    <main class="flex h-screen flex-col items-center justify-center space-y-4">
+    <main class="flex h-screen flex-col items-center justify-center">
       <Title>Login</Title>
 
       <div class="mb-12 flex flex-col gap-y-4">
@@ -46,12 +46,13 @@ const LoginPage: VoidComponent = () => {
         </Button>
       </div>
 
-      <Form class="flex flex-col items-center space-y-2">
+      <Form class="flex flex-col items-center gap-y-2">
         <Input
           name="username"
           placeholder="Username"
           autocomplete="username"
           disabled={isLoading}
+          required
         />
 
         <Input
@@ -60,6 +61,7 @@ const LoginPage: VoidComponent = () => {
           placeholder="Password"
           autocomplete="current-password"
           disabled={isLoading}
+          required
         />
 
         <div>

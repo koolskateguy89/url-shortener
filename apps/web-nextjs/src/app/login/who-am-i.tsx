@@ -21,11 +21,11 @@ export const WhoAmI = () => {
 
   return (
     <>
-      <pre>
+      <code>
         me ={" "}
         {whoAmIQuery.isFetching && <LoadingSpinner className="mr-2 inline" />}
-        <code>{JSON.stringify(whoAmIQuery.data, null, 2)}</code>
-      </pre>
+        {JSON.stringify(whoAmIQuery.data, null, 2)}
+      </code>
 
       <Button onClick={handleRefetch} variant="destructive">
         Refetch

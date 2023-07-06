@@ -16,10 +16,10 @@ export const WhoAmI: VoidComponent = () => {
 
   return (
     <>
-      <pre>
+      <code>
         me = {whoami.loading && <LoadingSpinner class="mr-2 inline" />}
-        <code>{JSON.stringify(whoami(), null, 2)}</code>
-      </pre>
+        {JSON.stringify(whoami(), null, 2)}
+      </code>
 
       <Button onclick={handleRefetch} variant="destructive">
         Refetch

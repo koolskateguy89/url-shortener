@@ -47,16 +47,17 @@ export default function RegisterPage() {
   const isLoading = registerMutation.isLoading;
 
   return (
-    <main className="flex h-screen flex-col items-center justify-center space-y-4">
+    <main className="flex h-screen flex-col items-center justify-center">
       <form
         onSubmit={(e) => void handleSubmit(e)}
-        className="flex flex-col items-center space-y-2"
+        className="flex flex-col items-center gap-y-2"
       >
         <Input
           name="username"
           placeholder="Username"
           autoComplete="username"
           disabled={isLoading}
+          required
         />
 
         <Input
@@ -65,6 +66,7 @@ export default function RegisterPage() {
           placeholder="Password"
           autoComplete="new-password"
           disabled={isLoading}
+          required
         />
 
         <div>

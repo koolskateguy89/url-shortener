@@ -33,15 +33,16 @@ const RegisterPage: VoidComponent = () => {
   const isLoading = registering.pending;
 
   return (
-    <main class="flex h-screen flex-col items-center justify-center space-y-4">
+    <main class="flex h-screen flex-col items-center justify-center">
       <Title>Register</Title>
 
-      <Form class="flex flex-col items-center space-y-2">
+      <Form class="flex flex-col items-center gap-y-2">
         <Input
           name="username"
           placeholder="Username"
           autocomplete="username"
           disabled={isLoading}
+          required
         />
 
         <Input
@@ -50,6 +51,7 @@ const RegisterPage: VoidComponent = () => {
           placeholder="Password"
           autocomplete="new-password"
           disabled={isLoading}
+          required
         />
 
         <div>
