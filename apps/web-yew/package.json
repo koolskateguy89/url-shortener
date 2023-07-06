@@ -8,10 +8,13 @@
     "start": "trunk serve --release",
     "lint": "cargo clippy",
     "format": "cargo fmt",
-    "css:gen": "tailwindcss -i input.css -o assets/output.css",
+    "css:gen": "postcss input.css -o assets/output.css",
     "test": "wasm-pack test --headless --chrome"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "postcss-cli": "^10.1.0",
     "tailwind-config": "workspace:*",
     "tailwindcss": "^3.3.2"
   }
