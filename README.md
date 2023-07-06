@@ -55,35 +55,35 @@ TODO: change to table?
   - [x] Shorten URL
   - [x] Lengthen URL
   - [x] Register
-  - [...] Sign in
+  - [x] Login
 - Solid-Start
   - [x] Home (shorten URL)
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
-  - [x] Sign in
+  - [x] Login
   - [x] Register
 - NextJs
   - [x] Home
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
-  - [x] Sign in
+  - [x] Login
   - [x] Register
 - Yew
   - [x] Home
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
-  - [x] Sign in
+  - [x] Login
   - [ ] Register
 - SvelteKit
   - [x] Home
   - [x] Redirect
   - [~] Stats
   - [~] URL Error Page
-  - [ ] Sign in
-  - [ ] Register
+  - [x] Login
+  - [x] Register
 - Tauri
   - [ ] Home
   - [ ] Redirect

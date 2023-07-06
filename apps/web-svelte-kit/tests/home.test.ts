@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import type { ShortenResponse } from 'api';
+
 test('home page has expected input with "type" and "name" of "url"', async ({ page }) => {
 	await page.goto('/');
 
@@ -8,12 +10,14 @@ test('home page has expected input with "type" and "name" of "url"', async ({ pa
 	await expect(inputElem.getAttribute('type')).resolves.toBe('url');
 });
 
-test('ID of shortened gets displayed', async ({ page, context }) => {
+test('ID of shortened url gets displayed', async ({ page, context }) => {
 	context.route('**/api/url/shorten', (route) => {
 		route.fulfill({
 			status: 200,
 			contentType: 'application/json',
-			body: JSON.stringify({ id: 'test_id' })
+			body: JSON.stringify({
+				id: 'test_id'
+			} satisfies ShortenResponse)
 		});
 	});
 
