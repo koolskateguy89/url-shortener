@@ -30,8 +30,9 @@ dev:
 udeps:
   cargo +nightly udeps
 
-# Build the Actix server static artifacts
+# Build the Actix server static artifacts, running tests first
 @build-static:
+  @pnpm test --filter=web-yew --filter=yew-query-rs
   @pnpm server:build
   echo Removing static folder \'{{STATIC_FOLDER}}\'
   -rm -r {{STATIC_FOLDER}}
