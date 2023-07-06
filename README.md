@@ -76,7 +76,7 @@ TODO: change to table?
   - [~] Stats
   - [~] URL Error Page
   - [x] Login
-  - [ ] Register
+  - [x] Register
 - SvelteKit
   - [x] Home
   - [x] Redirect

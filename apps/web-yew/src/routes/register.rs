@@ -1,22 +1,27 @@
-use gloo_console::log;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 use yew_query::{use_mutation, MutationDispatcher};
 use yew_router::prelude::*;
 
-use crate::api::auth::{login, logout};
-use crate::components::WhoAmI;
+use crate::api::auth::register;
 use crate::routes::Route;
 
-#[function_component(LoginPage)]
-pub fn login_page() -> Html {
-    let login_mut = use_mutation(move |(username, password): (String, String)| async move {
-        login(username, password).await
+#[function_component(RegisterPage)]
+pub fn register_page() -> Html {
+    let navigator = use_navigator().expect("cannot access navigator");
+
+    let register_mut = use_mutation(move |(username, password): (String, String)| async move {
+        register(username, password).await
     });
 
+    // on success, redirect to login page
+    if register_mut.is_success() {
+        navigator.push(&Route::Login);
+    }
+
     let onsubmit = {
-        let login_mut = login_mut.clone();
+        let register_mut = register_mut.clone();
 
         Callback::from(move |event: SubmitEvent| {
             event.prevent_default();
@@ -29,6 +34,7 @@ pub fn login_page() -> Html {
             let form_data =
                 FormData::new_with_form(&form).expect_throw("Form data could not be instantiated");
 
+            // TODO: min pw length - maybe just handle it on server
             let username = form_data
                 .get("username")
                 .as_string()
@@ -38,32 +44,14 @@ pub fn login_page() -> Html {
                 .as_string()
                 .expect_throw("Could not get password from form");
 
-            login_mut.mutate((username, password));
+            register_mut.mutate((username, password));
         })
     };
 
-    let handle_logout = Callback::from(move |_| {
-        wasm_bindgen_futures::spawn_local(async move {
-            // TODO: handle properly (alert?)
-            match logout().await {
-                Ok(logout_successful) => log!("logout_successful =", logout_successful),
-                Err(err) => log!(format!("err = {err:?}")),
-            }
-        });
-    });
-
-    let loading = login_mut.is_loading();
+    let loading = register_mut.is_loading();
 
     html! {
       <main class="flex h-screen flex-col items-center justify-center">
-        <div class="mb-12 flex flex-col gap-y-4">
-          <WhoAmI />
-
-          <button onclick={handle_logout} class="button-destructive">
-            { "LOG out" }
-          </button>
-        </div>
-
         <form {onsubmit} class="flex flex-col items-center gap-y-2">
           <input
             name="username"
@@ -85,6 +73,9 @@ pub fn login_page() -> Html {
           />
 
           <div>
+            <Link<Route> to={Route::Login} classes="button-link">
+              { "Login" }
+            </Link<Route>>
             <button
               type="submit"
               class="button"
@@ -93,11 +84,8 @@ pub fn login_page() -> Html {
               if loading {
                 <img class="h-4 w-4 animate-spin mr-2 inline" src="assets/loader-2.svg" alt="loading" />
               }
-              { "Login" }
-            </button>
-            <Link<Route> to={Route::Register} classes="button-link">
               { "Register" }
-            </Link<Route>>
+            </button>
           </div>
         </form>
       </main>

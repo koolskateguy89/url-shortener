@@ -71,7 +71,7 @@ pub fn home_page() -> Html {
                     class="input"
                     required=true
                     {disabled}
-                    />
+                />
                 <button
                     type="submit"
                     class="button"

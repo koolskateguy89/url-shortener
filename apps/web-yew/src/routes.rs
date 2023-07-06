@@ -6,6 +6,7 @@ pub mod home;
 pub mod login;
 pub mod not_found;
 pub mod redirect;
+pub mod register;
 pub mod stats;
 
 use error::ErrorPage;
@@ -13,6 +14,7 @@ use home::HomePage;
 use login::LoginPage;
 use not_found::NotFoundPage;
 use redirect::RedirectPage;
+use register::RegisterPage;
 use stats::StatsPage;
 
 /// Main app router
@@ -28,6 +30,8 @@ pub enum Route {
     Error,
     #[at("/login")]
     Login,
+    #[at("/register")]
+    Register,
     #[at("/404")]
     #[not_found]
     NotFound,
@@ -53,6 +57,7 @@ pub fn switch(route: Route) -> Html {
         },
         Route::Error => html! { <ErrorPage /> },
         Route::Login => html! { <LoginPage /> },
+        Route::Register => html! { <RegisterPage /> },
         Route::NotFound => html! { <NotFoundPage /> },
     }
 }

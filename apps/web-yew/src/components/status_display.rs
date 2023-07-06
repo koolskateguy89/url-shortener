@@ -31,10 +31,8 @@ pub fn status_display(props: &StatusDisplayProps) -> Html {
         ShortenStatus::Loading => html!(<p>{ "Loading..." }</p>),
         ShortenStatus::Success(id) => html! {
             <p>
-                <Link<UrlRoute> to={UrlRoute::Redirect { id: id.to_string() }}>
-                    <span class="underline">
-                        { format!("BASE_URL/{}", id) }
-                    </span>
+                <Link<UrlRoute> classes="underline" to={UrlRoute::Redirect { id: id.to_string() }}>
+                    { format!("BASE_URL/{}", id) }
                 </Link<UrlRoute>>
             </p>
         },

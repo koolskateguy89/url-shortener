@@ -7,6 +7,7 @@
     "build": "pnpm css:gen && trunk build --release --public-url /yew/",
     "start": "trunk serve --release",
     "lint": "cargo clippy",
+    "format": "cargo fmt",
     "css:gen": "tailwindcss -i input.css -o assets/output.css",
     "test": "wasm-pack test --headless --chrome"
   },
