@@ -40,5 +40,7 @@ jobs:
         if: always()
         with:
           name: playwright-report
+          # Idk why it requires the full path
           path: apps/web-svelte-kit/playwright-report/
+          if-no-files-found: error
           retention-days: 30
