@@ -12,6 +12,9 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web-svelte-kit
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -20,8 +23,6 @@ jobs:
       - uses: pnpm/action-setup@v2
       - name: Install dependencies
         run: pnpm install
-      - name: Enter SvelteKit app directory
-        run: cd apps/web-svelte-kit
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
       - name: Run Playwright tests
