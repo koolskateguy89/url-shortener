@@ -1,4 +1,4 @@
-use gloo_console::log;
+use log::debug;
 use yew::prelude::*;
 use yew_query::{use_query, QueryRefetcher};
 
@@ -17,7 +17,7 @@ impl From<NetResult<String>> for RequestStatus<String, gloo_net::Error> {
 pub fn who_am_i() -> Html {
     let whoami_query = use_query((), |_| async move {
         let me = whoami().await;
-        log!(format!("i am: {me:?}"));
+        debug!("i am: {me:?}");
         me
     });
 

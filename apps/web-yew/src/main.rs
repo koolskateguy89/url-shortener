@@ -6,9 +6,8 @@ mod routes;
 
 use app::App;
 
-// TODO: switch to `wasm-logger` instead of `gloo-console`
-// https://yew.rs/docs/more/debugging#wasm-logger
-
 fn main() {
+    wasm_logger::init(wasm_logger::Config::default());
+
     yew::Renderer::<App>::new().render();
 }

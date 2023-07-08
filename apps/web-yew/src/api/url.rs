@@ -1,6 +1,5 @@
-use gloo_console::log;
 use gloo_net::http::Request;
-
+use log::error;
 use std::fmt::{Debug, Display};
 
 use common::{
@@ -34,7 +33,7 @@ pub async fn shorten(url: String) -> UrlResult<ShortenResponse> {
             .await
             .map_err(|e| Error::Other(format!("json error: {e}")))?;
 
-        log!(format!("error: {error:?}"));
+        error!("error: {error:?}");
 
         Err(error)
     }
@@ -57,7 +56,7 @@ pub async fn lengthen<T: Display>(id: T) -> UrlResult<LengthenResponse> {
             .await
             .map_err(|e| Error::Other(format!("json error: {e}")))?;
 
-        log!(format!("error: {error:?}"));
+        error!("error: {error:?}");
 
         Err(error)
     }
@@ -80,7 +79,7 @@ pub async fn get_stats<T: Display>(id: T) -> UrlResult<StatsResponse> {
             .await
             .map_err(|e| Error::Other(format!("json error: {e}")))?;
 
-        log!(format!("error: {error:?}"));
+        error!("error: {error:?}");
 
         Err(error)
     }

@@ -1,4 +1,4 @@
-use gloo_console::{error, log};
+use log::{debug, error};
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::window;
 use yew::prelude::*;
@@ -25,7 +25,7 @@ pub fn redirect_page(props: &RedirectPageProps) -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     match api::url::lengthen(&id).await {
                         Ok(LengthenResponse { url }) => {
-                            log!(format!("url = {url:?}"));
+                            debug!("url = {url}");
 
                             let window = window().expect_throw("window is undefined");
                             let location = window.location();
@@ -33,7 +33,7 @@ pub fn redirect_page(props: &RedirectPageProps) -> Html {
                             location.set_href(&url).expect_throw("Could not redirect");
                         }
                         Err(err) => {
-                            error!(format!("err = {err:?}"));
+                            error!("err = {err:?}");
                             let _ = error_redirector.redirect(id.to_string(), format!("{err:?}"));
                         }
                     }

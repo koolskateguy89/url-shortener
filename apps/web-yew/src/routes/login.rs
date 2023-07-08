@@ -1,4 +1,4 @@
-use gloo_console::log;
+use log::{debug, error};
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
@@ -46,8 +46,13 @@ pub fn login_page() -> Html {
         wasm_bindgen_futures::spawn_local(async move {
             // TODO: handle properly (alert?)
             match logout().await {
-                Ok(logout_successful) => log!("logout_successful =", logout_successful),
-                Err(err) => log!(format!("err = {err:?}")),
+                Ok(logout_successful) => {
+                    // debug
+                    debug!("logout_successful = {logout_successful}");
+                }
+                Err(err) => {
+                    error!("err = {err:?}");
+                }
             }
         });
     });

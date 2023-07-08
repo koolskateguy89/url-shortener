@@ -1,4 +1,4 @@
-use gloo_console::{error, log};
+use log::{debug, error};
 use yew::prelude::*;
 
 use crate::api;
@@ -27,16 +27,16 @@ pub fn stats_page(props: &StatsPageProps) -> Html {
         use_effect_with_deps(
             move |_| {
                 wasm_bindgen_futures::spawn_local(async move {
-                    log!(format!("id = {id:?}"));
+                    debug!("id = {id}");
 
                     match api::url::get_stats(&id).await {
                         Ok(stats) => {
-                            log!(format!("stats = {stats:?}"));
+                            debug!("stats = {stats:?}");
 
                             status.set(Status::Success(stats));
                         }
                         Err(err) => {
-                            error!(format!("err = {err:?}"));
+                            error!("err = {err:?}");
                             let _ = error_redirector.redirect(id.to_string(), format!("{err:?}"));
                         }
                     }

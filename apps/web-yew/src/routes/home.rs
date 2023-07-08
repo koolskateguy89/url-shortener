@@ -1,4 +1,4 @@
-use gloo_console::log;
+use log::debug;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
@@ -39,7 +39,7 @@ pub fn home_page() -> Html {
                 .as_string()
                 .expect_throw("Could not get url from form");
 
-            log!("url =", &url);
+            debug!("url = {url}");
 
             // URL validation is done server side
 
@@ -48,7 +48,7 @@ pub fn home_page() -> Html {
                 status.set(ShortenStatus::Loading);
 
                 let result = shorten(url).await;
-                log!("result =", format!("{result:?}"));
+                debug!("result = {result:?}");
 
                 status.set(result.into());
             });
