@@ -1,0 +1,20 @@
+{
+	"name": "prettier-config-custom-svelte",
+	"version": "0.0.0",
+	"main": "prettier.config.cjs",
+	"license": "MIT",
+	"scripts": {
+		"lint": "prettier --ignore-path=../../.prettierignore --check .",
+		"format": "prettier --ignore-path=../../.prettierignore --write ."
+	},
+	"dependencies": {
+		"prettier-plugin-svelte": "^2.10.1",
+		"prettier-plugin-tailwindcss": "^0.3.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"devDependencies": {
+		"prettier": "^2.8.8"
+	}
+}
