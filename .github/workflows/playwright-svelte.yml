@@ -15,18 +15,27 @@ jobs:
     defaults:
       run:
         working-directory: apps/web-svelte-kit
+    env:
+      VITE_API_URL: 'doesntmatter'
     steps:
       - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - uses: pnpm/action-setup@v2
+          cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
+
       - name: Run Playwright tests
         run: pnpm exec playwright test
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
