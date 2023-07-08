@@ -11,7 +11,7 @@ test('home page has expected input with "type" and "name" of "url"', async ({ pa
 });
 
 test('ID of shortened url gets displayed', async ({ page, context }) => {
-	context.route('**/api/url/shorten', (route) => {
+	context.route('**/url/shorten', (route) => {
 		route.fulfill({
 			status: 200,
 			contentType: 'application/json',
@@ -26,7 +26,7 @@ test('ID of shortened url gets displayed', async ({ page, context }) => {
 	await page.getByRole('textbox', { name: 'url' }).fill('https://www.google.com');
 
 	await page.click('button[type=submit]');
-	// await page.waitForResponse('**/api/url/shorten');
+	// await page.waitForResponse('**/url/shorten');
 
 	const link = page.locator('a[href]');
 	await expect(link).toBeVisible();
