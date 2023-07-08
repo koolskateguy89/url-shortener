@@ -1,4 +1,4 @@
-name: Playwright Svelte Tests
+name: Playwright Tests
 
 on:
   push:
@@ -9,25 +9,38 @@ on:
       - main
 
 jobs:
-  test:
+  test-svelte-kit:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web-svelte-kit
+    env:
+      VITE_API_URL: 'doesntmatter'
     steps:
       - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install
-      - name: Enter SvelteKit app directory
-        run: cd apps/web-svelte-kit
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
+
       - name: Run Playwright tests
         run: pnpm exec playwright test
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
-          path: playwright-report/
+          # Idk why it requires the full path
+          path: apps/web-svelte-kit/playwright-report/
+          if-no-files-found: error
           retention-days: 30

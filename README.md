@@ -9,6 +9,12 @@ limited knowledge of
 and
 [pnpm workspaces](https://pnpm.io/workspaces).
 
+TODO: playwright nextjs & solid-start tests
+
+TODO: prettier/eslint github actions
+
+TODO?: shuttle deploy github action
+
 ## Apps, Packages and Crates
 
 TODO?: try to [on a non-very-basic level] port React Query to Yew
