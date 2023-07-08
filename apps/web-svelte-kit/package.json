@@ -8,7 +8,7 @@
 		"test": "pnpm test:integration && pnpm test:unit",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --plugin-search-dir . --check --ignore-path=../../.prettierignore . **.svelte && eslint .",
+		"lint": "prettier --plugin-search-dir . --check --ignore-path=../../.prettierignore . **.svelte && eslint --ignore-path ../../.eslintignore .",
 		"format": "prettier --plugin-search-dir . --write --ignore-path=../../.prettierignore . **.svelte",
 		"test:integration": "playwright test",
 		"test:unit": "vitest run"

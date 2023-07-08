@@ -5,7 +5,7 @@
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
-    "lint": "prettier --check --ignore-path=../../.prettierignore . && eslint \"**/*.ts*\"",
+    "lint": "prettier --check --ignore-path=../../.prettierignore . && eslint --ignore-path ../../.eslintignore .",
     "format": "prettier --write --ignore-path=../../.prettierignore .",
     "generate:component": "turbo gen react-component"
   },

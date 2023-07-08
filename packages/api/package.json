@@ -5,7 +5,7 @@
   "types": "./src/index.ts",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.ts*\""
+    "lint": "eslint --ignore-path ../../.eslintignore ."
   },
   "devDependencies": {
     "eslint": "^8.44.0",

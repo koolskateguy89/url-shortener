@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /build
-/.svelte-kit
+.svelte-kit
 /package
 .env
 .env.*
@@ -11,3 +11,13 @@ node_modules
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# idk if need to be ignored
+.next
+.solid
+.turbo
+.vercel
+
+# Playwright
+/test-results/
+playwright-report

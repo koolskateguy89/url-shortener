@@ -7,7 +7,7 @@
     "dev": "solid-start dev --port 3000",
     "build": "solid-start build",
     "start": "solid-start start",
-    "lint": "prettier --check --ignore-path=../../.prettierignore . && eslint \"**/*.{ts,tsx,js,jsx}\"",
+    "lint": "prettier --check --ignore-path=../../.prettierignore . && eslint --ignore-path ../../.eslintignore .",
     "format": "prettier --write --ignore-path=../../.prettierignore ."
   },
   "dependencies": {
