@@ -26,6 +26,7 @@ TODO: `logger` package
 - `ui-core`: 'core' component library, contains styles and variants using [`class-variance-authority`](https://cva.style/)
 - `ui-solid`: Solid component library
 - `ui-react`: React component library
+- `ui-svelte`: Svelte component library
 - `eslint-config-custom`: base [`eslint`](https://eslint.org/) configuration
 - `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-plugin-solid`)
 - `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-config-next`)
