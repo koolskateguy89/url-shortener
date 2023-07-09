@@ -10,7 +10,7 @@
 		"generate:component": "turbo gen svelte-component"
 	},
 	"dependencies": {
-		"lucide-svelte": "^0.259.0",
+		"lucide-svelte": "^0.256.0",
 		"ui-core": "workspace:*"
 	},
 	"devDependencies": {
