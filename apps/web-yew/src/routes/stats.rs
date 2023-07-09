@@ -36,8 +36,8 @@ pub fn stats_page(props: &StatsPageProps) -> Html {
                             status.set(Status::Success(stats));
                         }
                         Err(err) => {
-                            error!("err = {err:?}");
-                            let _ = error_redirector.redirect(id.to_string(), format!("{err:?}"));
+                            error!("(stats) err = {err:?}");
+                            let _ = error_redirector.redirect(id.to_string(), err.into());
                         }
                     }
                 });

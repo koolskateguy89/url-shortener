@@ -1,6 +1,6 @@
+use gloo_utils::window;
 use log::{debug, error};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::window;
 use yew::prelude::*;
 
 use crate::api;
@@ -27,14 +27,14 @@ pub fn redirect_page(props: &RedirectPageProps) -> Html {
                         Ok(LengthenResponse { url }) => {
                             debug!("url = {url}");
 
-                            let window = window().expect_throw("window is undefined");
-                            let location = window.location();
-
-                            location.set_href(&url).expect_throw("Could not redirect");
+                            window()
+                                .location()
+                                .set_href(&url)
+                                .expect_throw("Could not redirect");
                         }
                         Err(err) => {
-                            error!("err = {err:?}");
-                            let _ = error_redirector.redirect(id.to_string(), format!("{err:?}"));
+                            error!("(redirect) err = {err:?}");
+                            let _ = error_redirector.redirect(id.to_string(), err.into());
                         }
                     }
                 });
