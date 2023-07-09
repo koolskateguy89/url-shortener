@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 // TODO?: rename to UrlError, it's used in a lot of places
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(untagged)]
 pub enum Error {
     InvalidUrl,
     NotFound,

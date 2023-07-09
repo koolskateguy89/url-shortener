@@ -33,14 +33,10 @@ export interface RegisterRequest {
   password: string;
 }
 
-export type Error = "NotFound" | "InvalidUrl";
+export type Error = "NotFound" | "InvalidUrl" | (string & {});
 
 export interface ErrorResponse {
-  error:
-    | Error
-    | {
-        Other: string;
-      };
+  error: Error;
 }
 
 type ApiResponse<T, F> =
@@ -69,7 +65,9 @@ function apiResponse<T extends object>(
 }
 
 export function errorUrl(id: string, cause: Error): string {
-  return `/error?id=${encodeURIComponent(id)}&cause=${cause}`;
+  return `/error?id=${encodeURIComponent(id)}&cause=${encodeURIComponent(
+    cause
+  )}`;
 }
 
 /**
@@ -94,15 +92,9 @@ async function shorten(
 }
 
 async function lengthen(
-  id: string,
-  init: RequestInit = {
-    cache: "no-cache",
-  }
+  id: string
 ): Promise<ApiResponse<LengthenResponse, ErrorResponse>> {
-  const res = await fetch(
-    `${API_URL}/url/${encodeURIComponent(id)}/lengthen`,
-    init
-  );
+  const res = await fetch(`${API_URL}/url/${encodeURIComponent(id)}/lengthen`);
 
   const body = (await res.json()) as LengthenResponse | ErrorResponse;
   return apiResponse(body);
