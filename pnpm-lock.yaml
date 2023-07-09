@@ -422,7 +422,7 @@ importers:
         specifier: ^0.259.0
         version: 0.259.0(solid-js@1.7.7)
       solid-js:
-        specifier: ^1.7.5
+        specifier: ^1.7.7
         version: 1.7.7
       ui-core:
         specifier: workspace:*
@@ -447,8 +447,8 @@ importers:
   packages/ui-svelte:
     dependencies:
       lucide-svelte:
-        specifier: ^0.259.0
-        version: 0.259.0(svelte@4.0.5)
+        specifier: ^0.256.0
+        version: 0.256.0(svelte@4.0.5)
       ui-core:
         specifier: workspace:*
         version: link:../ui-core
@@ -5372,10 +5372,10 @@ packages:
       solid-js: 1.7.7
     dev: false
 
-  /lucide-svelte@0.259.0(svelte@4.0.5):
-    resolution: {integrity: sha512-OlPkP3wCTA27j2Qdkgf8QruWTNkTFT8vpS7ZviyiHpcTV9RJsJVRzC6EYcnLxvxB3xCyyQ6WE3FW7lCAlR+jIQ==}
+  /lucide-svelte@0.256.0(svelte@4.0.5):
+    resolution: {integrity: sha512-F1XMEOV+uyVbGygzojz0ly7pa+fQb0l1uxc6g1MDZQBoqo4LPgqTdaDWMkpH+YEsIsA3OIs7PEcTs9AZmTaIXQ==}
     peerDependencies:
-      svelte: '>=3 <5'
+      svelte: ^3.49.0
     dependencies:
       svelte: 4.0.5
     dev: false

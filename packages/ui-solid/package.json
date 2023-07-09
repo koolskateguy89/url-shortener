@@ -15,7 +15,7 @@
     "ui-core": "workspace:*"
   },
   "peerDependencies": {
-    "solid-js": "^1.7.5"
+    "solid-js": "^1.7.7"
   },
   "devDependencies": {
     "eslint": "^8.44.0",
