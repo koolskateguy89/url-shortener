@@ -1,4 +1,5 @@
-use log::{debug, error};
+use gloo_utils::window;
+use log::error;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
@@ -12,7 +13,19 @@ use crate::routes::Route;
 #[function_component(LoginPage)]
 pub fn login_page() -> Html {
     let login_mut = use_mutation(move |(username, password): (String, String)| async move {
-        login(username, password).await
+        let result = login(username, password).await;
+
+        if let Ok(logged_in) = result {
+            let message = if logged_in {
+                "Logged in"
+            } else {
+                "Failed to log in"
+            };
+
+            let _ = window().alert_with_message(message);
+        }
+
+        result
     });
 
     let onsubmit = {
@@ -44,16 +57,21 @@ pub fn login_page() -> Html {
 
     let handle_logout = Callback::from(move |_| {
         wasm_bindgen_futures::spawn_local(async move {
-            // TODO: handle properly (alert?)
-            match logout().await {
+            let message = match logout().await {
                 Ok(logout_successful) => {
-                    // debug
-                    debug!("logout_successful = {logout_successful}");
+                    if logout_successful {
+                        "Logged out"
+                    } else {
+                        "Failed to log out"
+                    }
                 }
                 Err(err) => {
                     error!("err = {err:?}");
+                    "Failed to log out (errored, check console)"
                 }
-            }
+            };
+
+            let _ = window().alert_with_message(message);
         });
     });
 

@@ -30,8 +30,14 @@ const LoginPage: VoidComponent = () => {
 
   const isLoading = loggingIn.pending;
 
-  const handleLogout = () => {
-    void api.logout();
+  const handleLogout = async () => {
+    try {
+      const loggedOut = await api.logout();
+      alert(loggedOut ? "Logged out" : "Failed to log out");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to log out (errored, check console)");
+    }
   };
 
   return (
@@ -41,7 +47,7 @@ const LoginPage: VoidComponent = () => {
       <div class="mb-12 flex flex-col gap-y-4">
         <WhoAmI />
 
-        <Button onClick={handleLogout} variant="destructive">
+        <Button onClick={() => void handleLogout()} variant="destructive">
           LOG out
         </Button>
       </div>

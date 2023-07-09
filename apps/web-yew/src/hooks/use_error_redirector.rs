@@ -1,21 +1,27 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::routes::error::SearchParams;
+use crate::routes::error::{ErrorCause, SearchParams};
 use crate::routes::Route;
+use common::error::Error as CommonError;
 
 pub struct ErrorRedirector {
     navigator: Navigator,
 }
 
+impl From<CommonError> for ErrorCause {
+    fn from(err: CommonError) -> Self {
+        match err {
+            CommonError::InvalidUrl => Self::Other("Invalid URL".to_string()),
+            CommonError::NotFound => Self::NotFound,
+            CommonError::Other(err) => Self::Other(err),
+        }
+    }
+}
+
 impl ErrorRedirector {
-    pub fn redirect(
-        &self,
-        id: impl Into<String>,
-        // TODO: make `cause` an enum
-        cause: impl Into<String>,
-    ) -> NavigationResult<()> {
-        let query = SearchParams::new(id.into(), Some(cause.into()));
+    pub fn redirect(&self, id: impl Into<String>, cause: ErrorCause) -> NavigationResult<()> {
+        let query = SearchParams::new(id.into(), Some(cause));
         self.navigator.push_with_query(&Route::Error, &query)
     }
 }
