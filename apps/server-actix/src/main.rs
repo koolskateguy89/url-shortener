@@ -6,12 +6,9 @@ use actix_web::{
     HttpResponse, Result,
 };
 use derive_more::Display;
-use log::info;
 use shuttle_actix_web::ShuttleActixWeb;
-use shuttle_runtime::CustomError;
 use shuttle_secrets::SecretStore;
-use sqlx::{Executor, PgPool};
-
+use sqlx::PgPool;
 use std::path::PathBuf;
 
 use common::{error::Error as CommonError, types::ErrorResponse};
@@ -90,15 +87,19 @@ async fn actix_web(
     #[shuttle_static_folder::StaticFolder(folder = "static")] static_folder: PathBuf,
     #[shuttle_secrets::Secrets] secret_store: SecretStore,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
-    info!("Running database migration");
-    // TODO: use sqlx::migrate
-    pool.execute(include_str!("../schema.sql"))
-        .await
-        .map_err(CustomError::new)?;
+    // Shuttle deployment breaks if we try to run migrations on it
+    // so just have to do it manually, locally on deployment db, using
+    // sqlx-cli
+    // log::info!("Running database migration");
+    // sqlx::migrate!()
+    //     .run(&pool)
+    //     .await
+    //     .map_err(shuttle_runtime::CustomError::new)?;
 
-    db::auth::register_user(&pool, "test", "testpw")
-        .await
-        .expect("could not register test user");
+    match db::auth::register_user(&pool, "test", "testpw").await {
+        Ok(_) => log::debug!("test user created"),
+        Err(e) => log::info!("could not register test user, error: {:?}", e),
+    }
 
     let session_key = secret_store
         .get("SESSION_KEY")
