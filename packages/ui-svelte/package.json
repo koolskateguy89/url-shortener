@@ -10,7 +10,7 @@
 		"generate:component": "turbo gen svelte-component"
 	},
 	"dependencies": {
-		"lucide-svelte": "^0.258.0",
+		"lucide-svelte": "^0.259.0",
 		"ui-core": "workspace:*"
 	},
 	"devDependencies": {
@@ -20,7 +20,7 @@
 		"prettier": "^2.8.8",
 		"prettier-config-custom-svelte": "workspace:*",
 		"prettier-plugin-svelte": "^2.10.1",
-		"svelte": "^4.0.4",
+		"svelte": "^4.0.5",
 		"typescript": "^5.1.6"
 	}
 }

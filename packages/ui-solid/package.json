@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@kobalte/core": "^0.9.8",
-    "lucide-solid": "^0.258.0",
+    "lucide-solid": "^0.259.0",
     "ui-core": "workspace:*"
   },
   "peerDependencies": {
