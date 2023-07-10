@@ -1,20 +1,29 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::api::ApiError;
 use crate::routes::error::{ErrorCause, SearchParams};
 use crate::routes::Route;
-use common::error::Error as CommonError;
+use common::error::UrlError;
 
 pub struct ErrorRedirector {
     navigator: Navigator,
 }
 
-impl From<CommonError> for ErrorCause {
-    fn from(err: CommonError) -> Self {
+impl From<UrlError> for ErrorCause {
+    fn from(err: UrlError) -> Self {
         match err {
-            CommonError::InvalidUrl => Self::Other("Invalid URL".to_string()),
-            CommonError::NotFound => Self::NotFound,
-            CommonError::Other(err) => Self::Other(err),
+            UrlError::NotFound => Self::NotFound,
+            UrlError::InvalidUrl => Self::Other("Invalid URL".to_string()),
+        }
+    }
+}
+
+impl From<ApiError<UrlError>> for ErrorCause {
+    fn from(err: ApiError<UrlError>) -> Self {
+        match err {
+            ApiError::Error(e) => e.into(),
+            ApiError::Other(s) => Self::Other(s),
         }
     }
 }

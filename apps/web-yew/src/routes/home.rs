@@ -3,14 +3,14 @@ use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
 use yew::prelude::*;
 
-use crate::api::{url::shorten, RequestStatus};
+use crate::api::{url::shorten, ApiError, RequestStatus};
 use crate::components::StatusDisplay;
-use common::{error::Error, types::ShortenResponse};
+use common::{error::UrlError, types::ShortenResponse};
 
-pub type ShortenStatus = RequestStatus<AttrValue, Error>;
+pub type ShortenStatus = RequestStatus<AttrValue, ApiError<UrlError>>;
 
-impl From<Result<ShortenResponse, Error>> for ShortenStatus {
-    fn from(result: Result<ShortenResponse, Error>) -> ShortenStatus {
+impl From<Result<ShortenResponse, ApiError<UrlError>>> for ShortenStatus {
+    fn from(result: Result<ShortenResponse, ApiError<UrlError>>) -> ShortenStatus {
         match result {
             Ok(result) => ShortenStatus::Success(result.id.into()),
             Err(err) => ShortenStatus::Error(err),
