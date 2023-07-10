@@ -46,7 +46,8 @@ pub fn stats_page(props: &StatsPageProps) -> Html {
         );
     }
 
-    // TODO: actually handle all cases
+    // don't need to actually handle all cases here because we're redirecting on error
+    // and idle is impossible
     let content = move || -> Html {
         match *status {
             Status::Success(StatsResponse {
