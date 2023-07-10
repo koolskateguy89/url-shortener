@@ -6,7 +6,7 @@
     "dev": "pnpm css:gen && trunk serve",
     "build": "pnpm css:gen && trunk build --release --public-url /yew/",
     "start": "trunk serve --release",
-    "lint": "cargo clippy",
+    "lint": "cargo clippy -- -D warnings",
     "format": "cargo fmt",
     "css:gen": "postcss input.css -o assets/output.css",
     "test": "wasm-pack test --headless --chrome"

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cargo watch -x \"shuttle run\"",
-    "lint": "cargo clippy",
+    "lint": "cargo clippy -- -D warnings",
     "format": "cargo fmt"
   }
 }
