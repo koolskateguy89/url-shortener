@@ -5,13 +5,15 @@ use actix_web::{
     web::{self, ServiceConfig},
     HttpResponse, Result,
 };
-use derive_more::Display;
 use shuttle_actix_web::ShuttleActixWeb;
 use shuttle_secrets::SecretStore;
 use sqlx::PgPool;
 use std::path::PathBuf;
 
-use common::{error::Error as CommonError, types::ErrorResponse};
+use common::{
+    error::{AuthError, Error, UrlError},
+    types::ErrorResponse,
+};
 
 mod auth;
 mod db;
@@ -20,45 +22,50 @@ mod services;
 
 use crate::services::{api::ApiService, yew::YewService};
 
-#[derive(Clone, Debug, Display)]
-pub enum UserError {
-    // url
-    #[display(fmt = "unused")]
-    InvalidUrl,
-    #[display(fmt = "unused")]
-    NotFound,
-    // auth
-    #[display(fmt = "unused")]
-    UserNotFound,
-    #[display(fmt = "unused")]
-    UserIncorrectPassword,
-    #[display(fmt = "unused")]
-    UsernameTaken,
-    // common
-    #[display(fmt = "unused")]
-    InternalError,
-    #[display(fmt = "unused")]
-    Other(String),
+#[derive(Debug)]
+pub struct UserError(Error);
+
+impl UserError {
+    pub fn new(error: Error) -> Self {
+        Self(error)
+    }
+
+    pub fn url(error: UrlError) -> Self {
+        Self(Error::Url(error))
+    }
+
+    pub fn auth(error: AuthError) -> Self {
+        Self(Error::Auth(error))
+    }
+
+    pub fn other(error: impl Into<String>) -> Self {
+        Self(Error::Other(error.into()))
+    }
+
+    pub fn internal() -> Self {
+        Self(Error::InternalError)
+    }
 }
 
-impl From<UserError> for CommonError {
-    fn from(e: UserError) -> Self {
-        match e {
-            UserError::InvalidUrl => CommonError::InvalidUrl,
-            UserError::NotFound => CommonError::NotFound,
-            UserError::Other(s) => CommonError::Other(s),
-            _ => CommonError::Other(format!("{e:?}")),
-        }
+// necessary for ResponseError
+impl std::fmt::Display for UserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // debug of inner
+        write!(f, "{:?}", self.0)
     }
 }
 
 impl error::ResponseError for UserError {
     fn status_code(&self) -> StatusCode {
-        match *self {
-            UserError::InvalidUrl => StatusCode::BAD_REQUEST,
-            UserError::NotFound | UserError::UserNotFound => StatusCode::NOT_FOUND,
-            UserError::UsernameTaken => StatusCode::CONFLICT,
-            UserError::UserIncorrectPassword => StatusCode::UNAUTHORIZED,
+        match self.0 {
+            Error::Url(UrlError::InvalidUrl) | Error::Auth(AuthError::InvalidCredentials) => {
+                StatusCode::BAD_REQUEST
+            }
+            Error::Url(UrlError::NotFound) | Error::Auth(AuthError::UserNotFound) => {
+                StatusCode::NOT_FOUND
+            }
+            Error::Auth(AuthError::UsernameTaken) => StatusCode::CONFLICT,
+            Error::Auth(AuthError::UserIncorrectPassword) => StatusCode::UNAUTHORIZED,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
@@ -66,7 +73,7 @@ impl error::ResponseError for UserError {
     fn error_response(&self) -> HttpResponse {
         HttpResponse::build(self.status_code())
             .insert_header(ContentType::json())
-            .json(ErrorResponse::new(self.clone().into()))
+            .json(ErrorResponse::new(self.0.clone()))
     }
 }
 
@@ -96,9 +103,26 @@ async fn actix_web(
     //     .await
     //     .map_err(shuttle_runtime::CustomError::new)?;
 
-    match db::auth::register_user(&pool, "test", "testpw").await {
-        Ok(_) => log::debug!("test user created"),
-        Err(e) => log::info!("could not register test user, error: {:?}", e),
+    {
+        use auth::hash_password;
+        use db::auth::{create_user, User};
+
+        if let Some(hashed_password) = hash_password("testpw".as_bytes()) {
+            let test_user = User {
+                username: "test".to_string(),
+                hashed_password,
+            };
+
+            match create_user(&pool, &test_user).await {
+                Ok(true) => log::debug!("test user created"),
+                Ok(false) => log::debug!("test user already exists"),
+                Err(sqlx_error) => {
+                    log::error!("could not create test user, sqlx_error: {:?}", sqlx_error)
+                }
+            }
+        } else {
+            log::error!("could not hash test user password");
+        }
     }
 
     let session_key = secret_store

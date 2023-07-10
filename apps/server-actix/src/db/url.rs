@@ -1,6 +1,8 @@
 use sqlx::{types::chrono, FromRow, PgPool};
 use url::Url;
 
+use common::error::UrlError;
+
 use crate::UserError;
 
 #[derive(Debug, FromRow)]
@@ -61,7 +63,7 @@ pub async fn id_exists(pool: &PgPool, id: &str) -> sqlx::Result<bool> {
 /// Upserts the url into the database.
 pub async fn insert_short_url(pool: &PgPool, url: &str) -> Result<String, UserError> {
     // Ensure url is a valid URL
-    let url = Url::parse(url).map_err(|_| UserError::InvalidUrl)?;
+    let url = Url::parse(url).map_err(|_| UserError::url(UrlError::InvalidUrl))?;
 
     let id = random_id();
 
@@ -82,7 +84,7 @@ pub async fn insert_short_url(pool: &PgPool, url: &str) -> Result<String, UserEr
     .bind(url.as_ref())
     .fetch_one(pool)
     .await
-    .map_err(|err| UserError::Other(err.to_string()))?;
+    .map_err(|err| UserError::other(err.to_string()))?;
 
     Ok(id)
 }
@@ -92,14 +94,14 @@ pub async fn get_long_url(pool: &PgPool, id: &str) -> Result<String, UserError> 
         .bind(id)
         .fetch_optional(pool)
         .await
-        .map_err(|err| UserError::Other(err.to_string()))?
-        .ok_or(UserError::NotFound)?;
+        .map_err(|err| UserError::other(err.to_string()))?
+        .ok_or(UserError::url(UrlError::NotFound))?;
 
     sqlx::query("INSERT INTO lengthen_logs(id) VALUES ($1)")
         .bind(id)
         .execute(pool)
         .await
-        .map_err(|err| UserError::Other(err.to_string()))?;
+        .map_err(|err| UserError::other(err.to_string()))?;
 
     Ok(url)
 }
@@ -109,14 +111,14 @@ pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<LengthenStat,
         .bind(id)
         .fetch_optional(pool)
         .await
-        .map_err(|err| UserError::Other(err.to_string()))?
-        .ok_or(UserError::NotFound)?;
+        .map_err(|err| UserError::other(err.to_string()))?
+        .ok_or(UserError::url(UrlError::NotFound))?;
 
     let rows: Vec<LengthenLogRow> = sqlx::query_as("SELECT * FROM lengthen_logs WHERE id = $1")
         .bind(id)
         .fetch_all(pool)
         .await
-        .map_err(|err| UserError::Other(err.to_string()))?;
+        .map_err(|err| UserError::other(err.to_string()))?;
 
     Ok(LengthenStat::new(url, rows))
 }

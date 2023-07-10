@@ -35,6 +35,12 @@ export interface RegisterRequest {
 
 export type Error = "NotFound" | "InvalidUrl" | (string & {});
 
+export type AuthError =
+  | "UserNotFound"
+  | "UserIncorrectPassword"
+  | "UsernameTaken"
+  | "InvalidCredentials";
+
 export interface ErrorResponse {
   error: Error;
 }

@@ -1,14 +1,37 @@
 use serde::{Deserialize, Serialize};
 
-// TODO?: rename to UrlError, it's used in a lot of places
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum Error {
-    InvalidUrl,
-    NotFound,
+    Url(UrlError),
+    Auth(AuthError),
+    // common
+    InternalError,
     Other(String),
 }
 
-pub type UrlResult<T> = std::result::Result<T, Error>;
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub enum UrlError {
+    InvalidUrl,
+    NotFound,
+}
 
-// TODO: auth related errors
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub enum AuthError {
+    UserNotFound,
+    UserIncorrectPassword,
+    UsernameTaken,
+    InvalidCredentials,
+}
+
+impl From<UrlError> for Error {
+    fn from(e: UrlError) -> Self {
+        Self::Url(e)
+    }
+}
+
+impl From<AuthError> for Error {
+    fn from(e: AuthError) -> Self {
+        Self::Auth(e)
+    }
+}

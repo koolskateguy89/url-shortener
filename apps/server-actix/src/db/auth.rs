@@ -1,72 +1,37 @@
-use sqlx::PgPool;
+use sqlx::{FromRow, PgPool};
 
-use crate::auth::{hash_password, verify_password};
-
-#[derive(Debug)]
-pub enum LoginError {
-    UserNotFound,
-    IncorrectPassword,
-    Sqlx(sqlx::Error),
+#[derive(Debug, FromRow)]
+pub struct User {
+    pub username: String,
+    pub hashed_password: String,
 }
 
-#[derive(Debug)]
-pub enum RegisterError {
-    UsernameTaken,
-    Sqlx(sqlx::Error),
-}
-
-impl From<sqlx::Error> for LoginError {
-    fn from(err: sqlx::Error) -> Self {
-        Self::Sqlx(err)
-    }
-}
-
-impl From<sqlx::Error> for RegisterError {
-    fn from(err: sqlx::Error) -> Self {
-        Self::Sqlx(err)
-    }
-}
-
-pub async fn register_user(
-    pool: &PgPool,
-    username: &str,
-    password: &str,
-) -> Result<(), RegisterError> {
+/// `Ok(true)` if user was created, `Ok(false)` if username was taken
+pub async fn create_user(pool: &PgPool, user: &User) -> Result<bool, sqlx::Error> {
     let (exists,): (bool,) =
         sqlx::query_as("SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)")
-            .bind(username)
+            .bind(&user.username)
             .fetch_one(pool)
             .await?;
 
     if exists {
-        return Err(RegisterError::UsernameTaken);
+        return Ok(false);
     }
 
-    let hashed_password = hash_password(password.as_bytes());
-
     sqlx::query("INSERT INTO users(username, password) VALUES ($1, $2)")
-        .bind(username)
-        .bind(hashed_password)
+        .bind(&user.username)
+        .bind(&user.hashed_password)
         .execute(pool)
         .await?;
 
-    Ok(())
+    Ok(true)
 }
 
-/// `Ok` if user exists and password is correct
-pub async fn can_login(pool: &PgPool, username: &str, password: &str) -> Result<(), LoginError> {
-    let (hashed_password,) =
-        sqlx::query_as::<_, (String,)>("SELECT password FROM users WHERE username = $1")
-            .bind(username)
-            .fetch_optional(pool)
-            .await?
-            .ok_or(LoginError::UserNotFound)?;
-
-    let correct_password = verify_password(password.as_bytes(), &hashed_password);
-
-    if !correct_password {
-        return Err(LoginError::IncorrectPassword);
-    }
-
-    Ok(())
+pub async fn get_user(pool: &PgPool, username: &str) -> Result<Option<User>, sqlx::Error> {
+    sqlx::query_as::<_, User>(
+        "SELECT username, password as hashed_password FROM users WHERE username = $1",
+    )
+    .bind(username)
+    .fetch_optional(pool)
+    .await
 }

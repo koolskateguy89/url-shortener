@@ -3435,7 +3435,6 @@ dependencies = [
  "actix-session",
  "actix-web",
  "argon2",
- "derive_more",
  "log",
  "nanoid",
  "serde_json",

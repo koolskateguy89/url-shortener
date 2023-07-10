@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 use crate::error::Error;
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct ErrorResponse {
-    pub error: Error,
+pub struct ErrorResponse<E = Error> {
+    pub error: E,
 }
 
 impl ErrorResponse {
