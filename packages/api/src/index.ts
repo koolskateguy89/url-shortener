@@ -72,7 +72,7 @@ function apiResponse<T extends object, E>(
   };
 }
 
-export function errorUrl(id: string, cause: AuthError): string {
+export function errorUrl(id: string, cause: UrlError): string {
   return `/error?id=${encodeURIComponent(id)}&cause=${encodeURIComponent(
     cause
   )}`;
