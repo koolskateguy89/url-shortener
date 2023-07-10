@@ -9,6 +9,7 @@ STATIC_FOLDER := "static"
 # STATIC_FOLDER := "apps/server-actix/static"
 
 alias up := upgrade-npm-deps
+alias sd := shuttle-deploy
 
 # List available recipes
 default:
