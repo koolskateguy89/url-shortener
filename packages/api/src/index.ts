@@ -33,7 +33,9 @@ export interface RegisterRequest {
   password: string;
 }
 
-export type Error = "NotFound" | "InvalidUrl" | (string & {});
+export type Error = UrlError | AuthError | "InternalError" | (string & {});
+
+export type UrlError = "NotFound" | "InvalidUrl";
 
 export type AuthError =
   | "UserNotFound"
@@ -41,8 +43,8 @@ export type AuthError =
   | "UsernameTaken"
   | "InvalidCredentials";
 
-export interface ErrorResponse {
-  error: Error;
+export interface ErrorResponse<E = Error> {
+  error: E;
 }
 
 type ApiResponse<T, F> =
@@ -55,9 +57,9 @@ type ApiResponse<T, F> =
       error: F;
     };
 
-function apiResponse<T extends object>(
-  data: T | ErrorResponse
-): ApiResponse<T, ErrorResponse> {
+function apiResponse<T extends object, E>(
+  data: T | ErrorResponse<E>
+): ApiResponse<T, ErrorResponse<E>> {
   if ("error" in data)
     return {
       success: false,
@@ -70,7 +72,7 @@ function apiResponse<T extends object>(
   };
 }
 
-export function errorUrl(id: string, cause: Error): string {
+export function errorUrl(id: string, cause: AuthError): string {
   return `/error?id=${encodeURIComponent(id)}&cause=${encodeURIComponent(
     cause
   )}`;
@@ -84,7 +86,7 @@ export function errorUrl(id: string, cause: Error): string {
  */
 async function shorten(
   url: string
-): Promise<ApiResponse<ShortenResponse, ErrorResponse>> {
+): Promise<ApiResponse<ShortenResponse, ErrorResponse<UrlError>>> {
   const res = await fetch(`${API_URL}/url/shorten`, {
     method: "POST",
     headers: {
@@ -93,16 +95,16 @@ async function shorten(
     body: JSON.stringify({ url }),
   });
 
-  const body = (await res.json()) as ShortenResponse | ErrorResponse;
+  const body = (await res.json()) as ShortenResponse | ErrorResponse<UrlError>;
   return apiResponse(body);
 }
 
 async function lengthen(
   id: string
-): Promise<ApiResponse<LengthenResponse, ErrorResponse>> {
+): Promise<ApiResponse<LengthenResponse, ErrorResponse<UrlError>>> {
   const res = await fetch(`${API_URL}/url/${encodeURIComponent(id)}/lengthen`);
 
-  const body = (await res.json()) as LengthenResponse | ErrorResponse;
+  const body = (await res.json()) as LengthenResponse | ErrorResponse<UrlError>;
   return apiResponse(body);
 }
 
@@ -117,13 +119,13 @@ async function getStats(
   init: RequestInit = {
     cache: "no-cache",
   }
-): Promise<ApiResponse<StatsResponse, ErrorResponse>> {
+): Promise<ApiResponse<StatsResponse, ErrorResponse<UrlError>>> {
   const res = await fetch(
     `${API_URL}/url/${encodeURIComponent(id)}/stats`,
     init
   );
 
-  const body = (await res.json()) as StatsResponse | ErrorResponse;
+  const body = (await res.json()) as StatsResponse | ErrorResponse<UrlError>;
   return apiResponse(body);
 }
 
