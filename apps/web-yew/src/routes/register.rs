@@ -34,7 +34,6 @@ pub fn register_page() -> Html {
             let form_data =
                 FormData::new_with_form(&form).expect_throw("Form data could not be instantiated");
 
-            // TODO: min pw length - maybe just handle it on server
             let username = form_data
                 .get("username")
                 .as_string()

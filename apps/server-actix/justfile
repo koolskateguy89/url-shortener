@@ -1,0 +1,13 @@
+# List available recipes and list all available migrations
+default:
+  @just --list --unsorted
+  @echo
+  sqlx migrate info
+
+# Run all pending sqlx migrations
+migrate-run:
+  sqlx migrate run
+
+# Reverse the latest revertable sqlx migration
+migrate-revert:
+  sqlx migrate revert

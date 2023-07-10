@@ -1,9 +1,8 @@
 use actix_web::{get, post, web, Responder, Result};
 use log::info;
-
 use std::collections::HashMap;
 
-use common::types;
+use common::{error::UrlError, types};
 
 use crate::db;
 use crate::{AppState, UserError};
@@ -13,7 +12,7 @@ pub async fn get_all_urls(state: web::Data<AppState>) -> Result<impl Responder> 
     let db = sqlx::query_as::<_, (String, String)>("SELECT * FROM urls")
         .fetch_all(&state.pool)
         .await
-        .map_err(|err| UserError::Other(err.to_string()))?
+        .map_err(|err| UserError::other(err.to_string()))?
         .into_iter()
         .collect::<HashMap<_, _>>();
 
@@ -55,11 +54,11 @@ pub async fn id_exists(
 
     let exists = db::url::id_exists(&state.pool, &id)
         .await
-        .map_err(|err| UserError::Other(err.to_string()))?;
+        .map_err(|err| UserError::other(err.to_string()))?;
 
     match exists {
         true => Ok("exists"),
-        false => Err(UserError::NotFound.into()),
+        false => Err(UserError::url(UrlError::NotFound).into()),
     }
 }
 

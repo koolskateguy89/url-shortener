@@ -102,14 +102,29 @@
   }
 
   .button-destructive {
-    @apply button-base bg-destructive text-destructive-foreground hover:bg-destructive/90;
+    @apply button-base;
+    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
+  }
+
+  .button-outline {
+    @apply button-base;
+    @apply border-input hover:bg-accent hover:text-accent-foreground border;
+  }
+
+  .button-seconday {
+    @apply button-base;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+
+  .button-ghost {
+    @apply button-base;
+    @apply hover:bg-accent hover:text-accent-foreground;
   }
 
   .button-link {
-    @apply button-base underline-offset-4 hover:underline text-primary;
+    @apply button-base;
+    @apply text-primary underline-offset-4 hover:underline;
   }
-
-  /* TODO: btn-outline, secondary, ghost */
 
   .input {
     @apply border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;

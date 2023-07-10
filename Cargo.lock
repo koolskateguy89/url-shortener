@@ -3435,7 +3435,6 @@ dependencies = [
  "actix-session",
  "actix-web",
  "argon2",
- "derive_more",
  "log",
  "nanoid",
  "serde_json",
@@ -3454,8 +3453,8 @@ dependencies = [
 name = "url-shortener-web-yew"
 version = "0.1.0"
 dependencies = [
- "gloo",
  "gloo-net",
+ "gloo-utils",
  "log",
  "serde",
  "url-shortener-common",

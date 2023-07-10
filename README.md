@@ -36,6 +36,7 @@ TODO: `logger` package
 - `eslint-config-custom`: base [`eslint`](https://eslint.org/) configuration
 - `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-plugin-solid`)
 - `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-config-next`)
+- `eslint-config-custom-svelte`: Svelte `eslint` configuration (includes `eslint-plugin-svelte`)
 - `tailwind-config`: shared [Tailwind CSS](https://tailwindcss.com/) configuration
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 

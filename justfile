@@ -9,6 +9,7 @@ STATIC_FOLDER := "static"
 # STATIC_FOLDER := "apps/server-actix/static"
 
 alias up := upgrade-npm-deps
+alias sd := shuttle-deploy
 
 # List available recipes
 default:
@@ -24,7 +25,7 @@ upgrade-npm-deps:
 
 # Run all apps in development mode
 dev:
-  pnpm dev --concurrency 19
+  pnpm dev --concurrency 20
 
 # Unused Cargo deps - https://github.com/est31/cargo-udeps
 udeps:
