@@ -5,17 +5,16 @@ use actix_web::{
     web::{self, ServiceConfig},
     HttpResponse, Result,
 };
+use common::{
+    error::{AuthError, Error, UrlError},
+    types::ErrorResponse,
+};
 use shuttle_actix_web::ShuttleActixWeb;
 use shuttle_secrets::SecretStore;
 use sqlx::PgPool;
 use std::path::PathBuf;
 
-use common::{
-    error::{AuthError, Error, UrlError},
-    types::ErrorResponse,
-};
-
-mod auth;
+mod config;
 mod db;
 mod middleware;
 mod services;
@@ -104,7 +103,7 @@ async fn actix_web(
     //     .map_err(shuttle_runtime::CustomError::new)?;
 
     {
-        use auth::hash_password;
+        use config::auth::hash_password;
         use db::auth::{create_user, User};
 
         if let Some(hashed_password) = hash_password("testpw".as_bytes()) {

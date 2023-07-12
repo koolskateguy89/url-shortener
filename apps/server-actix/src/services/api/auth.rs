@@ -1,10 +1,9 @@
 use actix_identity::Identity;
 use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse, Responder, Result};
-
 use common::{error::AuthError, types};
 
-use crate::{auth, db, AppState, UserError};
-use auth::{hash_password, validate_credentials, verify_password};
+use crate::{config, db, AppState, UserError};
+use config::auth::{hash_password, validate_credentials, verify_password};
 use db::auth::User;
 
 #[get("/api/users")]

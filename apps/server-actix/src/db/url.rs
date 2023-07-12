@@ -1,8 +1,8 @@
+use common::error::UrlError;
 use sqlx::{types::chrono, FromRow, PgPool};
 use url::Url;
 
-use common::error::UrlError;
-
+use crate::config::random_url_id;
 use crate::UserError;
 
 #[derive(Debug, FromRow)]
@@ -44,11 +44,6 @@ impl LengthenStat {
     }
 }
 
-/// Returns a random 6 character string.
-fn random_id() -> String {
-    nanoid::nanoid!(6)
-}
-
 pub async fn id_exists(pool: &PgPool, id: &str) -> sqlx::Result<bool> {
     let (exists,) = sqlx::query_as("SELECT EXISTS(SELECT 1 FROM urls WHERE id = $1)")
         .bind(id)
@@ -61,11 +56,8 @@ pub async fn id_exists(pool: &PgPool, id: &str) -> sqlx::Result<bool> {
 /// Returns the `id`.
 ///
 /// Upserts the url into the database.
-pub async fn insert_short_url(pool: &PgPool, url: &str) -> Result<String, UserError> {
-    // Ensure url is a valid URL
-    let url = Url::parse(url).map_err(|_| UserError::url(UrlError::InvalidUrl))?;
-
-    let id = random_id();
+pub async fn insert_short_url(pool: &PgPool, url: &Url) -> sqlx::Result<String> {
+    let id = random_url_id();
 
     // returning upsert: https://stackoverflow.com/a/37543015
     let (id,) = sqlx::query_as(
@@ -81,10 +73,9 @@ pub async fn insert_short_url(pool: &PgPool, url: &str) -> Result<String, UserEr
     ",
     )
     .bind(&id)
-    .bind(url.as_ref())
+    .bind(url.as_str())
     .fetch_one(pool)
-    .await
-    .map_err(|err| UserError::other(err.to_string()))?;
+    .await?;
 
     Ok(id)
 }
@@ -127,15 +118,6 @@ pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<LengthenStat,
 mod tests {
     use super::*;
     use chrono::{TimeZone, Utc};
-
-    #[test]
-    fn test_random_id() {
-        let id = random_id();
-        assert_eq!(id.len(), 6);
-
-        let another_id = random_id();
-        assert_ne!(id, another_id);
-    }
 
     #[test]
     fn test_lengthen_stat() {

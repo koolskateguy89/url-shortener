@@ -7,7 +7,7 @@ pub struct User {
 }
 
 /// `Ok(true)` if user was created, `Ok(false)` if username was taken
-pub async fn create_user(pool: &PgPool, user: &User) -> Result<bool, sqlx::Error> {
+pub async fn create_user(pool: &PgPool, user: &User) -> sqlx::Result<bool> {
     let (exists,): (bool,) =
         sqlx::query_as("SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)")
             .bind(&user.username)
@@ -28,10 +28,8 @@ pub async fn create_user(pool: &PgPool, user: &User) -> Result<bool, sqlx::Error
 }
 
 pub async fn get_user(pool: &PgPool, username: &str) -> Result<Option<User>, sqlx::Error> {
-    sqlx::query_as::<_, User>(
-        "SELECT username, password as hashed_password FROM users WHERE username = $1",
-    )
-    .bind(username)
-    .fetch_optional(pool)
-    .await
+    sqlx::query_as("SELECT username, password as hashed_password FROM users WHERE username = $1")
+        .bind(username)
+        .fetch_optional(pool)
+        .await
 }

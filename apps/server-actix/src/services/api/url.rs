@@ -1,8 +1,8 @@
 use actix_web::{get, post, web, Responder, Result};
+use common::{error::UrlError, types};
 use log::info;
 use std::collections::HashMap;
-
-use common::{error::UrlError, types};
+use url::Url;
 
 use crate::db;
 use crate::{AppState, UserError};
@@ -26,7 +26,12 @@ pub async fn shorten_url(
 ) -> Result<impl Responder> {
     info!("shortening url: {}", body.url);
 
-    let id = db::url::insert_short_url(&state.pool, &body.url).await?;
+    // Ensure url is a valid URL
+    let url = Url::parse(&body.url).map_err(|_| UserError::url(UrlError::InvalidUrl))?;
+
+    let id = db::url::insert_short_url(&state.pool, &url)
+        .await
+        .map_err(|err| UserError::other(err.to_string()))?;
 
     Ok(web::Json(types::ShortenResponse { id }))
 }
@@ -56,9 +61,10 @@ pub async fn id_exists(
         .await
         .map_err(|err| UserError::other(err.to_string()))?;
 
-    match exists {
-        true => Ok("exists"),
-        false => Err(UserError::url(UrlError::NotFound).into()),
+    if exists {
+        Ok("exists")
+    } else {
+        Err(UserError::url(UrlError::NotFound).into())
     }
 }
 
