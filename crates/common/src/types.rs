@@ -1,14 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-use crate::error::Error;
-
 #[derive(Debug, Deserialize, Serialize)]
-pub struct ErrorResponse<E = Error> {
+pub struct ErrorResponse<E> {
     pub error: E,
 }
 
-impl ErrorResponse {
-    pub fn new(error: Error) -> Self {
+impl<E> ErrorResponse<E> {
+    pub fn new(error: E) -> Self {
         Self { error }
     }
 }

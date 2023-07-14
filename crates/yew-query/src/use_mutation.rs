@@ -1,6 +1,5 @@
-use yew::prelude::*;
-
 use std::{future::Future, rc::Rc};
+use yew::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum MutationStatus<SUCC, ERR> {
