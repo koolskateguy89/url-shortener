@@ -1,9 +1,9 @@
+use common::types::StatsResponse;
 use log::{debug, error};
 use yew::prelude::*;
 
 use crate::api;
 use crate::hooks::use_error_redirector;
-use common::types::StatsResponse;
 
 #[derive(PartialEq, Properties)]
 pub struct StatsPageProps {

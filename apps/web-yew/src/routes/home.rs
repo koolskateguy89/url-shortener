@@ -1,3 +1,4 @@
+use common::{error::UrlError, types::ShortenResponse};
 use log::debug;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{FormData, HtmlFormElement};
@@ -5,7 +6,6 @@ use yew::prelude::*;
 
 use crate::api::{url::shorten, ApiError, RequestStatus};
 use crate::components::StatusDisplay;
-use common::{error::UrlError, types::ShortenResponse};
 
 pub type ShortenStatus = RequestStatus<AttrValue, ApiError<UrlError>>;
 

@@ -1,3 +1,4 @@
+use common::types::LengthenResponse;
 use gloo_utils::window;
 use log::{debug, error};
 use wasm_bindgen::UnwrapThrowExt;
@@ -5,7 +6,6 @@ use yew::prelude::*;
 
 use crate::api;
 use crate::hooks::use_error_redirector;
-use common::types::LengthenResponse;
 
 #[derive(PartialEq, Properties)]
 pub struct RedirectPageProps {

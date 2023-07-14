@@ -1,7 +1,7 @@
+use common::types::{LoginRequest, RegisterRequest};
 use gloo_net::http::Request;
 
 use super::NetResult;
-use common::types::{LoginRequest, RegisterRequest};
 
 pub async fn whoami() -> NetResult<String> {
     let response = Request::get("/api/whoami").send().await?;

@@ -1,11 +1,10 @@
-use gloo_net::http::Request;
-use log::error;
-use std::fmt::{Debug, Display};
-
 use common::{
     error::UrlError,
     types::{ErrorResponse, LengthenResponse, ShortenRequest, ShortenResponse, StatsResponse},
 };
+use gloo_net::http::Request;
+use log::error;
+use std::fmt::{Debug, Display};
 
 use crate::api::ApiError;
 

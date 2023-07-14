@@ -1,8 +1,7 @@
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::UnwrapThrowExt;
 use yew::prelude::*;
 use yew_router::prelude::*;
-
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(untagged)]

@@ -1,10 +1,10 @@
+use common::error::UrlError;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::api::ApiError;
 use crate::routes::error::{ErrorCause, SearchParams};
 use crate::routes::Route;
-use common::error::UrlError;
 
 pub struct ErrorRedirector {
     navigator: Navigator,
