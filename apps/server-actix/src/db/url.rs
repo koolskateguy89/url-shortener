@@ -6,17 +6,18 @@ use crate::config::random_url_id;
 use crate::UserError;
 
 #[derive(Debug, FromRow)]
-#[allow(dead_code)]
-struct UrlRow {
-    id: String,
-    url: String,
+pub struct UrlRow {
+    pub id: String,
+    pub url: String,
+    pub username: Option<String>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Debug, FromRow)]
 #[allow(dead_code)]
 struct LengthenLogRow {
     id: String,
-    created_at: chrono::DateTime<chrono::Utc>,
+    date: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Debug)]
@@ -36,12 +37,13 @@ impl LengthenStat {
     fn new(url: String, rows: Vec<LengthenLogRow>) -> Self {
         Self {
             url,
-            hits: rows
-                .into_iter()
-                .map(|row| row.created_at.timestamp())
-                .collect(),
+            hits: rows.into_iter().map(|row| row.date.timestamp()).collect(),
         }
     }
+}
+
+pub async fn get_all_urls(pool: &PgPool) -> sqlx::Result<Vec<UrlRow>> {
+    sqlx::query_as("SELECT * FROM urls").fetch_all(pool).await
 }
 
 pub async fn id_exists(pool: &PgPool, id: &str) -> sqlx::Result<bool> {
@@ -56,26 +58,60 @@ pub async fn id_exists(pool: &PgPool, id: &str) -> sqlx::Result<bool> {
 /// Returns the `id`.
 ///
 /// Upserts the url into the database.
-pub async fn insert_short_url(pool: &PgPool, url: &Url) -> sqlx::Result<String> {
+pub async fn insert_short_url(
+    pool: &PgPool,
+    url: &Url,
+    username: Option<&str>,
+) -> sqlx::Result<String> {
     let id = random_url_id();
 
-    // returning upsert: https://stackoverflow.com/a/37543015
-    let (id,) = sqlx::query_as(
-        "
-    INSERT INTO
-      urls(id, url)
-    VALUES
-      ($1, $2)
-    ON CONFLICT (url)
-    DO UPDATE SET
-        url=EXCLUDED.url
-    RETURNING id
-    ",
-    )
-    .bind(&id)
-    .bind(url.as_str())
-    .fetch_one(pool)
-    .await?;
+    let id = if let Some(username) = username {
+        // Unique constraint in the table ensures that the same username
+        // cannot have the same url twice.
+
+        // returning upsert: https://stackoverflow.com/a/37543015
+        let (id,) = sqlx::query_as::<_, (String,)>(
+            "
+        INSERT INTO
+          urls(id, url, username)
+        VALUES
+          ($1, $2, $3)
+        ON CONFLICT (url, username)
+        DO UPDATE SET
+            url=EXCLUDED.url
+        RETURNING id
+        ",
+        )
+        .bind(&id)
+        .bind(url.as_str())
+        .bind(username)
+        .fetch_one(pool)
+        .await?;
+
+        id
+    } else {
+        // But the unique constraint does not apply to null values. So when
+        // username is none, have to explicitly check if url already exists
+        let id_optional = sqlx::query_as::<_, (String,)>(
+            "SELECT id from urls WHERE url = $1 AND username IS NULL",
+        )
+        .bind(url.as_str())
+        .fetch_optional(pool)
+        .await?;
+
+        if let Some((id,)) = id_optional {
+            id
+        } else {
+            // insert url without username
+            sqlx::query("INSERT INTO urls(id, url) VALUES ($1, $2)")
+                .bind(&id)
+                .bind(url.as_str())
+                .execute(pool)
+                .await?;
+
+            id
+        }
+    };
 
     Ok(id)
 }
@@ -97,6 +133,7 @@ pub async fn get_long_url(pool: &PgPool, id: &str) -> Result<String, UserError> 
     Ok(url)
 }
 
+// TODO: add username
 pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<LengthenStat, UserError> {
     let (url,): (String,) = sqlx::query_as("SELECT url FROM urls WHERE id = $1")
         .bind(id)
@@ -126,11 +163,11 @@ mod tests {
         let rows = vec![
             LengthenLogRow {
                 id: "id".to_string(),
-                created_at: Utc.timestamp_opt(1, 0).unwrap(),
+                date: Utc.timestamp_opt(1, 0).unwrap(),
             },
             LengthenLogRow {
                 id: "id".to_string(),
-                created_at: Utc.timestamp_opt(2, 0).unwrap(),
+                date: Utc.timestamp_opt(2, 0).unwrap(),
             },
         ];
 

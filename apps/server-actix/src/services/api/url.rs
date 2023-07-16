@@ -1,20 +1,31 @@
+use actix_identity::Identity;
 use actix_web::{get, post, web, Responder, Result};
 use common::{error::UrlError, types};
-use log::info;
-use std::collections::HashMap;
+use log::debug;
 use url::Url;
 
 use crate::db;
 use crate::{AppState, UserError};
 
+impl From<db::url::UrlRow> for types::UrlInfo {
+    fn from(row: db::url::UrlRow) -> Self {
+        Self {
+            id: row.id,
+            url: row.url,
+            username: row.username,
+            created_at: row.created_at.timestamp(),
+        }
+    }
+}
+
 #[get("/api/urls")]
 pub async fn get_all_urls(state: web::Data<AppState>) -> Result<impl Responder> {
-    let db = sqlx::query_as::<_, (String, String)>("SELECT * FROM urls")
-        .fetch_all(&state.pool)
+    let db: types::AllUrlsResponse = db::url::get_all_urls(&state.pool)
         .await
         .map_err(|err| UserError::other(err.to_string()))?
         .into_iter()
-        .collect::<HashMap<_, _>>();
+        .map(|row| (row.id.clone(), types::UrlInfo::from(row)))
+        .collect();
 
     Ok(web::Json(db))
 }
@@ -23,13 +34,16 @@ pub async fn get_all_urls(state: web::Data<AppState>) -> Result<impl Responder> 
 pub async fn shorten_url(
     body: web::Json<types::ShortenRequest>,
     state: web::Data<AppState>,
+    user: Option<Identity>,
 ) -> Result<impl Responder> {
-    info!("shortening url: {}", body.url);
+    debug!("shortening url: {}", body.url);
 
     // Ensure url is a valid URL
     let url = Url::parse(&body.url).map_err(|_| UserError::url(UrlError::InvalidUrl))?;
 
-    let id = db::url::insert_short_url(&state.pool, &url)
+    let username = user.and_then(|user| user.id().ok());
+
+    let id = db::url::insert_short_url(&state.pool, &url, username.as_deref())
         .await
         .map_err(|err| UserError::other(err.to_string()))?;
 
@@ -43,7 +57,7 @@ pub async fn lengthen_url(
 ) -> Result<impl Responder> {
     let (id,) = path.into_inner();
 
-    info!("lengthening id: {}", id);
+    debug!("lengthening id: {}", id);
 
     let url = db::url::get_long_url(&state.pool, &id).await?;
 
@@ -68,6 +82,7 @@ pub async fn id_exists(
     }
 }
 
+// TODO: also include username (as optional)
 #[get("/api/url/{id}/stats")]
 pub async fn lengthen_stats(
     path: web::Path<(String,)>,

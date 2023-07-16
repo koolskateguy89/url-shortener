@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -10,6 +12,17 @@ impl<E> ErrorResponse<E> {
         Self { error }
     }
 }
+
+// Url shortening
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct UrlInfo {
+    pub id: String,
+    pub url: String,
+    pub username: Option<String>,
+    pub created_at: i64,
+}
+pub type AllUrlsResponse = HashMap<String, UrlInfo>;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ShortenRequest {

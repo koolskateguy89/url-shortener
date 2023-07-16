@@ -37,9 +37,12 @@ pub fn verify_password(password: &[u8], password_hash: &str) -> bool {
 }
 
 pub fn validate_credentials(username: &str, password: &str) -> bool {
-    // TODO: ensure username is only a-z0-9
+    // ensure username is only a-zA-Z0-9
+    if !username.chars().all(|c| c.is_ascii_alphanumeric()) {
+        return false;
+    }
 
-    if password.len() < 8 {
+    if password.len() < 4 {
         return false;
     }
 

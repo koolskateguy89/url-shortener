@@ -87,24 +87,70 @@ pub struct AppState {
     static_folder: PathBuf,
 }
 
+async fn _get_and_delete_all_tables(pool: &PgPool) -> Result<(), shuttle_runtime::Error> {
+    use sqlx::Executor;
+
+    // get table names
+    let table_names = sqlx::query_as::<_, (String,)>(
+        r#"
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        "#,
+    )
+    .fetch_all(pool)
+    .await
+    .map_err(shuttle_runtime::CustomError::new)?
+    .into_iter()
+    .map(|(table_name,)| table_name)
+    .collect::<Vec<_>>();
+
+    log::error!("table_names = {:?}", table_names);
+
+    // delete all tables
+    pool.execute(
+        table_names
+            .iter()
+            .map(|table_name| format!("DROP TABLE IF EXISTS {} CASCADE", table_name))
+            .collect::<Vec<_>>()
+            .join(";")
+            .as_str(),
+    )
+    .await
+    .map_err(shuttle_runtime::CustomError::new)?;
+
+    log::error!("done");
+
+    Ok(())
+}
+
+/// Shuttle deployment breaks if we try to run migrations on it
+/// so just have to do it manually, locally on deployment db, using
+/// sqlx-cli
+async fn _migrate(pool: &PgPool) -> Result<(), shuttle_runtime::Error> {
+    log::info!("Running database migration");
+
+    sqlx::migrate!()
+        .run(pool)
+        .await
+        .map_err(shuttle_runtime::CustomError::new)?;
+
+    Ok(())
+}
+
 #[shuttle_runtime::main]
 async fn actix_web(
     #[shuttle_shared_db::Postgres] pool: PgPool,
     #[shuttle_static_folder::StaticFolder(folder = "static")] static_folder: PathBuf,
     #[shuttle_secrets::Secrets] secret_store: SecretStore,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
-    // Shuttle deployment breaks if we try to run migrations on it
-    // so just have to do it manually, locally on deployment db, using
-    // sqlx-cli
-    // log::info!("Running database migration");
-    // sqlx::migrate!()
-    //     .run(&pool)
-    //     .await
-    //     .map_err(shuttle_runtime::CustomError::new)?;
+    // _get_and_delete_all_tables(&pool).await?;
+    // _migrate(&pool).await?;
 
     {
         use config::auth::hash_password;
         use db::auth::{create_user, User};
+        use log::{debug, error};
 
         if let Some(hashed_password) = hash_password("testpw".as_bytes()) {
             let test_user = User {
@@ -113,14 +159,14 @@ async fn actix_web(
             };
 
             match create_user(&pool, &test_user).await {
-                Ok(true) => log::debug!("test user created"),
-                Ok(false) => log::debug!("test user already exists"),
+                Ok(true) => debug!("test user created"),
+                Ok(false) => debug!("test user already exists"),
                 Err(sqlx_error) => {
-                    log::error!("could not create test user, sqlx_error: {:?}", sqlx_error)
+                    error!("could not create test user, sqlx_error: {:?}", sqlx_error)
                 }
             }
         } else {
-            log::error!("could not hash test user password");
+            error!("could not hash test user password");
         }
     }
 

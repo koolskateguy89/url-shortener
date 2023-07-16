@@ -1,6 +1,7 @@
 use actix_identity::Identity;
 use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse, Responder, Result};
 use common::{error::AuthError, types};
+use log::{debug, warn};
 
 use crate::{config, db, AppState, UserError};
 use config::auth::{hash_password, validate_credentials, verify_password};
@@ -26,7 +27,7 @@ pub async fn whoami(user: Option<Identity>) -> impl Responder {
         None => "not logged in".to_string(),
     };
 
-    log::warn!("whoami = {:?}", res);
+    warn!("whoami = {:?}", res);
 
     res
 }
@@ -50,21 +51,21 @@ pub async fn login(
             let correct_password = verify_password(password.as_bytes(), &user.hashed_password);
 
             if correct_password {
-                log::debug!("login successful for `{}`", user.username);
+                debug!("login successful for `{}`", user.username);
 
                 Identity::login(&req.extensions(), user.username).unwrap();
                 Ok(HttpResponse::Ok().finish())
             } else {
-                log::debug!("incorrect password for user `{username}`");
+                debug!("incorrect password for user `{username}`");
                 Err(UserError::auth(AuthError::UserIncorrectPassword))?
             }
         }
         Ok(None) => {
-            log::debug!("user `{username}` not found");
+            debug!("user `{username}` not found");
             Err(UserError::auth(AuthError::UserNotFound))?
         }
         Err(sqlx_error) => {
-            log::warn!("sqlx error: {sqlx_error:?}");
+            warn!("sqlx error: {sqlx_error:?}");
             Err(UserError::internal())?
         }
     }
@@ -100,15 +101,15 @@ pub async fn register(
 
     match result {
         Ok(true) => {
-            log::debug!("registration successful for `{}`", username);
+            debug!("registration successful for `{}`", username);
             Ok(HttpResponse::Ok().finish())
         }
         Ok(false) => {
-            log::debug!("tried to register already taken username `{username}`");
+            debug!("tried to register already taken username `{username}`");
             Err(UserError::auth(AuthError::UsernameTaken))?
         }
         Err(sqlx_error) => {
-            log::warn!("sqlx error: {sqlx_error:?}");
+            warn!("sqlx error: {sqlx_error:?}");
             Err(UserError::internal())?
         }
     }
