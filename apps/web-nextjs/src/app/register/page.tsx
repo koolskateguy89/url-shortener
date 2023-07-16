@@ -69,7 +69,7 @@ export default function RegisterPage() {
           required
         />
 
-        <div>
+        <div className="flex w-full justify-evenly">
           <Button variant="link" asChild>
             <Link href="/login">Login</Link>
           </Button>

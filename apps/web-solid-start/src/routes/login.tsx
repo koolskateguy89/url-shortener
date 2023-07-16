@@ -70,7 +70,7 @@ const LoginPage: VoidComponent = () => {
           required
         />
 
-        <div>
+        <div class="flex w-full justify-evenly">
           <Button type="submit" disabled={isLoading}>
             {isLoading && <LoadingSpinner class="mr-2" />}
             Login

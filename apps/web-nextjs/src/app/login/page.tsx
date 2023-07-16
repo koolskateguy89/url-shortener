@@ -87,7 +87,7 @@ export default function LoginPage() {
           required
         />
 
-        <div>
+        <div className="flex w-full justify-evenly">
           <Button type="submit" disabled={isLoading}>
             {isLoading && <LoadingSpinner className="mr-2" />}
             Login

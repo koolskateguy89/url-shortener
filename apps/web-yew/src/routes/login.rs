@@ -107,7 +107,7 @@ pub fn login_page() -> Html {
             disabled={loading}
           />
 
-          <div>
+          <div class="flex w-full justify-evenly">
             <button
               type="submit"
               class="button"
@@ -126,5 +126,3 @@ pub fn login_page() -> Html {
       </main>
     }
 }
-// TODO: button div flex row with justify between or whatever to have
-// it be full width and have the buttons be in middle of left and right

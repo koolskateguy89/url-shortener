@@ -51,7 +51,7 @@
 			required
 		/>
 
-		<div>
+		<div class="flex w-full justify-evenly">
 			<Button href="/login" variant="link">Login</Button>
 			<Button type="submit" disabled={isLoading}>
 				{#if isLoading}

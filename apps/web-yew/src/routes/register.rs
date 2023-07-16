@@ -84,7 +84,7 @@ pub fn register_page() -> Html {
             disabled={loading}
           />
 
-          <div>
+          <div class="flex w-full justify-evenly">
             <Link<Route> to={Route::Login} classes="button-link">
               { "Login" }
             </Link<Route>>
