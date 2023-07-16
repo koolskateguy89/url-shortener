@@ -23,6 +23,7 @@ struct LengthenLogRow {
 #[derive(Debug)]
 pub struct LengthenStat {
     pub url: String,
+    pub username: Option<String>,
     pub hits: Vec<i64>,
 }
 
@@ -34,9 +35,10 @@ pub struct UserRow {
 }
 
 impl LengthenStat {
-    fn new(url: String, rows: Vec<LengthenLogRow>) -> Self {
+    fn new(url: String, username: Option<String>, rows: Vec<LengthenLogRow>) -> Self {
         Self {
             url,
+            username,
             hits: rows.into_iter().map(|row| row.date.timestamp()).collect(),
         }
     }
@@ -133,9 +135,8 @@ pub async fn get_long_url(pool: &PgPool, id: &str) -> Result<String, UserError> 
     Ok(url)
 }
 
-// TODO: add username
 pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<LengthenStat, UserError> {
-    let (url,): (String,) = sqlx::query_as("SELECT url FROM urls WHERE id = $1")
+    let (url, username) = sqlx::query_as("SELECT url, username FROM urls WHERE id = $1")
         .bind(id)
         .fetch_optional(pool)
         .await
@@ -148,7 +149,7 @@ pub async fn get_lengthen_stats(pool: &PgPool, id: &str) -> Result<LengthenStat,
         .await
         .map_err(|err| UserError::other(err.to_string()))?;
 
-    Ok(LengthenStat::new(url, rows))
+    Ok(LengthenStat::new(url, username, rows))
 }
 
 #[cfg(test)]
@@ -159,6 +160,7 @@ mod tests {
     #[test]
     fn test_lengthen_stat() {
         let url = "https://example.com".to_string();
+        let username = Some("username".to_string());
 
         let rows = vec![
             LengthenLogRow {
@@ -171,9 +173,10 @@ mod tests {
             },
         ];
 
-        let stat = LengthenStat::new(url, rows);
+        let stat = LengthenStat::new(url, username, rows);
 
         assert_eq!(stat.url, "https://example.com");
+        assert_eq!(stat.username, Some("username".to_string()));
         assert_eq!(stat.hits, vec![1, 2]);
     }
 }

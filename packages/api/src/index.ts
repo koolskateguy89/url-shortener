@@ -16,6 +16,7 @@ export interface LengthenResponse {
 
 export interface StatsResponse {
   url: string;
+  username?: string;
   num_hits: number;
   /**
    * UTC timestamps
@@ -155,6 +156,8 @@ async function logout(): Promise<boolean> {
   return res.ok;
 }
 
+// TODO: generic of error response<AuthError>, or ig cant put it here cos promise
+//i lied i think i can, look above
 async function register(body: RegisterRequest): Promise<boolean> {
   const res = await fetch(`${API_URL}/register`, {
     method: "POST",

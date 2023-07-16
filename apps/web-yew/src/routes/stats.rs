@@ -10,7 +10,10 @@ pub struct StatsPageProps {
     pub id: AttrValue,
 }
 
-type Status = api::RequestStatus<StatsResponse, ()>;
+enum Status {
+    Loading,
+    Success(StatsResponse),
+}
 
 #[function_component(StatsPage)]
 pub fn stats_page(props: &StatsPageProps) -> Html {
@@ -52,12 +55,14 @@ pub fn stats_page(props: &StatsPageProps) -> Html {
         match *status {
             Status::Success(StatsResponse {
                 ref url,
+                ref username,
                 hits: _,
                 num_hits,
             }) => html! {
                 <>
                     <p>{ "URL: " }{url}</p>
                     <p>{ "Num hits: " }{num_hits}</p>
+                    <p>{ format!("Username: {}", username.as_deref().unwrap_or("null")) }</p>
                 </>
             },
             _ => html!(<p>{ "Loading..." }</p>),

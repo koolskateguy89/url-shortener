@@ -82,7 +82,6 @@ pub async fn id_exists(
     }
 }
 
-// TODO: also include username (as optional)
 #[get("/api/url/{id}/stats")]
 pub async fn lengthen_stats(
     path: web::Path<(String,)>,
@@ -90,10 +89,15 @@ pub async fn lengthen_stats(
 ) -> Result<impl Responder> {
     let (id,) = path.into_inner();
 
-    let db::url::LengthenStat { url, hits } = db::url::get_lengthen_stats(&state.pool, &id).await?;
+    let db::url::LengthenStat {
+        url,
+        username,
+        hits,
+    } = db::url::get_lengthen_stats(&state.pool, &id).await?;
 
     Ok(web::Json(types::StatsResponse {
         url,
+        username,
         num_hits: hits.len(),
         hits,
     }))

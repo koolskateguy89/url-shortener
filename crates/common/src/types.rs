@@ -39,10 +39,10 @@ pub struct LengthenResponse {
     pub url: String,
 }
 
-/// TODO: more stats ig
 #[derive(Debug, Deserialize, Serialize)]
 pub struct StatsResponse {
     pub url: String,
+    pub username: Option<String>,
     pub num_hits: usize,
     pub hits: Vec<i64>,
 }

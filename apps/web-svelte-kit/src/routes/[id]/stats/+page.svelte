@@ -12,4 +12,5 @@
 	<h1>Stats</h1>
 	<p>URL: {data.url}</p>
 	<p>Num hits: {data.num_hits}</p>
+	<p>Username: {data.username ?? 'null'}</p>
 </main>
