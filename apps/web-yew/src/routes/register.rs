@@ -12,13 +12,26 @@ pub fn register_page() -> Html {
     let navigator = use_navigator().expect("cannot access navigator");
 
     let register_mut = use_mutation(move |(username, password): (String, String)| async move {
-        register(username, password).await
+        let register_result = register(username, password).await;
+
+        match register_result {
+            Ok(_) => {
+                log::debug!("register success");
+            }
+            Err(ref error) => {
+                log::debug!("{error:?}");
+            }
+        }
+
+        register_result
     });
 
     // on success, redirect to login page
     if register_mut.is_success() {
         navigator.push(&Route::Login);
     }
+
+    // TODO: display error message
 
     let onsubmit = {
         let register_mut = register_mut.clone();

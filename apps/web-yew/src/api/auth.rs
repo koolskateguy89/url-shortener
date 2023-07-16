@@ -1,7 +1,10 @@
-use common::types::{LoginRequest, RegisterRequest};
+use common::{
+    error::AuthError,
+    types::{LoginRequest, RegisterRequest},
+};
 use gloo_net::http::Request;
 
-use super::NetResult;
+use super::{error_from_response, to_error, ApiError, NetResult};
 
 pub async fn whoami() -> NetResult<String> {
     let response = Request::get("/api/whoami").send().await?;
@@ -26,13 +29,25 @@ pub async fn logout() -> NetResult<bool> {
     Ok(response.ok())
 }
 
-pub async fn register(username: impl Into<String>, password: impl Into<String>) -> NetResult<bool> {
+pub async fn register(
+    username: impl Into<String>,
+    password: impl Into<String>,
+) -> Result<(), ApiError<AuthError>> {
     let body = RegisterRequest {
         username: username.into(),
         password: password.into(),
     };
 
-    let response = Request::post("/api/register").json(&body)?.send().await?;
+    let response = Request::post("/api/register")
+        .json(&body)
+        .map_err(to_error)? // should not happen
+        .send()
+        .await
+        .map_err(to_error)?;
 
-    Ok(response.ok())
+    if response.ok() {
+        Ok(())
+    } else {
+        Err(error_from_response(response).await)
+    }
 }

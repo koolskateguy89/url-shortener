@@ -1,16 +1,11 @@
 use common::{
     error::UrlError,
-    types::{ErrorResponse, LengthenResponse, ShortenRequest, ShortenResponse, StatsResponse},
+    types::{LengthenResponse, ShortenRequest, ShortenResponse, StatsResponse},
 };
 use gloo_net::http::Request;
-use log::error;
-use std::fmt::{Debug, Display};
+use std::fmt::Display;
 
-use crate::api::ApiError;
-
-fn to_error<E>(s: impl Debug) -> ApiError<E> {
-    ApiError::Other(format!("{s:?}"))
-}
+use super::{error_from_response, to_error, to_json_error, ApiError};
 
 /// Make a request to the API to shorten a URL
 pub async fn shorten(url: String) -> Result<ShortenResponse, ApiError<UrlError>> {
@@ -24,19 +19,9 @@ pub async fn shorten(url: String) -> Result<ShortenResponse, ApiError<UrlError>>
         .map_err(to_error)?;
 
     if response.ok() {
-        response
-            .json()
-            .await
-            .map_err(|e| ApiError::Other(format!("json error: {e}"))) // should not happen
+        response.json().await.map_err(to_json_error) // should not happen
     } else {
-        let ErrorResponse { error } = response
-            .json::<ErrorResponse<UrlError>>()
-            .await
-            .map_err(|e| ApiError::Other(format!("json error: {e}")))?;
-
-        error!("error: {error:?}");
-
-        Err(error.into())
+        Err(error_from_response(response).await)
     }
 }
 
@@ -47,19 +32,9 @@ pub async fn lengthen<T: Display>(id: T) -> Result<LengthenResponse, ApiError<Ur
         .map_err(to_error)?;
 
     if response.ok() {
-        response
-            .json()
-            .await
-            .map_err(|e| ApiError::Other(format!("json error: {e}"))) // should not happen
+        response.json().await.map_err(to_json_error) // should not happen
     } else {
-        let ErrorResponse { error } = response
-            .json::<ErrorResponse<UrlError>>()
-            .await
-            .map_err(|e| ApiError::Other(format!("json error: {e}")))?;
-
-        error!("error: {error:?}");
-
-        Err(error.into())
+        Err(error_from_response(response).await)
     }
 }
 
@@ -70,18 +45,8 @@ pub async fn get_stats<T: Display>(id: T) -> Result<StatsResponse, ApiError<UrlE
         .map_err(to_error)?;
 
     if response.ok() {
-        response
-            .json()
-            .await
-            .map_err(|e| ApiError::Other(format!("json error: {e}"))) // should not happen
+        response.json().await.map_err(to_json_error) // should not happen
     } else {
-        let ErrorResponse { error } = response
-            .json::<ErrorResponse<UrlError>>()
-            .await
-            .map_err(|e| ApiError::Other(format!("json error: {e}")))?;
-
-        error!("error: {error:?}");
-
-        Err(error.into())
+        Err(error_from_response(response).await)
     }
 }
