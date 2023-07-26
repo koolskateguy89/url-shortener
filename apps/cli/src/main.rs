@@ -1,12 +1,10 @@
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use common::types::ShortenResponse;
+use colored::Colorize;
 
 mod api;
 
 /// A CLI for URL shortening
 #[derive(Debug, Parser)]
-#[command(name = "git")]
-#[command(about = "A fictional versioning CLI", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -14,6 +12,9 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Commands {
+    /// List shortened URLs
+    List,
+
     /// Shortens URL
     #[command(arg_required_else_help = true)]
     Shorten {
@@ -37,9 +38,6 @@ enum Commands {
     },
 }
 
-// TODO (probably)
-// some sort of console coloring library
-
 #[tokio::main]
 async fn main() {
     let args = Cli::parse();
@@ -47,6 +45,14 @@ async fn main() {
     // TODO: display loading
 
     let res: Result<String, String> = match args.command {
+        Commands::List => match api::get_all_urls().await {
+            Ok(all_urls) => Ok(all_urls
+                .iter()
+                .map(|(id, info)| format!("{id} {url}", id = id.green().bold(), url = info.url))
+                .collect::<Vec<_>>()
+                .join("\n")),
+            Err(err) => Err(err.to_string()),
+        },
         Commands::Shorten { url } => {
             match api::shorten(url).await {
                 Ok(shortened) => Ok(shortened.id),
@@ -66,9 +72,8 @@ async fn main() {
         }
     };
 
-    // TODO: colour
     match res {
-        Ok(s) => println!("{}", s),
-        Err(e) => eprintln!("Error: {}", e),
+        Ok(s) => println!("{s}"),
+        Err(e) => eprintln!("Error: {}", e.red().bold()),
     }
 }

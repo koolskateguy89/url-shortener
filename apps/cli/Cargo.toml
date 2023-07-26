@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.3.16", features = ["derive"] }
+colored = "2.0.4"
 common = { package = "url-shortener-common", path = "../../crates/common" }
 reqwest = { version = "0.11.18", features = ["json"] }
 serde = "1.0.174"
