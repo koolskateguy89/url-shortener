@@ -6,6 +6,5 @@ module.exports = {
 	printWidth: 100,
 	// FIXME?: tailwind plugin isn't doing anything
 	plugins: ['prettier-plugin-svelte', 'prettier-plugin-tailwindcss'],
-	pluginSearchDirs: ['.'],
 	overrides: [{ files: '*.svelte', options: { parser: 'svelte' } }]
 };
