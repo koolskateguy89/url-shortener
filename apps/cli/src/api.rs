@@ -8,26 +8,26 @@ use serde::de::DeserializeOwned;
 
 #[derive(Debug)]
 pub enum ApiError {
-    Url(UrlError),
+    Url(StatusCode, UrlError),
     Reqwest(Error),
     Other(StatusCode, String),
 }
 pub type ApiResult<T> = Result<T, ApiError>;
 
+impl std::fmt::Display for ApiError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ApiError::Url(status, err) => write!(f, "{status}: {err:?}"),
+            ApiError::Reqwest(err) => err.fmt(f),
+            ApiError::Other(status, body) => write!(f, "{status}: {body}"),
+        }
+    }
+}
+
 impl From<Error> for ApiError {
     fn from(error: Error) -> Self {
         Self::Reqwest(error)
     }
-}
-
-/// Basically `format!` but with API_URL prepended
-macro_rules! api_url {
-    ($($arg:tt)*) => {{
-        // TODO: probably error handle
-        let api_url = std::env::var("API_URL").unwrap_or("http://localhost:8000/api".to_string());
-        let endpoint = format!($($arg)*);
-        format!("{api_url}{endpoint}")
-    }}
 }
 
 async fn to_result<T>(response: Response) -> Result<T, ApiError>
@@ -41,11 +41,21 @@ where
         Ok(res)
     } else if status.is_client_error() {
         let res = response.json::<ErrorResponse<UrlError>>().await?;
-        Err(ApiError::Url(res.error))
+        Err(ApiError::Url(status, res.error))
     } else {
         // server error or network error(?)
         Err(ApiError::Other(status, response.text().await?))
     }
+}
+
+/// Basically `format!` but with value of env var `URL_SHORTENER_API_URL` prepended
+macro_rules! api_url {
+    ($($arg:tt)*) => {{
+        // TODO: probably error handle
+        let api_url = std::env::var("URL_SHORTENER_API_URL").unwrap_or("http://localhost:8000/api".to_string());
+        let endpoint = format!($($arg)*);
+        format!("{api_url}{endpoint}")
+    }}
 }
 
 pub async fn get_all_urls() -> ReqResult<AllUrlsResponse> {
@@ -66,16 +76,12 @@ pub async fn shorten(url: String) -> ApiResult<ShortenResponse> {
     to_result(response).await
 }
 
-// TODO: lengthen
 pub async fn lengthen(id: String) -> ApiResult<LengthenResponse> {
     let response = reqwest::get(api_url!("/url/{id}/lengthen")).await?;
-
-    // Ok("lengthened".to_string())
-    todo!()
+    to_result(response).await
 }
 
-// TODO: stats
 pub async fn stats(id: String) -> ApiResult<StatsResponse> {
-    // Ok("stats".to_string())
-    todo!()
+    let response = reqwest::get(api_url!("/url/{id}/stats")).await?;
+    to_result(response).await
 }

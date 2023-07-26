@@ -1,4 +1,4 @@
-use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap::{Parser, Subcommand};
 use colored::Colorize;
 
 mod api;
@@ -53,27 +53,28 @@ async fn main() {
                 .join("\n")),
             Err(err) => Err(err.to_string()),
         },
-        Commands::Shorten { url } => {
-            match api::shorten(url).await {
-                Ok(shortened) => Ok(shortened.id),
-                // TODO: proper(?) error handle
-                Err(err) => Err(format!("{err:?}")),
-            }
-        }
-        Commands::Lengthen { id } => {
-            // TODO
-            println!("Lengthening {}", id);
-            Err("not impl.".to_string())
-        }
+
+        Commands::Shorten { url } => match api::shorten(url).await {
+            Ok(shortened) => Ok(shortened.id),
+            Err(err) => Err(err.to_string()),
+        },
+
+        Commands::Lengthen { id } => match api::lengthen(id).await {
+            Ok(lengthened) => Ok(lengthened.url),
+            Err(err) => Err(err.to_string()),
+        },
+
         Commands::Stats { id } => {
-            // TODO
-            println!("Stats for {}", id);
-            Err("not impl.".to_string())
+            // TODO: output format
+            match api::stats(id).await {
+                Ok(stats) => Ok(format!("{:#?}", stats)),
+                Err(err) => Err(err.to_string()),
+            }
         }
     };
 
     match res {
         Ok(s) => println!("{s}"),
-        Err(e) => eprintln!("Error: {}", e.red().bold()),
+        Err(e) => eprintln!("{}", e.red().bold()),
     }
 }

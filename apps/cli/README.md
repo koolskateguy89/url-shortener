@@ -2,9 +2,13 @@
 
 A CLI version of the URL Shortener. Uses the [same API](/apps/server-actix/) as the web apps.
 
-Build using [Clap](https://github.com/clap-rs/clap).
+Built using [Clap](https://github.com/clap-rs/clap).
 
-> Note in local development, you can replace `url-shortener-cli` with `cargo run --` in the examples below.
+> Note in local development, you can replace `url-shortener-cli` with `cargo run --` or `just cli` in the examples below.
+
+The server must be running for the CLI to work.
+
+The server url is set in the `URL_SHORTENER_API_URL` environment variable. Defaults to `http://localhost:8080`.
 
 ## List
 
@@ -40,7 +44,10 @@ $ url-shortener-cli stats <ID>
 ### Format
 
 - json
+- pretty json
 - plain text
+- rust debug (`StatsResponse`)
+- rust pretty debug (`StatsResponse`)
 
 ```sh
 $ url-shortener-cli stats <ID> --format <FORMAT>
