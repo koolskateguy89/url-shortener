@@ -31,6 +31,7 @@ dev:
 udeps:
   cargo +nightly udeps
 
+# TODO: use turbo for tests cos caching
 # Build the Actix server static artifacts, running tests first
 @build-static:
   @pnpm test --filter=web-yew --filter=yew-query-rs
@@ -45,3 +46,7 @@ udeps:
 # Build the Actix server artifacts and deploy to Shuttle
 @shuttle-deploy: build-static
   @cargo shuttle deploy --allow-dirty
+
+# Run the `url-shortener-cli` with the given arguments (the server needs to be running)
+cli *args:
+  cargo run --bin url-shortener-cli --quiet -- {{args}}

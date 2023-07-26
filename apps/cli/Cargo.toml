@@ -1,0 +1,14 @@
+[package]
+name = "url-shortener-cli"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.3.16", features = ["derive"] }
+common = { package = "url-shortener-common", path = "../../crates/common" }
+reqwest = { version = "0.11.18", features = ["json"] }
+serde = "1.0.174"
+serde_json = "1.0.103"
+tokio = "1.29.1"
