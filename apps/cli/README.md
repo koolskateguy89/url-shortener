@@ -8,7 +8,7 @@ Built using [Clap](https://github.com/clap-rs/clap).
 
 The server must be running for the CLI to work.
 
-The server url is set in the `URL_SHORTENER_API_URL` environment variable. Defaults to `http://localhost:8080`.
+The server url is set in the `URL_SHORTENER_API_URL` environment variable (it needs to include `/api). Defaults to `http://localhost:8080/api`.
 
 ## List
 

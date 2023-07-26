@@ -3,13 +3,13 @@ use common::types::{
     AllUrlsResponse, ErrorResponse, LengthenResponse, ShortenRequest, ShortenResponse,
     StatsResponse,
 };
-use reqwest::{Error, Response, Result as ReqResult, StatusCode};
+use reqwest::{Response, Result as ReqResult, StatusCode};
 use serde::de::DeserializeOwned;
 
 #[derive(Debug)]
 pub enum ApiError {
     Url(StatusCode, UrlError),
-    Reqwest(Error),
+    Reqwest(reqwest::Error),
     Other(StatusCode, String),
 }
 pub type ApiResult<T> = Result<T, ApiError>;
@@ -24,8 +24,8 @@ impl std::fmt::Display for ApiError {
     }
 }
 
-impl From<Error> for ApiError {
-    fn from(error: Error) -> Self {
+impl From<reqwest::Error> for ApiError {
+    fn from(error: reqwest::Error) -> Self {
         Self::Reqwest(error)
     }
 }
@@ -52,7 +52,10 @@ where
 macro_rules! api_url {
     ($($arg:tt)*) => {{
         // TODO: probably error handle
+        // TODO: some sort of option/way to select local or remote - just need to enter URL really,
+        // which can be done with env var
         let api_url = std::env::var("URL_SHORTENER_API_URL").unwrap_or("http://localhost:8000/api".to_string());
+        // let api_url = "https://url-shortener-server-actix.shuttleapp.rs/api";
         let endpoint = format!($($arg)*);
         format!("{api_url}{endpoint}")
     }}
