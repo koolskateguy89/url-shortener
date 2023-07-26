@@ -26,7 +26,7 @@ const Home: VoidComponent = () => {
       const { url } = wrappedUrl.data;
 
       return await api.shorten(url);
-    }
+    },
   );
   shortening satisfies ActionStatus;
 

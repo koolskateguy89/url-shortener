@@ -27,7 +27,7 @@ const RegisterPage: VoidComponent = () => {
       alert(registered ? "Registered" : "Failed to register");
 
       if (registered) throw redirect("/login");
-    }
+    },
   );
 
   const isLoading = registering.pending;

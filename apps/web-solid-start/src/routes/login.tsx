@@ -25,7 +25,7 @@ const LoginPage: VoidComponent = () => {
 
       const loggedIn = await api.login(credentials);
       alert(loggedIn ? "Logged in" : "Failed to log in");
-    }
+    },
   );
 
   const isLoading = loggingIn.pending;
