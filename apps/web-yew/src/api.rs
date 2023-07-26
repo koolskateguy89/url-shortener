@@ -28,6 +28,7 @@ where
         .map(|ErrorResponse { error }| {
             error!("error: {error:?}");
 
+            // from generic E to ApiError<E>
             error.into()
         });
 

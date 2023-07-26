@@ -1,6 +1,8 @@
 use crossterm::{cursor, execute, style, terminal, ExecutableCommand, Result};
 use std::io::stdout;
 
+// TODO: tests
+
 /// See https://stackoverflow.com/a/59890400
 ///
 /// `chars` cannot be empty
