@@ -59,7 +59,7 @@ type ApiResponse<T, F> =
     };
 
 function apiResponse<T extends object, E>(
-  data: T | ErrorResponse<E>
+  data: T | ErrorResponse<E>,
 ): ApiResponse<T, ErrorResponse<E>> {
   if ("error" in data)
     return {
@@ -75,7 +75,7 @@ function apiResponse<T extends object, E>(
 
 export function errorUrl(id: string, cause: UrlError): string {
   return `/error?id=${encodeURIComponent(id)}&cause=${encodeURIComponent(
-    cause
+    cause,
   )}`;
 }
 
@@ -86,7 +86,7 @@ export function errorUrl(id: string, cause: UrlError): string {
  * @returns
  */
 async function shorten(
-  url: string
+  url: string,
 ): Promise<ApiResponse<ShortenResponse, ErrorResponse<UrlError>>> {
   const res = await fetch(`${API_URL}/url/shorten`, {
     method: "POST",
@@ -101,7 +101,7 @@ async function shorten(
 }
 
 async function lengthen(
-  id: string
+  id: string,
 ): Promise<ApiResponse<LengthenResponse, ErrorResponse<UrlError>>> {
   const res = await fetch(`${API_URL}/url/${encodeURIComponent(id)}/lengthen`);
 
@@ -119,11 +119,11 @@ async function getStats(
   id: string,
   init: RequestInit = {
     cache: "no-cache",
-  }
+  },
 ): Promise<ApiResponse<StatsResponse, ErrorResponse<UrlError>>> {
   const res = await fetch(
     `${API_URL}/url/${encodeURIComponent(id)}/stats`,
-    init
+    init,
   );
 
   const body = (await res.json()) as StatsResponse | ErrorResponse<UrlError>;

@@ -23,15 +23,15 @@
     "svelte:build": "turbo run svelte:build"
   },
   "devDependencies": {
-    "@turbo/gen": "^1.10.7",
-    "@types/eslint": "^8.44.0",
-    "@types/node": "^20.4.1",
+    "@turbo/gen": "^1.10.12",
+    "@types/eslint": "^8.44.1",
+    "@types/node": "^20.4.5",
     "@types/prettier": "^2.7.3",
-    "eslint": "^8.44.0",
+    "eslint": "^8.45.0",
     "eslint-config-custom": "workspace:*",
-    "prettier": "^2.8.8",
-    "prettier-plugin-tailwindcss": "^0.3.0",
-    "turbo": "^1.10.7",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.4.1",
+    "turbo": "^1.10.12",
     "typescript": "^5.1.6"
   },
   "packageManager": "pnpm@8.6.7"
