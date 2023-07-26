@@ -1,13 +1,16 @@
 use common::error::UrlError;
-use common::types::{AllUrlsResponse, ErrorResponse, ShortenRequest, ShortenResponse};
-use reqwest::{Error, Response, Result as ReqResult};
+use common::types::{
+    AllUrlsResponse, ErrorResponse, LengthenResponse, ShortenRequest, ShortenResponse,
+    StatsResponse,
+};
+use reqwest::{Error, Response, Result as ReqResult, StatusCode};
 use serde::de::DeserializeOwned;
 
 #[derive(Debug)]
 pub enum ApiError {
     Url(UrlError),
     Reqwest(Error),
-    Other(String),
+    Other(StatusCode, String),
 }
 pub type ApiResult<T> = Result<T, ApiError>;
 
@@ -17,9 +20,14 @@ impl From<Error> for ApiError {
     }
 }
 
-fn api_url() -> String {
-    // TODO: probably error handle
-    std::env::var("API_URL").unwrap_or("http://localhost:8000/api".to_string())
+/// Basically `format!` but with API_URL prepended
+macro_rules! api_url {
+    ($($arg:tt)*) => {{
+        // TODO: probably error handle
+        let api_url = std::env::var("API_URL").unwrap_or("http://localhost:8000/api".to_string());
+        let endpoint = format!($($arg)*);
+        format!("{api_url}{endpoint}")
+    }}
 }
 
 async fn to_result<T>(response: Response) -> Result<T, ApiError>
@@ -36,12 +44,12 @@ where
         Err(ApiError::Url(res.error))
     } else {
         // server error or network error(?)
-        Err(ApiError::Other(response.text().await?))
+        Err(ApiError::Other(status, response.text().await?))
     }
 }
 
 pub async fn get_all_urls() -> ReqResult<AllUrlsResponse> {
-    let response = reqwest::get(format!("{}/urls", api_url())).await?;
+    let response = reqwest::get(api_url!("/urls")).await?;
     response.json().await
 }
 
@@ -50,7 +58,7 @@ pub async fn shorten(url: String) -> ApiResult<ShortenResponse> {
 
     let client = reqwest::Client::new();
     let response = client
-        .post(format!("{}/url/shorten", api_url()))
+        .post(api_url!("/url/shorten"))
         .json(&body)
         .send()
         .await?;
@@ -59,11 +67,15 @@ pub async fn shorten(url: String) -> ApiResult<ShortenResponse> {
 }
 
 // TODO: lengthen
-pub async fn lengthen(id: String) -> ApiResult<String> {
-    Ok("lengthened".to_string())
+pub async fn lengthen(id: String) -> ApiResult<LengthenResponse> {
+    let response = reqwest::get(api_url!("/url/{id}/lengthen")).await?;
+
+    // Ok("lengthened".to_string())
+    todo!()
 }
 
 // TODO: stats
-pub async fn stats(id: String) -> ApiResult<String> {
-    Ok("stats".to_string())
+pub async fn stats(id: String) -> ApiResult<StatsResponse> {
+    // Ok("stats".to_string())
+    todo!()
 }
