@@ -20,7 +20,7 @@
 		"@sveltejs/kit": "^1.22.3",
 		"api": "workspace:*",
 		"autoprefixer": "^10.4.14",
-		"eslint": "^8.45.0",
+		"eslint": "^8.46.0",
 		"eslint-config-custom-svelte": "workspace:*",
 		"postcss": "^8.4.27",
 		"postcss-load-config": "^4.0.1",

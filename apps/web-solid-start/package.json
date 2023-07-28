@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/node": "^20.4.5",
     "autoprefixer": "^10.4.14",
-    "eslint": "^8.45.0",
+    "eslint": "^8.46.0",
     "eslint-config-custom-solid": "workspace:*",
     "postcss": "^8.4.27",
     "prettier": "^3.0.0",

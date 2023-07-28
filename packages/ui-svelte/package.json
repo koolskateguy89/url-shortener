@@ -14,11 +14,11 @@
 		"ui-core": "workspace:*"
 	},
 	"devDependencies": {
-		"eslint": "^8.45.0",
+		"eslint": "^8.46.0",
 		"eslint-config-custom-svelte": "workspace:*",
 		"prettier": "^3.0.0",
 		"prettier-config-custom-svelte": "workspace:*",
-		"prettier-plugin-svelte": "^3.0.0",
+		"prettier-plugin-svelte": "^3.0.3",
 		"svelte": "^4.1.1",
 		"typescript": "^5.1.6"
 	}

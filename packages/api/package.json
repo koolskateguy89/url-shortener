@@ -9,7 +9,7 @@
     "format": "prettier --write --ignore-path=../../.prettierignore ."
   },
   "devDependencies": {
-    "eslint": "^8.45.0",
+    "eslint": "^8.46.0",
     "eslint-config-custom": "workspace:*",
     "prettier": "^3.0.0",
     "tsconfig": "workspace:*",
