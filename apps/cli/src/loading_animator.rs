@@ -4,10 +4,11 @@ use std::io::stdout;
 // TODO: tests
 
 /// See https://stackoverflow.com/a/59890400
-///
-/// `chars` cannot be empty
-#[derive(Debug)]
 pub struct LoadingAnimator<'a> {
+    inner: Inner<'a>,
+}
+
+struct Inner<'a> {
     chars: &'a [char],
     current: usize,
     // flags for `display`
@@ -15,36 +16,53 @@ pub struct LoadingAnimator<'a> {
     hidden_cursor: bool,
 }
 
+#[derive(Debug)]
+pub struct CharsEmptyError;
+
+impl std::fmt::Display for CharsEmptyError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "`chars` cannot be empty")
+    }
+}
+
+impl std::error::Error for CharsEmptyError {}
+
 impl<'a> LoadingAnimator<'a> {
-    /// `chars` cannot be empty
-    pub fn new(chars: &'a [char]) -> Self {
-        Self {
-            chars,
-            current: 0,
-            aborted: false,
-            hidden_cursor: false,
+    /// `chars` must not be empty
+    pub fn new(chars: &'a [char]) -> std::result::Result<Self, CharsEmptyError> {
+        if chars.is_empty() {
+            Err(CharsEmptyError)
+        } else {
+            Ok(Self {
+                inner: Inner {
+                    chars,
+                    current: 0,
+                    aborted: false,
+                    hidden_cursor: false,
+                },
+            })
         }
     }
 
     fn next(&mut self) -> char {
-        let next_char = self.chars[self.current];
-        self.current = (self.current + 1) % self.chars.len();
+        let next_char = self.inner.chars[self.inner.current];
+        self.inner.current = (self.inner.current + 1) % self.inner.chars.len();
 
         next_char
     }
 
     /// Display the next loading character, overwriting the previous one.
     pub fn display(&mut self) -> Result<()> {
-        if self.aborted {
+        if self.inner.aborted {
             return Ok(());
         }
 
         let mut stdout = stdout();
 
-        if !self.hidden_cursor {
+        if !self.inner.hidden_cursor {
             stdout.execute(cursor::Hide)?;
             execute!(stdout, cursor::Hide)?;
-            self.hidden_cursor = true;
+            self.inner.hidden_cursor = true;
         }
 
         execute!(
@@ -57,7 +75,7 @@ impl<'a> LoadingAnimator<'a> {
 
     /// Stop the animation and clear the line.
     pub fn stop_and_clear(&mut self) -> Result<()> {
-        self.aborted = true;
+        self.inner.aborted = true;
 
         execute!(
             stdout(),

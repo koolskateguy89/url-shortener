@@ -108,7 +108,9 @@ async fn main() -> Result<(), JoinError> {
     join_set.spawn(api_request);
 
     let animator = {
-        let animator = Arc::new(Mutex::new(LoadingAnimator::new(LOADING_CHARS)));
+        let animator = Arc::new(Mutex::new(
+            LoadingAnimator::new(LOADING_CHARS).expect("chars should not be empty"),
+        ));
         let ani = animator.clone();
 
         join_set.spawn(async move {
