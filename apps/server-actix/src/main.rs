@@ -1,7 +1,7 @@
 use actix_web::{
     dev::{ServiceRequest, ServiceResponse},
     error,
-    http::{header::ContentType, StatusCode},
+    http::StatusCode,
     web::{self, ServiceConfig},
     HttpResponse, Result,
 };
