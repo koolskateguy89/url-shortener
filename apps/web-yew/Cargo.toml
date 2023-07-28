@@ -11,6 +11,7 @@ gloo-net = "0.3.0"
 gloo-utils = "0.1.7"
 log = "0.4.19"
 serde = { version = "1.0.164", features = ["derive"] }
+thiserror = "1.0.44"
 wasm-bindgen = "0.2.86"
 wasm-bindgen-futures = "0.4.36"
 wasm-logger = "0.2.0"

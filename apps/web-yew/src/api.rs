@@ -3,6 +3,7 @@ use gloo_net::http::Response;
 use log::error;
 use serde::de::DeserializeOwned;
 use std::fmt::{Debug, Display};
+use thiserror::Error;
 
 pub mod auth;
 pub mod url;
@@ -47,14 +48,10 @@ pub enum RequestStatus<T, F> {
     Error(F),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Error)]
 pub enum ApiError<E> {
-    Error(E),
+    #[error(transparent)]
+    Error(#[from] E),
+    #[error("{0}")]
     Other(String),
-}
-
-impl<E> From<E> for ApiError<E> {
-    fn from(e: E) -> Self {
-        Self::Error(e)
-    }
 }

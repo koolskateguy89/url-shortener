@@ -5,32 +5,20 @@ use common::types::{
 };
 use reqwest::{Response, Result as ReqResult, StatusCode};
 use serde::de::DeserializeOwned;
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum ApiError {
+    #[error("{0}: {1}")]
     Url(StatusCode, UrlError),
-    Reqwest(reqwest::Error),
+    #[error(transparent)]
+    Reqwest(#[from] reqwest::Error),
+    #[error("{0}: {1}")]
     Other(StatusCode, String),
 }
 pub type ApiResult<T> = Result<T, ApiError>;
 
-impl std::fmt::Display for ApiError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ApiError::Url(status, err) => write!(f, "{status}: {err:?}"),
-            ApiError::Reqwest(err) => err.fmt(f),
-            ApiError::Other(status, body) => write!(f, "{status}: {body}"),
-        }
-    }
-}
-
-impl From<reqwest::Error> for ApiError {
-    fn from(error: reqwest::Error) -> Self {
-        Self::Reqwest(error)
-    }
-}
-
-async fn to_result<T>(response: Response) -> Result<T, ApiError>
+async fn to_result<T>(response: Response) -> ApiResult<T>
 where
     T: DeserializeOwned,
 {
@@ -49,6 +37,7 @@ where
 }
 
 /// Basically `format!` but with value of env var `URL_SHORTENER_API_URL` prepended
+// TODO: move to config file (config.rs) so can show about it in main.rs
 macro_rules! api_url {
     ($($arg:tt)*) => {{
         // TODO: probably error handle

@@ -49,8 +49,8 @@ impl UserError {
 // necessary for ResponseError
 impl std::fmt::Display for UserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // debug of inner
-        write!(f, "{:?}", self.0)
+        // inner
+        write!(f, "{}", self.0)
     }
 }
 
@@ -70,9 +70,7 @@ impl error::ResponseError for UserError {
     }
 
     fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code())
-            .insert_header(ContentType::json())
-            .json(ErrorResponse::new(self.0.clone()))
+        HttpResponse::build(self.status_code()).json(ErrorResponse::new(self.0.clone()))
     }
 }
 
