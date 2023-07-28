@@ -7,11 +7,11 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.3.16", features = ["derive"] }
-colored = "2.0.4"
 common = { package = "url-shortener-common", path = "../../crates/common" }
 crossterm = "0.26.1"
+dotenv = "0.15.0"
 reqwest = { version = "0.11.18", features = ["json"] }
 serde = "1.0.174"
 serde_json = "1.0.103"
 thiserror = "1.0.44"
-tokio = "1.29.1"
+tokio = { version = "1.29.1", features = ["full"] }

@@ -1,11 +1,13 @@
 use clap::{Parser, Subcommand};
-use colored::Colorize;
+use crossterm::style::Stylize;
+use dotenv::dotenv;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use tokio::task::{JoinError, JoinSet};
 use tokio::time::sleep;
 
 mod api;
+mod config;
 mod loading_animator;
 
 use loading_animator::LoadingAnimator;
@@ -48,15 +50,32 @@ enum Commands {
     },
 }
 
+fn check_env_var(var: &str) {
+    use std::env::VarError;
+
+    match std::env::var(var) {
+        Err(VarError::NotPresent) => {
+            panic!("env var `{}` not set", var.red())
+        }
+        Err(VarError::NotUnicode(_)) => {
+            panic!("env var `{}` not unicode", var.red())
+        }
+        Ok(_) => {}
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), JoinError> {
+    dotenv().ok();
+    check_env_var("URL_SHORTENER_API_URL");
+
     let args = Cli::parse();
 
     let api_request = async {
         match args.command {
             Commands::List => match api::get_all_urls().await {
                 Ok(all_urls) => Ok(all_urls
-                    .iter()
+                    .into_iter()
                     .map(|(id, info)| format!("{id} {url}", id = id.green().bold(), url = info.url))
                     .collect::<Vec<_>>()
                     .join("\n")),

@@ -7,6 +7,8 @@ use reqwest::{Response, Result as ReqResult, StatusCode};
 use serde::de::DeserializeOwned;
 use thiserror::Error;
 
+use crate::config::api_url;
+
 #[derive(Debug, Error)]
 pub enum ApiError {
     #[error("{0}: {1}")]
@@ -34,20 +36,6 @@ where
         // server error or network error(?)
         Err(ApiError::Other(status, response.text().await?))
     }
-}
-
-/// Basically `format!` but with value of env var `URL_SHORTENER_API_URL` prepended
-// TODO: move to config file (config.rs) so can show about it in main.rs
-macro_rules! api_url {
-    ($($arg:tt)*) => {{
-        // TODO: probably error handle
-        // TODO: some sort of option/way to select local or remote - just need to enter URL really,
-        // which can be done with env var
-        let api_url = std::env::var("URL_SHORTENER_API_URL").unwrap_or("http://localhost:8000/api".to_string());
-        // let api_url = "https://url-shortener-server-actix.shuttleapp.rs/api";
-        let endpoint = format!($($arg)*);
-        format!("{api_url}{endpoint}")
-    }}
 }
 
 pub async fn get_all_urls() -> ReqResult<AllUrlsResponse> {
