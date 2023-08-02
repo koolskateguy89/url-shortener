@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.3.16", features = ["derive"] }
+clap = { version = "4.3.19", features = ["derive"] }
 common = { package = "url-shortener-common", path = "../../crates/common" }
 crossterm = "0.26.1"
 dotenv = "0.15.0"

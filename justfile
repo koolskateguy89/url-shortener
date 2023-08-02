@@ -17,7 +17,7 @@ default:
 
 # List outdated cargo npm dependencies
 outdated:
-  cargo outdated
+  cargo outdated --root-deps-only
   -pnpm -r outdated
 
 upgrade-npm-deps:
