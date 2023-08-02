@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.6.0",
-    "@tanstack/react-query": "^4.32.0",
+    "@tanstack/react-query": "^4.32.1",
     "api": "workspace:*",
     "next": "^13.4.12",
     "react": "^18.2.0",
@@ -20,9 +20,9 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^4.29.25",
-    "@types/node": "^20.4.5",
-    "@types/react": "^18.2.17",
+    "@tanstack/eslint-plugin-query": "^4.32.1",
+    "@types/node": "^20.4.6",
+    "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
     "autoprefixer": "^10.4.14",
     "eslint-config-custom-next": "workspace:*",
