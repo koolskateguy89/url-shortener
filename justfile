@@ -47,6 +47,6 @@ udeps:
 @shuttle-deploy: build-static
   @cargo shuttle deploy --allow-dirty
 
-# Run the `url-shortener-cli` with the given arguments (the server needs to be running)
+# Run the `url-shortener-cli` with the given arguments (the server needs to be running) (note does not corrently load env file)
 cli *args:
   cargo run --bin url-shortener-cli --quiet -- {{args}}

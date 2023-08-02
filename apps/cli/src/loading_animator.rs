@@ -73,10 +73,8 @@ impl<'a> LoadingAnimator<'a> {
         )
     }
 
-    /// Stop the animation and clear the line.
-    pub fn stop_and_clear(&mut self) -> Result<()> {
-        self.inner.aborted = true;
-
+    /// Clear the line.
+    pub fn _clear(&self) -> Result<()> {
         execute!(
             stdout(),
             cursor::RestorePosition,

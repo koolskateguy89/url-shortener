@@ -1,7 +1,6 @@
 use clap::{Parser, Subcommand};
 use crossterm::style::Stylize;
-use dotenv::dotenv;
-use std::sync::{Arc, Mutex};
+use dotenvy::dotenv;
 use std::time::Duration;
 use tokio::task::{JoinError, JoinSet};
 use tokio::time::sleep;
@@ -66,7 +65,7 @@ fn check_env_var(var: &str) {
 
 #[tokio::main]
 async fn main() -> Result<(), JoinError> {
-    dotenv().ok();
+    dotenv().expect(".env file not found");
     check_env_var("URL_SHORTENER_API_URL");
 
     let args = Cli::parse();
@@ -107,27 +106,17 @@ async fn main() -> Result<(), JoinError> {
 
     join_set.spawn(api_request);
 
-    let animator = {
-        let animator = Arc::new(Mutex::new(
-            LoadingAnimator::new(LOADING_CHARS).expect("chars should not be empty"),
-        ));
-        let ani = animator.clone();
+    join_set.spawn(async move {
+        let mut animator = LoadingAnimator::new(LOADING_CHARS).expect("chars should not be empty");
 
-        join_set.spawn(async move {
-            loop {
-                ani.lock().unwrap().display().unwrap();
-                sleep(LOADING_DELAY).await;
-            }
-        });
-
-        animator
-    };
+        loop {
+            animator.display().unwrap();
+            sleep(LOADING_DELAY).await;
+        }
+    });
 
     // The API request is the only future that will complete
     if let Some(res) = join_set.join_next().await {
-        // manually stop loading animation
-        animator.lock().unwrap().stop_and_clear().unwrap();
-
         let out = res?;
         match out {
             Ok(s) => println!("{s}"),
