@@ -17,11 +17,11 @@ common = { package = "url-shortener-common", path = "../../crates/common" }
 log = "0.4.19"
 nanoid = "0.4.0"
 serde_json = "1.0.104"
-shuttle-actix-web = "0.22.0"
-shuttle-runtime = "0.22.0"
-shuttle-secrets = "0.22.0"
-shuttle-shared-db = { version = "0.22.0", features = ["postgres", "sqlx"] }
-shuttle-static-folder = "0.22.0"
+shuttle-actix-web = "0.23.0"
+shuttle-runtime = "0.23.0"
+shuttle-secrets = "0.23.0"
+shuttle-shared-db = { version = "0.23.0", features = ["postgres", "sqlx"] }
+shuttle-static-folder = "0.23.0"
 sqlx = { version = "0.7.1", features = ["postgres", "runtime-tokio-native-tls", "chrono"] }
 tokio = "1.29.1"
 url = "2.4.0"
