@@ -25,7 +25,7 @@ export const Button: Component<ButtonProps> = (_props) => {
         variant: localProps.variant,
         size: localProps.size,
         class: localProps.class,
-      })
+      }),
     );
 
   return <KobalteButton.Root class={className()} {...otherProps} />;

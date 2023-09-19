@@ -19,7 +19,7 @@ export function routeData({ params }: RouteDataArgs) {
         id: params.id,
         key: "redirect",
       }),
-    }
+    },
   );
 }
 

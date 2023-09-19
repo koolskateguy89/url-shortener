@@ -4,7 +4,6 @@ use actix_web::{
     web::{self, ServiceConfig},
     HttpRequest,
 };
-
 use std::path::PathBuf;
 
 use crate::middleware;

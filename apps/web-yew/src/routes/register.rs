@@ -12,13 +12,26 @@ pub fn register_page() -> Html {
     let navigator = use_navigator().expect("cannot access navigator");
 
     let register_mut = use_mutation(move |(username, password): (String, String)| async move {
-        register(username, password).await
+        let register_result = register(username, password).await;
+
+        match register_result {
+            Ok(_) => {
+                log::debug!("register success");
+            }
+            Err(ref error) => {
+                log::debug!("{error:?}");
+            }
+        }
+
+        register_result
     });
 
     // on success, redirect to login page
     if register_mut.is_success() {
         navigator.push(&Route::Login);
     }
+
+    // TODO: display error message
 
     let onsubmit = {
         let register_mut = register_mut.clone();
@@ -34,7 +47,6 @@ pub fn register_page() -> Html {
             let form_data =
                 FormData::new_with_form(&form).expect_throw("Form data could not be instantiated");
 
-            // TODO: min pw length - maybe just handle it on server
             let username = form_data
                 .get("username")
                 .as_string()
@@ -72,7 +84,7 @@ pub fn register_page() -> Html {
             disabled={loading}
           />
 
-          <div>
+          <div class="flex w-full justify-evenly">
             <Link<Route> to={Route::Login} classes="button-link">
               { "Login" }
             </Link<Route>>

@@ -15,6 +15,48 @@ TODO: prettier/eslint github actions
 
 TODO?: shuttle deploy github action
 
+## Quickstart
+
+### Prerequisites
+
+TODO: check urls
+- [Rust](https://www.rust-lang.org/tools/install)
+- [pnpm](https://pnpm.io/installation)
+- [Docker](https://docs.docker.com/get-docker/)
+
+### Setup
+
+```sh
+# Install npm dependencies
+pnpm install
+```
+
+```sh
+cargo binstall cargo-shuttle
+```
+
+### Development
+
+```sh
+# Start the server
+pnpm server:dev
+```
+
+To start the server and all web apps in development mode, run:
+
+```sh
+pnpm dev --concurrency 20
+```
+
+or if you have just installed:
+
+```sh
+just dev
+```
+
+todo: specifc web apps + server
+
+
 ## Apps, Packages and Crates
 
 TODO?: try to [on a non-very-basic level] port React Query to Yew
@@ -28,6 +70,7 @@ TODO: `logger` package
 - `web-nextjs`: a [Next.js](https://nextjs.org/) app
 - `web-yew`: a [Yew](https://yew.rs/) app
 - `web-svelte-kit`: a [SvelteKit](https://kit.svelte.dev/) app
+- `cli`: a [Clap](https://github.com/clap-rs/clap) CLI app
 - `api`: API to interact with the server
 - `ui-core`: 'core' component library, contains styles and variants using [`class-variance-authority`](https://cva.style/)
 - `ui-solid`: Solid component library
@@ -36,6 +79,7 @@ TODO: `logger` package
 - `eslint-config-custom`: base [`eslint`](https://eslint.org/) configuration
 - `eslint-config-custom-solid`: Solid `eslint` configuration (includes `eslint-plugin-solid`)
 - `eslint-config-custom-next`: Next.Js `eslint` configuration (includes `eslint-config-next`)
+- `eslint-config-custom-svelte`: Svelte `eslint` configuration (includes `eslint-plugin-svelte`)
 - `tailwind-config`: shared [Tailwind CSS](https://tailwindcss.com/) configuration
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 

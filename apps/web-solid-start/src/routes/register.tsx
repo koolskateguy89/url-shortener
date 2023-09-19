@@ -27,7 +27,7 @@ const RegisterPage: VoidComponent = () => {
       alert(registered ? "Registered" : "Failed to register");
 
       if (registered) throw redirect("/login");
-    }
+    },
   );
 
   const isLoading = registering.pending;
@@ -54,7 +54,7 @@ const RegisterPage: VoidComponent = () => {
           required
         />
 
-        <div>
+        <div class="flex w-full justify-evenly">
           <Button variant="link" asChild>
             <As component={A} href="/login">
               Login

@@ -24,7 +24,7 @@ export const StatusDisplay = ({
         <p>
           {data.success ? (
             <Link href={`/${data.data.id}`} className="underline">
-              BASE_URL/{data.data.id}
+              {data.data.id}
             </Link>
           ) : (
             "Error"

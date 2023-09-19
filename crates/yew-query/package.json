@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "lint": "cargo clippy",
+    "lint": "cargo clippy -- -D warnings",
     "format": "cargo fmt",
     "test": "wasm-pack test --headless --chrome"
   }

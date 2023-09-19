@@ -6,16 +6,16 @@
     "dev": "pnpm css:gen && trunk serve",
     "build": "pnpm css:gen && trunk build --release --public-url /yew/",
     "start": "trunk serve --release",
-    "lint": "cargo clippy",
+    "lint": "cargo clippy -- -D warnings",
     "format": "cargo fmt",
     "css:gen": "postcss input.css -o assets/output.css",
     "test": "wasm-pack test --headless --chrome"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.24",
+    "postcss": "^8.4.27",
     "postcss-cli": "^10.1.0",
     "tailwind-config": "workspace:*",
-    "tailwindcss": "^3.3.2"
+    "tailwindcss": "^3.3.3"
   }
 }

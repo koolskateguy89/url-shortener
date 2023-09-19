@@ -1,5 +1,4 @@
 use std::{future::Future, rc::Rc};
-
 use yew::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, Eq)]

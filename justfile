@@ -9,6 +9,7 @@ STATIC_FOLDER := "static"
 # STATIC_FOLDER := "apps/server-actix/static"
 
 alias up := upgrade-npm-deps
+alias sd := shuttle-deploy
 
 # List available recipes
 default:
@@ -16,7 +17,7 @@ default:
 
 # List outdated cargo npm dependencies
 outdated:
-  cargo outdated
+  cargo outdated --root-deps-only
   -pnpm -r outdated
 
 upgrade-npm-deps:
@@ -24,12 +25,13 @@ upgrade-npm-deps:
 
 # Run all apps in development mode
 dev:
-  pnpm dev --concurrency 19
+  pnpm dev --concurrency 20
 
 # Unused Cargo deps - https://github.com/est31/cargo-udeps
 udeps:
   cargo +nightly udeps
 
+# TODO: use turbo for tests cos caching
 # Build the Actix server static artifacts, running tests first
 @build-static:
   @pnpm test --filter=web-yew --filter=yew-query-rs
@@ -44,3 +46,7 @@ udeps:
 # Build the Actix server artifacts and deploy to Shuttle
 @shuttle-deploy: build-static
   @cargo shuttle deploy --allow-dirty
+
+# Run the `url-shortener-cli` with the given arguments (the server needs to be running) (note does not corrently load env file)
+cli *args:
+  cargo run --bin url-shortener-cli --quiet -- {{args}}

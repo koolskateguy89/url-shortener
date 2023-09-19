@@ -1,17 +1,28 @@
+use std::collections::BTreeMap;
+
 use serde::{Deserialize, Serialize};
 
-use crate::error::Error;
-
 #[derive(Debug, Deserialize, Serialize)]
-pub struct ErrorResponse {
-    pub error: Error,
+pub struct ErrorResponse<E> {
+    pub error: E,
 }
 
-impl ErrorResponse {
-    pub fn new(error: Error) -> Self {
+impl<E> ErrorResponse<E> {
+    pub fn new(error: E) -> Self {
         Self { error }
     }
 }
+
+// Url shortening
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct UrlInfo {
+    pub id: String,
+    pub url: String,
+    pub username: Option<String>,
+    pub created_at: i64,
+}
+pub type AllUrlsResponse = BTreeMap<String, UrlInfo>;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ShortenRequest {
@@ -28,10 +39,10 @@ pub struct LengthenResponse {
     pub url: String,
 }
 
-/// TODO: more stats ig
 #[derive(Debug, Deserialize, Serialize)]
 pub struct StatsResponse {
     pub url: String,
+    pub username: Option<String>,
     pub num_hits: usize,
     pub hits: Vec<i64>,
 }

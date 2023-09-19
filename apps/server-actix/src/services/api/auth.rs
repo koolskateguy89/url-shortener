@@ -1,17 +1,18 @@
 use actix_identity::Identity;
 use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse, Responder, Result};
+use common::{error::AuthError, types};
+use log::{debug, warn};
 
-use common::types;
-
-use crate::db;
-use crate::{AppState, UserError};
+use crate::{config, db, AppState, UserError};
+use config::auth::{hash_password, validate_credentials, verify_password};
+use db::auth::User;
 
 #[get("/api/users")]
 pub async fn get_all_users(state: web::Data<AppState>) -> Result<impl Responder> {
     let usernames: Vec<String> = sqlx::query_as("SELECT username FROM users")
         .fetch_all(&state.pool)
         .await
-        .map_err(|err| UserError::Other(err.to_string()))?
+        .map_err(|err| UserError::other(err.to_string()))?
         .into_iter()
         .map(|(username,)| username)
         .collect();
@@ -26,7 +27,7 @@ pub async fn whoami(user: Option<Identity>) -> impl Responder {
         None => "not logged in".to_string(),
     };
 
-    log::warn!("whoami = {:?}", res);
+    warn!("whoami = {:?}", res);
 
     res
 }
@@ -41,30 +42,31 @@ pub async fn login(
     state: web::Data<AppState>,
     req: HttpRequest,
 ) -> Result<impl Responder> {
-    use db::auth::LoginError;
-
     let types::LoginRequest { username, password } = body.into_inner();
 
-    let result = db::auth::can_login(&state.pool, &username, &password).await;
+    let result = db::auth::get_user(&state.pool, &username).await;
 
     match result {
-        Ok(_) => {
-            log::debug!("login successful for `{username}`");
+        Ok(Some(user)) => {
+            let correct_password = verify_password(password.as_bytes(), &user.hashed_password);
 
-            Identity::login(&req.extensions(), username).unwrap();
-            Ok(HttpResponse::Ok().finish())
+            if correct_password {
+                debug!("login successful for `{}`", user.username);
+
+                Identity::login(&req.extensions(), user.username).unwrap();
+                Ok(HttpResponse::Ok().finish())
+            } else {
+                debug!("incorrect password for user `{username}`");
+                Err(UserError::auth(AuthError::UserIncorrectPassword))?
+            }
         }
-        Err(LoginError::UserNotFound) => {
-            log::debug!("user `{username}` not found");
-            Err(UserError::UserNotFound.into())
+        Ok(None) => {
+            debug!("user `{username}` not found");
+            Err(UserError::auth(AuthError::UserNotFound))?
         }
-        Err(LoginError::IncorrectPassword) => {
-            log::debug!("incorrect password for user `{username}`");
-            Err(UserError::UserIncorrectPassword.into())
-        }
-        Err(LoginError::Sqlx(sqlx_error)) => {
-            log::warn!("sqlx error: {sqlx_error:?}");
-            Err(UserError::InternalError.into())
+        Err(sqlx_error) => {
+            warn!("sqlx error: {sqlx_error:?}");
+            Err(UserError::internal())?
         }
     }
 }
@@ -80,24 +82,35 @@ pub async fn register(
     body: web::Json<types::RegisterRequest>,
     state: web::Data<AppState>,
 ) -> Result<impl Responder> {
-    use db::auth::RegisterError;
-
     let types::RegisterRequest { username, password } = body.into_inner();
 
-    let result = db::auth::register_user(&state.pool, &username, &password).await;
+    if !validate_credentials(&username, &password) {
+        Err(UserError::auth(AuthError::InvalidCredentials))?
+    }
+
+    let hashed_password = hash_password(password.as_bytes()).ok_or(UserError::internal())?;
+
+    let result = db::auth::create_user(
+        &state.pool,
+        &User {
+            username: username.clone(),
+            hashed_password,
+        },
+    )
+    .await;
 
     match result {
-        Ok(_) => {
-            log::debug!("registration successful for `{username}`");
+        Ok(true) => {
+            debug!("registration successful for `{}`", username);
             Ok(HttpResponse::Ok().finish())
         }
-        Err(RegisterError::UsernameTaken) => {
-            log::debug!("tried to register already taken username `{username}`");
-            Err(UserError::UsernameTaken.into())
+        Ok(false) => {
+            debug!("tried to register already taken username `{username}`");
+            Err(UserError::auth(AuthError::UsernameTaken))?
         }
-        Err(RegisterError::Sqlx(sqlx_error)) => {
-            log::warn!("sqlx error: {sqlx_error:?}");
-            Err(UserError::InternalError.into())
+        Err(sqlx_error) => {
+            warn!("sqlx error: {sqlx_error:?}");
+            Err(UserError::internal())?
         }
     }
 }

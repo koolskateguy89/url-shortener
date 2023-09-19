@@ -1,16 +1,19 @@
+use common::types::StatsResponse;
 use log::{debug, error};
 use yew::prelude::*;
 
 use crate::api;
 use crate::hooks::use_error_redirector;
-use common::types::StatsResponse;
 
 #[derive(PartialEq, Properties)]
 pub struct StatsPageProps {
     pub id: AttrValue,
 }
 
-type Status = api::RequestStatus<StatsResponse, ()>;
+enum Status {
+    Loading,
+    Success(StatsResponse),
+}
 
 #[function_component(StatsPage)]
 pub fn stats_page(props: &StatsPageProps) -> Html {
@@ -36,8 +39,8 @@ pub fn stats_page(props: &StatsPageProps) -> Html {
                             status.set(Status::Success(stats));
                         }
                         Err(err) => {
-                            error!("err = {err:?}");
-                            let _ = error_redirector.redirect(id.to_string(), format!("{err:?}"));
+                            error!("(stats) err = {err:?}");
+                            let _ = error_redirector.redirect(id.to_string(), err.into());
                         }
                     }
                 });
@@ -46,17 +49,20 @@ pub fn stats_page(props: &StatsPageProps) -> Html {
         );
     }
 
-    // TODO: actually handle all cases
+    // don't need to actually handle all cases here because we're redirecting on error
+    // and idle is impossible
     let content = move || -> Html {
         match *status {
             Status::Success(StatsResponse {
                 ref url,
+                ref username,
                 hits: _,
                 num_hits,
             }) => html! {
                 <>
                     <p>{ "URL: " }{url}</p>
                     <p>{ "Num hits: " }{num_hits}</p>
+                    <p>{ format!("Username: {}", username.as_deref().unwrap_or("null")) }</p>
                 </>
             },
             _ => html!(<p>{ "Loading..." }</p>),

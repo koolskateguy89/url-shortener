@@ -32,8 +32,14 @@
 		alert(loggedIn ? 'Logged in' : 'Failed to log in');
 	}
 
-	function handleLogout() {
-		api.logout();
+	async function handleLogout() {
+		try {
+			const loggedOut = await api.logout();
+			alert(loggedOut ? 'Logged out' : 'Failed to log out');
+		} catch (err) {
+			console.error(err);
+			alert('Failed to log out (errored, check console)');
+		}
 	}
 </script>
 
@@ -63,7 +69,7 @@
 			required
 		/>
 
-		<div>
+		<div class="flex w-full justify-evenly">
 			<Button type="submit" disabled={isLoading}>
 				{#if isLoading}
 					<LoadingSpinner class="mr-2" />

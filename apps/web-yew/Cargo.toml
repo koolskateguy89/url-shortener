@@ -7,9 +7,11 @@ edition = "2021"
 
 [dependencies]
 common = { package = "url-shortener-common", path = "../../crates/common" }
-gloo-net = "0.3.0"
+gloo-net = "0.3.1"
+gloo-utils = "0.1.7"
 log = "0.4.19"
-serde = { version = "1.0.164", features = ["derive"] }
+serde = { version = "1.0.180", features = ["derive"] }
+thiserror = "1.0.44"
 wasm-bindgen = "0.2.86"
 wasm-bindgen-futures = "0.4.36"
 wasm-logger = "0.2.0"
@@ -19,5 +21,4 @@ yew-query = { path = "../../crates/yew-query" }
 yew-router = "0.17.0"
 
 [dev-dependencies]
-gloo = "0.8.1"
 wasm-bindgen-test = "0.3.37"

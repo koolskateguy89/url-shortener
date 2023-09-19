@@ -1,75 +1,76 @@
 use actix_web::{
     dev::{ServiceRequest, ServiceResponse},
     error,
-    http::{header::ContentType, StatusCode},
+    http::StatusCode,
     web::{self, ServiceConfig},
     HttpResponse, Result,
 };
-use derive_more::Display;
-use log::info;
+use common::{
+    error::{AuthError, Error, UrlError},
+    types::ErrorResponse,
+};
 use shuttle_actix_web::ShuttleActixWeb;
-use shuttle_runtime::CustomError;
 use shuttle_secrets::SecretStore;
-use sqlx::{Executor, PgPool};
-
+use sqlx::PgPool;
 use std::path::PathBuf;
 
-use common::{error::Error as CommonError, types::ErrorResponse};
-
-mod auth;
+mod config;
 mod db;
 mod middleware;
 mod services;
 
 use crate::services::{api::ApiService, yew::YewService};
 
-#[derive(Clone, Debug, Display)]
-pub enum UserError {
-    // url
-    #[display(fmt = "unused")]
-    InvalidUrl,
-    #[display(fmt = "unused")]
-    NotFound,
-    // auth
-    #[display(fmt = "unused")]
-    UserNotFound,
-    #[display(fmt = "unused")]
-    UserIncorrectPassword,
-    #[display(fmt = "unused")]
-    UsernameTaken,
-    // common
-    #[display(fmt = "unused")]
-    InternalError,
-    #[display(fmt = "unused")]
-    Other(String),
+#[derive(Debug)]
+pub struct UserError(Error);
+
+impl UserError {
+    pub fn new(error: Error) -> Self {
+        Self(error)
+    }
+
+    pub fn url(error: UrlError) -> Self {
+        Self(Error::Url(error))
+    }
+
+    pub fn auth(error: AuthError) -> Self {
+        Self(Error::Auth(error))
+    }
+
+    pub fn other(error: impl Into<String>) -> Self {
+        Self(Error::Other(error.into()))
+    }
+
+    pub fn internal() -> Self {
+        Self(Error::InternalError)
+    }
 }
 
-impl From<UserError> for CommonError {
-    fn from(e: UserError) -> Self {
-        match e {
-            UserError::InvalidUrl => CommonError::InvalidUrl,
-            UserError::NotFound => CommonError::NotFound,
-            UserError::Other(s) => CommonError::Other(s),
-            _ => CommonError::Other(format!("{e:?}")),
-        }
+// necessary for ResponseError
+impl std::fmt::Display for UserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // inner
+        write!(f, "{}", self.0)
     }
 }
 
 impl error::ResponseError for UserError {
     fn status_code(&self) -> StatusCode {
-        match *self {
-            UserError::InvalidUrl => StatusCode::BAD_REQUEST,
-            UserError::NotFound | UserError::UserNotFound => StatusCode::NOT_FOUND,
-            UserError::UsernameTaken => StatusCode::CONFLICT,
-            UserError::UserIncorrectPassword => StatusCode::UNAUTHORIZED,
+        match self.0 {
+            Error::Url(UrlError::InvalidUrl) | Error::Auth(AuthError::InvalidCredentials) => {
+                StatusCode::BAD_REQUEST
+            }
+            Error::Url(UrlError::NotFound) | Error::Auth(AuthError::UserNotFound) => {
+                StatusCode::NOT_FOUND
+            }
+            Error::Auth(AuthError::UsernameTaken) => StatusCode::CONFLICT,
+            Error::Auth(AuthError::UserIncorrectPassword) => StatusCode::UNAUTHORIZED,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
     fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code())
-            .insert_header(ContentType::json())
-            .json(ErrorResponse::new(self.clone().into()))
+        HttpResponse::build(self.status_code()).json(ErrorResponse::new(self.0.clone()))
     }
 }
 
@@ -84,21 +85,88 @@ pub struct AppState {
     static_folder: PathBuf,
 }
 
+async fn _get_and_delete_all_tables(pool: &PgPool) -> Result<(), shuttle_runtime::Error> {
+    use sqlx::Executor;
+
+    // get table names
+    let table_names = sqlx::query_as::<_, (String,)>(
+        r#"
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        "#,
+    )
+    .fetch_all(pool)
+    .await
+    .map_err(shuttle_runtime::CustomError::new)?
+    .into_iter()
+    .map(|(table_name,)| table_name)
+    .collect::<Vec<_>>();
+
+    log::error!("table_names = {:?}", table_names);
+
+    // delete all tables
+    pool.execute(
+        table_names
+            .iter()
+            .map(|table_name| format!("DROP TABLE IF EXISTS {} CASCADE", table_name))
+            .collect::<Vec<_>>()
+            .join(";")
+            .as_str(),
+    )
+    .await
+    .map_err(shuttle_runtime::CustomError::new)?;
+
+    log::error!("done");
+
+    Ok(())
+}
+
+/// Shuttle deployment breaks if we try to run migrations on it
+/// so just have to do it manually, locally on deployment db, using
+/// sqlx-cli
+async fn _migrate(pool: &PgPool) -> Result<(), shuttle_runtime::Error> {
+    log::info!("Running database migration");
+
+    sqlx::migrate!()
+        .run(pool)
+        .await
+        .map_err(shuttle_runtime::CustomError::new)?;
+
+    Ok(())
+}
+
 #[shuttle_runtime::main]
 async fn actix_web(
     #[shuttle_shared_db::Postgres] pool: PgPool,
     #[shuttle_static_folder::StaticFolder(folder = "static")] static_folder: PathBuf,
     #[shuttle_secrets::Secrets] secret_store: SecretStore,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
-    info!("Running database migration");
-    // TODO: use sqlx::migrate
-    pool.execute(include_str!("../schema.sql"))
-        .await
-        .map_err(CustomError::new)?;
+    // _get_and_delete_all_tables(&pool).await?;
+    // _migrate(&pool).await?;
 
-    db::auth::register_user(&pool, "test", "testpw")
-        .await
-        .expect("could not register test user");
+    {
+        use config::auth::hash_password;
+        use db::auth::{create_user, User};
+        use log::{debug, error};
+
+        if let Some(hashed_password) = hash_password("testpw".as_bytes()) {
+            let test_user = User {
+                username: "test".to_string(),
+                hashed_password,
+            };
+
+            match create_user(&pool, &test_user).await {
+                Ok(true) => debug!("test user created"),
+                Ok(false) => debug!("test user already exists"),
+                Err(sqlx_error) => {
+                    error!("could not create test user, sqlx_error: {:?}", sqlx_error)
+                }
+            }
+        } else {
+            error!("could not hash test user password");
+        }
+    }
 
     let session_key = secret_store
         .get("SESSION_KEY")

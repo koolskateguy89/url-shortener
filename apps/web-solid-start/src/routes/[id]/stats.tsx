@@ -26,7 +26,7 @@ export function routeData({ params }: RouteDataArgs) {
         id: params.id,
         key: "stats",
       }),
-    }
+    },
   );
 }
 
@@ -39,12 +39,13 @@ const StatsPage: VoidComponent = () => {
 
   return (
     <Show when={stats()} fallback={"Failed to fetch stats"} keyed>
-      {({ url, num_hits }) => (
+      {({ url, username, num_hits }) => (
         <main>
           <Title>{params.id} Stats</Title>
           <h1>Stats</h1>
           <p>URL: {url}</p>
           <p>Num hits: {num_hits}</p>
+          <p>Username: {username ?? "null"}</p>
         </main>
       )}
     </Show>

@@ -1,6 +1,8 @@
 [workspace]
+resolver = "2"
 
 members = [
+  "apps/cli",
   "apps/server-actix",
   "apps/web-yew",
   "crates/common",

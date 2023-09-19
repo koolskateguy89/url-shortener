@@ -35,3 +35,20 @@ pub fn verify_password(password: &[u8], password_hash: &str) -> bool {
 
     argon2().verify_password(password, &parsed_hash).is_ok()
 }
+
+pub fn validate_credentials(username: &str, password: &str) -> bool {
+    // ensure username is only a-zA-Z0-9
+    if !username.chars().all(|c| c.is_ascii_alphanumeric()) {
+        return false;
+    }
+
+    if password.len() < 4 {
+        return false;
+    }
+
+    if username.len() < 3 {
+        return false;
+    }
+
+    true
+}

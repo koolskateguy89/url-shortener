@@ -1,18 +1,23 @@
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::UnwrapThrowExt;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use serde::{Deserialize, Serialize};
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(untagged)]
+pub enum ErrorCause {
+    NotFound,
+    Other(String),
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct SearchParams {
     id: String,
-    #[allow(dead_code)]
-    cause: Option<String>,
+    cause: Option<ErrorCause>,
 }
 
 impl SearchParams {
-    pub fn new(id: String, cause: Option<String>) -> Self {
+    pub fn new(id: String, cause: Option<ErrorCause>) -> Self {
         Self { id, cause }
     }
 }
