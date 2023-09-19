@@ -32,7 +32,7 @@ pub fn status_display(props: &StatusDisplayProps) -> Html {
         ShortenStatus::Success(id) => html! {
             <p>
                 <Link<UrlRoute> classes="underline" to={UrlRoute::Redirect { id: id.to_string() }}>
-                    { format!("BASE_URL/{}", id) }
+                    { format!("{id}") }
                 </Link<UrlRoute>>
             </p>
         },

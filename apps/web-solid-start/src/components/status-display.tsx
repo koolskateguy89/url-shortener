@@ -15,7 +15,7 @@ export const StatusDisplay: VoidComponent<StatusDisplayProps> = (props) => {
         {({ id }) => (
           <p>
             <A href={`/${id}`} class="underline">
-              BASE_URL/{id}
+              {id}
             </A>
           </p>
         )}

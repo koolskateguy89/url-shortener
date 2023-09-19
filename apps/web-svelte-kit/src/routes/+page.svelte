@@ -39,7 +39,7 @@
 					{@const { id } = res.data}
 					{JSON.stringify(res.data, null, 2)}
 					<a href="/{id}" class="underline">
-						BASE_URL/{id}
+						{id}
 					</a>
 				{:else}
 					error = <pre>{JSON.stringify(res.error, null, 2)}</pre>
