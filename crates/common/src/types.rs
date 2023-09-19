@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -22,7 +22,7 @@ pub struct UrlInfo {
     pub username: Option<String>,
     pub created_at: i64,
 }
-pub type AllUrlsResponse = HashMap<String, UrlInfo>;
+pub type AllUrlsResponse = BTreeMap<String, UrlInfo>;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ShortenRequest {
